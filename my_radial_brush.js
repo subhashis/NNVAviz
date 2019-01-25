@@ -114,6 +114,7 @@ function my_radial_brush() {
 	return _circularbrush;
 
 	function resizeDown(d) {
+		d3.event.preventDefault();
 		var _mouse = d3.mouse(_brushG.node());
 
 		_originalBrushData = {startAngle: _brushData[0].startAngle, endAngle: _brushData[0].endAngle};
