@@ -1,0 +1,32 @@
+/* SVG styling */
+svg {
+	width: 400px;
+	height: 400px;
+}
+#mychart1 svg {
+	height: 400px;
+}
+#mychart2 svg {
+	height: 400px;
+}
+#mychart3 svg {
+	width:200px;
+	height: 400px;
+}
+path {
+	stroke: #777;
+	stroke-width: 0.1px;
+}
+
+.labels {
+	fill: #aaa;
+	font-weight: 200;
+	letter-spacing: -1px;
+}
+.labels.segment {
+	font-size: 10px;
+}
+
+#chart3 .labels {
+	fill: #555;
+}
