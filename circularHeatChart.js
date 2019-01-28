@@ -1,15 +1,22 @@
 function circularHeatChart() {
-    var margin = {top: 20, right: 20, bottom: 20, left: 20},
-    innerRadius = 50,
-    numSegments = 24,
-    segmentHeight = 20,
-    domain = null,
-    range = ["white", "red"],
-    accessor = function(d) {return d;},
-    radialLabels = segmentLabels = [];
+    var margin = {
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20
+        },
+        innerRadius = 50,
+        numSegments = 24,
+        segmentHeight = 20,
+        domain = null,
+        range = ["white", "red"],
+        accessor = function (d) {
+            return d;
+        },
+        radialLabels = segmentLabels = [];
 
     function chart(selection) {
-        selection.each(function(data) {
+        selection.each(function (data) {
             var svg = d3.select(this);
 
             var offset = innerRadius + Math.ceil(data.length / numSegments) * segmentHeight;
@@ -23,13 +30,15 @@ function circularHeatChart() {
                 autoDomain = true;
             }
             var color = d3.scaleLinear().domain(domain).range(range);
-            if(autoDomain)
+            if (autoDomain)
                 domain = null;
 
             g.selectAll("path").data(data)
                 .enter().append("path")
                 .attr("d", d3.arc().innerRadius(ir).outerRadius(or).startAngle(sa).endAngle(ea))
-                .attr("fill", function(d) {return color(accessor(d));});
+                .attr("fill", function (d) {
+                    return color(accessor(d));
+                });
 
 
             /*// Unique id so that the text path defs are unique - is there a better way to do this?
@@ -86,71 +95,71 @@ function circularHeatChart() {
     }
 
     /* Arc functions */
-    ir = function(d, i) {
-        return innerRadius + Math.floor(i/numSegments) * segmentHeight;
+    ir = function (d, i) {
+        return innerRadius + Math.floor(i / numSegments) * segmentHeight;
     }
-    or = function(d, i) {
-        return innerRadius + segmentHeight + Math.floor(i/numSegments) * segmentHeight;
+    or = function (d, i) {
+        return innerRadius + segmentHeight + Math.floor(i / numSegments) * segmentHeight;
     }
-    sa = function(d, i) {
+    sa = function (d, i) {
         return (i * 2 * Math.PI) / numSegments;
     }
-    ea = function(d, i) {
+    ea = function (d, i) {
         return ((i + 1) * 2 * Math.PI) / numSegments;
     }
 
     /* Configuration getters/setters */
-    chart.margin = function(_) {
+    chart.margin = function (_) {
         if (!arguments.length) return margin;
         margin = _;
         return chart;
     };
 
-    chart.innerRadius = function(_) {
+    chart.innerRadius = function (_) {
         if (!arguments.length) return innerRadius;
         innerRadius = _;
         return chart;
     };
 
-    chart.numSegments = function(_) {
+    chart.numSegments = function (_) {
         if (!arguments.length) return numSegments;
         numSegments = _;
         return chart;
     };
 
-    chart.segmentHeight = function(_) {
+    chart.segmentHeight = function (_) {
         if (!arguments.length) return segmentHeight;
         segmentHeight = _;
         return chart;
     };
 
-    chart.domain = function(_) {
+    chart.domain = function (_) {
         if (!arguments.length) return domain;
         domain = _;
         return chart;
     };
 
-    chart.range = function(_) {
+    chart.range = function (_) {
         if (!arguments.length) return range;
         range = _;
         return chart;
     };
 
-    chart.radialLabels = function(_) {
+    chart.radialLabels = function (_) {
         if (!arguments.length) return radialLabels;
         if (_ == null) _ = [];
         radialLabels = _;
         return chart;
     };
 
-    chart.segmentLabels = function(_) {
+    chart.segmentLabels = function (_) {
         if (!arguments.length) return segmentLabels;
         if (_ == null) _ = [];
         segmentLabels = _;
         return chart;
     };
 
-    chart.accessor = function(_) {
+    chart.accessor = function (_) {
         if (!arguments.length) return accessor;
         accessor = _;
         return chart;
