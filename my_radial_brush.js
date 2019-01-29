@@ -123,7 +123,9 @@ function my_radial_brush() {
 		var i = 1,
 			n = arguments.length,
 			method;
-		while (++i < n) target[method = arguments[i]] = d3_rebind(target, source, source[method]);
+		while (++i < n) {
+			target[method = arguments[i]] = d3_rebind(target, source, source[method]);
+		}
 		return target;
 	};
 
@@ -170,7 +172,7 @@ function my_radial_brush() {
 				.on("mouseup.brush", extentUp);
 		}
 
-		//_circularbrushDispatch.brushstart();
+		_circularbrushDispatch.call('brushstart');
 
 	}
 
@@ -244,7 +246,7 @@ function my_radial_brush() {
 
 		_extent = ([_newStartAngle, _newEndAngle]);
 
-		//_circularbrushDispatch.brush();
+		_circularbrushDispatch.call('brush');
 
 	}
 
@@ -253,7 +255,7 @@ function my_radial_brush() {
 		_brushData = _newBrushData;
 		d3_window.on("mousemove.brush", null).on("mouseup.brush", null);
 
-		//_circularbrushDispatch.brushend();
+		_circularbrushDispatch.call('brushend');
 	}
 
 
