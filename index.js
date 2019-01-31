@@ -5,7 +5,7 @@ const valueLen = 400;
 let selectV = []; //global variable to hold selected value index.
 const selectedColor = 'yellow';
 const normalColor = '#777';
-
+let heatColorMap;
 var colors1 = colorbrewer["PiYG"][10];
 
 var colorScale = d3.scaleQuantize()
@@ -128,13 +128,19 @@ d3.json("1/NNVA_data.json", function (error, data) {
       right: 50,
       bottom: 50,
       left: 50
-    });
-
-  chart.accessor(function (d) {
+    })
+    .accessor(function (d) {
       return d.value;
     })
     .radialLabels(null)
     .segmentLabels(null);
+
+  // set up the same colormap for brushing
+  heatColorMap = d3
+    .scaleLinear()
+    .domain([Math.round(sen_min), Math.round(sen_mid_point), Math.round(sen_max)])
+    .range(["#276419", "#e6f5d0", "#c51b7d"]);
+
   // console.log('sensitivity data:')
   // console.log(sen_data);
 
@@ -158,7 +164,10 @@ d3.json("1/NNVA_data.json", function (error, data) {
   }
   // console.log(pset_data);
 
-
+  const extent = brush.extent();
+  this.start = (extent[0]+valueLen/2)%valueLen;
+  this.end = (extent[1]+valueLen/2)%valueLen;
+  updateHeatBrush();
 });
 
 
@@ -323,9 +332,10 @@ function drawBrush() {
     cancelAnimationFrame(this.ani);
   }
   function brushMove() {
-    let extent = brush.extent();
+    const extent = brush.extent();
     this.start = (extent[0]+valueLen/2)%valueLen;
     this.end = (extent[1]+valueLen/2)%valueLen;
+  }
 }
 
 function animate(){
@@ -384,12 +394,12 @@ function updateHeatBrush(){
 
   for(const index of add_select){
     d3.selectAll(`path.heat.v${index}`)
-      .style('stroke',selectedColor);
+      .attr('opacity','1');
   }
 
   for(const index of sub_select){
     d3.selectAll(`path.heat.v${index}`)
-      .style('stroke',normalColor);
+      .attr('opacity','0.1');
   }
 }
 
@@ -430,6 +440,4 @@ function drawBrush3() {
   d3.select("#mychart1").select("svg").append("g")
     .attr("class", "linear")
     .attr("transform", "translate(40,350)")
-  }
-
 }
