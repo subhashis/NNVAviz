@@ -316,75 +316,81 @@ function drawBrush() {
 
   function brushStart() {
     console.log('brush started');
+    animate();
   }
   function brushEnd() {
     console.log('brush ended');
-    let start = Math.ceil(this.start);
-    let new_selectV = [];  //array to hold new selection
-    let add_select=[]; //additional element comapared to old selection
-    let sub_select=[]; //canceled element compared to old
-    if (start < end) {
-      for(let i = start;i<this.end;i++){
-        new_selectV.push(i);
-      }
-    } else {
-      for(let i=start;i<400;i++){
-        new_selectV.push(i);
-      }
-      for(let i=0;i<this.end;i++){
-        new_selectV.push(i);
-      }
-    }
-    // calculate add and sub selection
-    let i1=0, i2=0;
-    new_selectV.sort((a,b)=>{a-b});
-    while(true){
-      if(i1==new_selectV.length){
-        for(let j=i2;j<selectV.length;j++){
-          sub_select.push(selectV[j]);
-        }
-        break;
-      }
-      else if(i2==selectV.length){
-        for(let j=i1;j<new_selectV.length;j++){
-          add_select.push(new_selectV[j]);
-        }
-        break;
-      }
-      else if(new_selectV[i1]==selectV[i2]){
-        i1++;i2++;
-      }
-      else if(new_selectV[i1]<selectV[i2]){
-        add_select.push(new_selectV[i1]);
-        i1++;
-      }
-      else{
-        sub_select.push(selectV[i2]);
-        i2++;
-      }
-    }
-
-    selectV = new_selectV;
-
-    for(const index of add_select){
-      d3.selectAll(`path.heat.v${index}`)
-        .style('stroke',selectedColor);
-    }
-
-    for(const index of sub_select){
-      d3.selectAll(`path.heat.v${index}`)
-        .style('stroke',normalColor);
-    }
-    
+    cancelAnimationFrame(this.ani);
   }
   function brushMove() {
     let extent = brush.extent();
-
     this.start = (extent[0]+valueLen/2)%valueLen;
     this.end = (extent[1]+valueLen/2)%valueLen;
+}
+
+function animate(){
+  updateHeatBrush();
+  this.ani = requestAnimationFrame(animate);
+}
+
+function updateHeatBrush(){
+  let start = Math.ceil(this.start);
+  let end = Math.ceil(this.end);
+  let new_selectV = [];  //array to hold new selection
+  let add_select=[]; //additional element comapared to old selection
+  let sub_select=[]; //canceled element compared to old
+  if (start < end) {
+    for(let i = start;i<end;i++){
+      new_selectV.push(i);
+    }
+  } else {
+    for(let i=start;i<400;i++){
+      new_selectV.push(i);
+    }
+    for(let i=0;i<end;i++){
+      new_selectV.push(i);
+    }
+  }
+  // calculate add and sub selection
+  let i1=0, i2=0;
+  new_selectV.sort((a,b)=>{return a-b});
+  while(true){
+    if(i1==new_selectV.length){
+      for(let j=i2;j<selectV.length;j++){
+        sub_select.push(selectV[j]);
+      }
+      break;
+    }
+    else if(i2==selectV.length){
+      for(let j=i1;j<new_selectV.length;j++){
+        add_select.push(new_selectV[j]);
+      }
+      break;
+    }
+    else if(new_selectV[i1]==selectV[i2]){
+      i1++;i2++;
+    }
+    else if(new_selectV[i1]<selectV[i2]){
+      add_select.push(new_selectV[i1]);
+      i1++;
+    }
+    else{
+      sub_select.push(selectV[i2]);
+      i2++;
+    }
   }
 
-  
+  selectV = new_selectV;
+
+  for(const index of add_select){
+    d3.selectAll(`path.heat.v${index}`)
+      .style('stroke',selectedColor);
+  }
+
+  for(const index of sub_select){
+    d3.selectAll(`path.heat.v${index}`)
+      .style('stroke',normalColor);
+  }
 }
 
 //drawBrush2();
@@ -404,6 +410,7 @@ function drawBrush2() {
   d3.select("#mychart1").select("svg").append("g")
     .attr("class", "linear")
     .attr("transform", "translate(40,350)")
+}
 
  
 //drawBrush3();
