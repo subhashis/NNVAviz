@@ -1,0 +1,50 @@
+/* Document styling */
+body {
+	margin: 0 auto;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	line-height: 20px;
+}
+#outputs {
+  width: 98vw;
+  height: 39vw;
+  margin: auto;
+}
+.chart {
+  width: 40%;
+  height: 100%;
+  float: left;
+}
+#bar {
+  width: 20%;
+  height: 100%;
+  float: left;
+}
+h1 {
+	font-size: 40px;
+	font-weight: 300;
+	letter-spacing: -2px;
+	margin: 1em 0 0.5em 0;
+}
+h2 {
+	font-weight: 300;
+}
+a {
+	color: #0088cc;
+	text-decoration: none;
+}
+a:hover {
+	color: #005580;
+	text-decoration: underline;
+}
+#info {
+	height: 20px;
+}
+
+footer {
+	margin: 50px 0 30px 0;
+}
+footer p {
+	font-size: 11px;
+}
+
