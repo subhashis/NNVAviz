@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import data from './data/1/NNVA_data';
 import * as d3 from 'd3';
 import circularHeatChart from './circularHeatChart';
 
@@ -7,23 +6,7 @@ class HeatChart extends Component {
 
   constructor(props){
     super(props);
-    // prepare sensitivity
-    this.sen_data = [];
-    this.sen_max = data.sensitivity[0] * 100000;
-    this.sen_min = data.sensitivity[0] * 100000;
 
-    for (var i = 0; i < 400 * 35; i++) {
-      this.sen_data[i] = {
-        title: "Segment " + i,
-        value: Math.round((data.sensitivity[i] * 100000))
-      };
-      if (data.sensitivity[i] * 100000 > this.sen_max)
-        this.sen_max = data.sensitivity[i] * 100000;
-      if (data.sensitivity[i] * 100000 < this.sen_min)
-        this.sen_min = data.sensitivity[i] * 100000;
-    }
-
-    this.sen_mid_point = (this.sen_max + this.sen_min) / 2;
     // console.log('sensivity bounds:');
     // console.log(sen_max);
     // console.log(sen_min);
@@ -32,10 +15,10 @@ class HeatChart extends Component {
   }
   componentDidMount(){
     // draw heat chart
-    const sen_min = this.sen_min;
-    const sen_mid_point = this.sen_mid_point;
-    const sen_max = this.sen_max;
-    const sen_data = this.sen_data;
+    const sen_min = this.props.sen_min;
+    const sen_mid_point = this.props.sen_mid_point;
+    const sen_max = this.props.sen_max;
+    const sen_data = this.props.sen_data;
     const chart = circularHeatChart();
     const width = this.props.size;
 

@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import * as d3 from 'd3';
 import CellChart from './CellChart';
 import HeatChart from './HeatChart';
+import BarChart from './barChart';
+import data from './data/1/NNVA_data';
 
 class OutputCharts extends Component {
 	constructor(props){
@@ -11,6 +13,25 @@ class OutputCharts extends Component {
 		// }
 		this.valueLen = 400;
 		this.selectV = [];
+		this.allSenHist = [];
+
+		// prepare sensitivity
+		this.sen_data = [];
+		this.sen_max = data.sensitivity[0] * 100000;
+		this.sen_min = data.sensitivity[0] * 100000;
+	
+		for (var i = 0; i < 400 * 35; i++) {
+			this.sen_data[i] = {
+			title: "Segment " + i,
+			value: Math.round((data.sensitivity[i] * 100000))
+			};
+			if (data.sensitivity[i] * 100000 > this.sen_max)
+			this.sen_max = data.sensitivity[i] * 100000;
+			if (data.sensitivity[i] * 100000 < this.sen_min)
+			this.sen_min = data.sensitivity[i] * 100000;
+		}
+	
+		this.sen_mid_point = (this.sen_max + this.sen_min) / 2;
 	}
 
 	updateSelection() {
@@ -78,6 +99,46 @@ class OutputCharts extends Component {
 				.attr('opacity','0.1');
 		}
 
+		console.log( sub_select )
+ 
+		// update bar chart
+		let bar_svg = d3.select("#bar_svg");
+		let bar_h = parseInt( bar_svg.style("height"), 10 )/35;
+    	let bar_w = parseInt( bar_svg.style("width"), 10 );
+
+		let partialMax = 0;
+		for( let i = 0; i < 35; i++ ){
+			let sum = 0;
+			let index = i * 400 + selectV[0];
+			for( let j = 0; j<selectV.length; j++ ){
+				sum += this.sen_data[index + j].value;
+			}
+			this.allSenHist[i].partV = sum;//parseFloat(sum /selectV.length);
+			if( partialMax < this.allSenHist[i].partV ){
+				partialMax = this.allSenHist[i].partV
+			}
+		}
+		console.log(selectV.length)
+		console.log(this.allSenHist);
+		console.log(bar_h)
+		console.log(bar_w)
+		console.log(partialMax)
+
+
+		bar_svg.selectAll("#partial")
+		.data(this.allSenHist)
+		.transition().duration(750)
+		.attr("transform", function(d, i) { return "translate(" + 0 + "," + (i*bar_h+3) + ")"; } )
+		.attr("width", function(d) { 
+			// console.log((d.partV/partialMax)*bar_w);
+			// return (d.partV/partialMax)*bar_w; 
+			console.log((d.partV)*bar_w);
+			return (d.partV)*bar_w; 
+		})
+		.attr("height", function(d) { return 5 })//bar_h-6; })
+		.attr("fill", 'red')
+		.attr("opacity", 0.7);
+
 		// regeister animation
 		this.ani = requestAnimationFrame(this.updateSelection.bind(this));
 	}
@@ -108,8 +169,19 @@ class OutputCharts extends Component {
 					brushEnd = {this.brushEnd.bind(this)}
 					brushMove = {this.brushMove.bind(this)}
 				/>
-				<HeatChart radius={150} size={400} />
-				<div id='bar'>Plan to put the vertical bars here:</div>
+				<HeatChart radius={150} 
+						   size={400} 
+						   sen_data={this.sen_data} 
+						   sen_min={this.sen_min} 
+						   sen_max={this.sen_max} 
+						   sen_mid_point={this.sen_mid_point}
+				/>
+				<BarChart  sen_data={this.sen_data} 
+						   sen_min={this.sen_min} 
+						   sen_max={this.sen_max} 
+						   sen_mid_point={this.sen_mid_point}
+						   allSenHist={this.allSenHist}
+				/>
 			</div>
     );
   }
