@@ -3,15 +3,6 @@ import * as d3 from 'd3';
 
 class BarChart extends Component {
 
-  constructor(props){
-    super(props);
-
-    // console.log('sensivity bounds:');
-    // console.log(sen_max);
-    // console.log(sen_min);
-    // console.log('sensitivity data:')
-    // console.log(sen_data);
-  }
   componentDidMount(){
     //draw basic 
     let max_allV = 0;

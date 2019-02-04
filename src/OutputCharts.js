@@ -13,6 +13,9 @@ class OutputCharts extends Component {
 		// }
 		this.valueLen = 400;
 		this.selectV = [];
+		for (let i=0;i<400;i++){
+			this.selectV.push(i);
+		}
 		this.allSenHist = [];
 
 		// prepare sensitivity
@@ -83,10 +86,7 @@ class OutputCharts extends Component {
 				i2++;
 			}
 		}
-	
-		// this.setState({
-		// 	selectV: new_selectV,
-		// });
+
 		this.selectV = new_selectV;
 	
 		for(const index of add_select){
@@ -96,7 +96,7 @@ class OutputCharts extends Component {
 	
 		for(const index of sub_select){
 			d3.selectAll(`path.heat.v${index}`)
-				.attr('opacity','0.1');
+				.attr('opacity','0.05');
 		}
 
 		// update bar chart
@@ -149,29 +149,29 @@ class OutputCharts extends Component {
 
   render() {
     return (
-			<div id="outputs">
-				<CellChart 
-					radius={150} 
-					size={400} 
-					valueLen={400}
-					brushStart = {this.brushStart.bind(this)}
-					brushEnd = {this.brushEnd.bind(this)}
-					brushMove = {this.brushMove.bind(this)}
-				/>
-				<HeatChart radius={150} 
-						   size={400} 
-						   sen_data={this.sen_data} 
-						   sen_min={this.sen_min} 
-						   sen_max={this.sen_max} 
-						   sen_mid_point={this.sen_mid_point}
-				/>
-				<BarChart  sen_data={this.sen_data} 
-						   sen_min={this.sen_min} 
-						   sen_max={this.sen_max} 
-						   sen_mid_point={this.sen_mid_point}
-						   allSenHist={this.allSenHist}
-				/>
-			</div>
+		<div id="outputs">
+			<CellChart 
+				radius={150} 
+				size={400} 
+				valueLen={400}
+				brushStart = {this.brushStart.bind(this)}
+				brushEnd = {this.brushEnd.bind(this)}
+				brushMove = {this.brushMove.bind(this)}
+			/>
+			<HeatChart radius={150} 
+						size={400} 
+						sen_data={this.sen_data} 
+						sen_min={this.sen_min} 
+						sen_max={this.sen_max} 
+						sen_mid_point={this.sen_mid_point}
+			/>
+			<BarChart  sen_data={this.sen_data} 
+						sen_min={this.sen_min} 
+						sen_max={this.sen_max} 
+						sen_mid_point={this.sen_mid_point}
+						allSenHist={this.allSenHist}
+			/>
+		</div>
     );
   }
 }

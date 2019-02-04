@@ -4,15 +4,6 @@ import circularHeatChart from './circularHeatChart';
 
 class HeatChart extends Component {
 
-  constructor(props){
-    super(props);
-
-    // console.log('sensivity bounds:');
-    // console.log(sen_max);
-    // console.log(sen_min);
-    // console.log('sensitivity data:')
-    // console.log(sen_data);
-  }
   componentDidMount(){
     // draw heat chart
     const sen_min = this.props.sen_min;
