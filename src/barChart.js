@@ -38,20 +38,18 @@ class BarChart extends Component {
     bar_svg.selectAll("rect1")
     .data(this.props.allSenHist)
     .enter().append("rect")
-    .attr("transform", function(d, i) { return "translate(" + 0 + "," + (i*bar_h+1) + ")"; } )
+    .attr("transform", function(d, i) { return "translate(" + 0 + "," + (i*bar_h) + ")"; } )
     .attr("width", function(d) { return (d.allV/max_allV)*bar_w; })
-    .attr("height", function(d) { return bar_h-2; })
-    .attr("opacity", 0.3);
+    .attr("height", function(d) { return bar_h/2 -2 ; });
 
     bar_svg.selectAll("partial")
         .data(this.props.allSenHist)
         .enter().append("rect")
         .attr("id", "partial")
-        .attr("transform", function(d, i) { return "translate(" + 0 + "," + (i*bar_h+3) + ")"; } )
+        .attr("transform", function(d, i) { return "translate(" + 0 + "," + ((i+0.5)*bar_h) + ")"; } )
         .attr("width", function(d) { return (d.partV/max_allV)*bar_w; })
-        .attr("height", function(d) { return bar_h-6; })
-        .attr("fill", 'red')
-        .attr("opacity", 0.7);
+        .attr("height", function(d) { return bar_h/2 -1; })
+        .attr("fill", 'red');
   }
   render() {
     return (

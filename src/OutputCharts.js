@@ -99,8 +99,6 @@ class OutputCharts extends Component {
 				.attr('opacity','0.1');
 		}
 
-		console.log( sub_select )
- 
 		// update bar chart
 		let bar_svg = d3.select("#bar_svg");
 		let bar_h = parseInt( bar_svg.style("height"), 10 )/35;
@@ -118,26 +116,17 @@ class OutputCharts extends Component {
 				partialMax = this.allSenHist[i].partV
 			}
 		}
-		console.log(selectV.length)
-		console.log(this.allSenHist);
-		console.log(bar_h)
-		console.log(bar_w)
-		console.log(partialMax)
-
+		partialMax = partialMax<=0?1:partialMax
 
 		bar_svg.selectAll("#partial")
 		.data(this.allSenHist)
 		.transition().duration(750)
-		.attr("transform", function(d, i) { return "translate(" + 0 + "," + (i*bar_h+3) + ")"; } )
+		.attr("transform", function(d, i) { return "translate(" + 0 + "," + ((i+0.5)*bar_h-1) + ")"; } )
 		.attr("width", function(d) { 
-			// console.log((d.partV/partialMax)*bar_w);
-			// return (d.partV/partialMax)*bar_w; 
-			console.log((d.partV)*bar_w);
-			return (d.partV)*bar_w; 
+			return (d.partV/partialMax)*bar_w; 
 		})
-		.attr("height", function(d) { return 5 })//bar_h-6; })
-		.attr("fill", 'red')
-		.attr("opacity", 0.7);
+		.attr("height", function(d) { return bar_h/2 -2; })
+		.attr("fill", 'red');
 
 		// regeister animation
 		this.ani = requestAnimationFrame(this.updateSelection.bind(this));
