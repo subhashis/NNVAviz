@@ -143,9 +143,9 @@ class OutputCharts extends Component {
 		// update bar chart
 		let bar_svg = d3.select("#bar_svg");
 		let bar_h = parseInt( bar_svg.style("height"), 10 )/35;
-    	let bar_w = parseInt( bar_svg.style("width"), 10 );
+		let bar_w = parseInt( bar_svg.style("width"), 10 );
 
-		let partialMax = 0;
+		let barMax = 0;
 		for( let i = 0; i < 35; i++ ){
 			let sum = 0;
 			let index = i * 400 + selectV[0];
@@ -153,19 +153,27 @@ class OutputCharts extends Component {
 				sum += this.sen_data[index + j].value;
 			}
 			this.allSenHist[i].partV = sum;//parseFloat(sum /selectV.length);
-			if( partialMax < this.allSenHist[i].partV ){
-				partialMax = this.allSenHist[i].partV
+			if( barMax < this.allSenHist[i].partV ){
+				barMax = this.allSenHist[i].partV
+			}
+			if( barMax < this.allSenHist[i].allV ){
+				barMax = this.allSenHist[i].allV
 			}
 		}
-		partialMax = partialMax<=0?1:partialMax
+		barMax = barMax<=0?1:barMax
+
+		bar_svg.selectAll("#all")
+		.data(this.allSenHist)
+		.transition().duration(750)
+		.attr("transform", function(d, i) { return "translate(" + 0 + "," + (i*bar_h) + ")"; } )
+		.attr("width", function(d) { return (d.allV/barMax)*bar_w; })
+		.attr("height", function(d) { return bar_h/2 -2 ; });
 
 		bar_svg.selectAll("#partial")
 		.data(this.allSenHist)
 		.transition().duration(750)
 		.attr("transform", function(d, i) { return "translate(" + 0 + "," + ((i+0.5)*bar_h-1) + ")"; } )
-		.attr("width", function(d) { 
-			return (d.partV/partialMax)*bar_w; 
-		})
+		.attr("width", function(d) { return (d.partV/barMax)*bar_w; })
 		.attr("height", function(d) { return bar_h/2 -2; })
 		.attr("fill", 'red');
 	}

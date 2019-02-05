@@ -11,7 +11,7 @@ class BarChart extends Component {
         let sum = 0;
         let index = i * 400;
         for( let j=0; j<400; j++ ){
-        sum += this.props.sen_data[index + j].value
+          sum += this.props.sen_data[index + j].value
         }
         let tmp = {
         'allV': sum / 400,
@@ -29,6 +29,7 @@ class BarChart extends Component {
     bar_svg.selectAll("rect1")
     .data(this.props.allSenHist)
     .enter().append("rect")
+    .attr("id", "all")
     .attr("transform", function(d, i) { return "translate(" + 0 + "," + (i*bar_h) + ")"; } )
     .attr("width", function(d) { return (d.allV/max_allV)*bar_w; })
     .attr("height", function(d) { return bar_h/2 -2 ; });
