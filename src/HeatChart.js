@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import circularHeatChart from './circularHeatChart';
+import $ from 'jquery';
 
 class HeatChart extends Component {
 
@@ -85,10 +86,14 @@ class HeatChart extends Component {
       .attr('id','selectedHeat')
       .attr("transform", "rotate(180) scale(1.25)")
       .style("filter", "url(#drop-shadow)");
+
+    // add the name of chart
+    const title = document.createTextNode('Sensitivity Heat Chart');
+    $('#mychart2').append(title);
   }
   render() {
     return (
-      <div className = "chart" id = "mychart2" / >
+      <div className = "chart border border-primary" id = "mychart2" / >
     );
   }
 }

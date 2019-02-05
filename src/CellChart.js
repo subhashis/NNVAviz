@@ -4,6 +4,7 @@ import React, {
 import data from './data/1/NNVA_data';
 import * as d3 from 'd3';
 import my_radial_brush from './my_radial_brush';
+import $ from 'jquery';
 
 class CellChart extends Component {
   constructor(props){
@@ -109,6 +110,10 @@ class CellChart extends Component {
 
     // draw brush
     this.drawBrush();
+
+    // add the name of chart
+    const title = document.createTextNode('Cell Chart');
+    $('#mychart1').append(title);
   }
 
   draw_radial_axes() {
@@ -178,7 +183,7 @@ class CellChart extends Component {
 
   render() {
     return ( 
-      <div className = "chart" id = "mychart1" / >
+      <div className = "chart border border-primary" id = "mychart1" />
     )
   }
 }

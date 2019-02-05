@@ -164,7 +164,7 @@ class OutputCharts extends Component {
 
   render() {
     return (
-		<div id="outputs">
+		<div id="outputs" >
 			<CellChart 
 				radius={150} 
 				size={400} 
@@ -173,6 +173,7 @@ class OutputCharts extends Component {
 				brushEnd = {this.brushEnd.bind(this)}
 				brushMove = {this.brushMove.bind(this)}
 			/>
+			
 			<HeatChart radius={150} 
 						size={400} 
 						sen_data={this.sen_data} 
