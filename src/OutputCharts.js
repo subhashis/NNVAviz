@@ -4,6 +4,7 @@ import CellChart from './CellChart';
 import HeatChart from './HeatChart';
 import BarChart from './barChart';
 import data from './data/1/NNVA_data';
+var $ = require('jquery');
 
 class OutputCharts extends Component {
 	constructor(props){
@@ -11,6 +12,7 @@ class OutputCharts extends Component {
 		// this.state = {
 		// 	selectV: [],
 		// }
+		this.selectionStarted = false;
 		this.valueLen = 400;
 		this.selectV = [];
 		for (let i=0;i<400;i++){
@@ -44,8 +46,6 @@ class OutputCharts extends Component {
 		let start = Math.ceil(this.start);
 		let end = Math.ceil(this.end);
 		let new_selectV = [];  //array to hold new selection
-		let add_select=[]; //additional element comapared to old selection
-		let sub_select=[]; //canceled element compared to old
 		if (start < end) {
 			for(let i = start;i<end;i++){
 				new_selectV.push(i);
@@ -58,9 +58,22 @@ class OutputCharts extends Component {
 				new_selectV.push(i);
 			}
 		}
-		// calculate add and sub selection
-		let i1=0, i2=0;
 		new_selectV.sort((a,b)=>{return a-b});
+
+		// draw mask
+		let mask = d3.select('div#mychart2').select('svg').select('#mask');
+		let sA = Math.PI*2*start/400+Math.PI;
+		let eA = Math.PI*2*end/400+Math.PI;
+		if(eA>sA) eA-=Math.PI*2;
+
+		
+		mask.attr('d',d3.arc().innerRadius(50).outerRadius(35*3+50).startAngle(eA).endAngle(sA));
+
+
+		// calculate add and sub selection
+		let add_select=[]; //additional element comapared to old selection
+		let sub_select=[]; //canceled element compared to old
+		let i1=0, i2=0;
 		while(true){
 			if(i1===new_selectV.length){
 				for(let j=i2;j<selectV.length;j++){
@@ -87,16 +100,30 @@ class OutputCharts extends Component {
 			}
 		}
 
+		this.add_select = add_select;
+		this.sub_select = sub_select;
 		this.selectV = new_selectV;
 	
-		for(const index of add_select){
-			d3.selectAll(`path.heat.v${index}`)
-				.attr('opacity','1');
-		}
-	
-		for(const index of sub_select){
-			d3.selectAll(`path.heat.v${index}`)
-				.attr('opacity','0.05');
+		// regeister animation
+		this.ani = requestAnimationFrame(this.updateSelection.bind(this));
+	}
+
+	brushStart(){
+		console.log('brush started');
+		if(this.selectionStarted)
+			for(const index of this.selectV){
+				$('.circular-heat').append($(`path.heat.v${index}`));
+			}
+		else this.selectionStarted = true;
+		this.ani = this.updateSelection();
+	}
+	brushEnd(){
+		console.log('brush ended');
+		cancelAnimationFrame(this.ani);
+		const selectV = this.selectV;
+		// shadow effect
+		for (const index of selectV){
+			$('#selectedHeat').append($(`path.heat.v${index}`));
 		}
 
 		// update bar chart
@@ -127,18 +154,6 @@ class OutputCharts extends Component {
 		})
 		.attr("height", function(d) { return bar_h/2 -2; })
 		.attr("fill", 'red');
-
-		// regeister animation
-		this.ani = requestAnimationFrame(this.updateSelection.bind(this));
-	}
-
-	brushStart(){
-		console.log('brush started');
-		this.ani = this.updateSelection();
-	}
-	brushEnd(){
-		console.log('brush ended');
-		cancelAnimationFrame(this.ani);
 	}
 	brushMove(brush){
 		const extent = brush.extent();
