@@ -60,6 +60,6 @@ path {
 	stroke-width: 0.5;
   }
 
-	/* path.heat:hover {
-		stroke: orange;
-	} */
+	.resize {
+		fill: black;
+	}

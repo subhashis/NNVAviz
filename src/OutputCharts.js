@@ -67,6 +67,7 @@ class OutputCharts extends Component {
 			}
 		}
 		new_selectV.sort((a,b)=>{return a-b});
+		this.new_selectV = new_selectV;
 
 		// draw mask
 		let mask = d3.select('div#mychart2').select('svg').select('#mask');
@@ -76,7 +77,6 @@ class OutputCharts extends Component {
 
 		mask.attr('d',d3.arc().innerRadius(50).outerRadius(35*3+50).startAngle(eA).endAngle(sA));
 
-		this.new_selectV = new_selectV;
 	
 		// regeister animation
 		this.ani = requestAnimationFrame(this.updateSelection.bind(this));
