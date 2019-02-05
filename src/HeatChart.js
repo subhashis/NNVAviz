@@ -43,7 +43,7 @@ class HeatChart extends Component {
       .append('path')
       .attr('id','mask')
       .attr('d',d3.arc().innerRadius(50).outerRadius(35*3+50).startAngle(0).endAngle(0))
-      .style('opacity','0.9')
+      .style('opacity','0.3')
       .style('fill','white')
 
     //draw drop shadow
@@ -83,7 +83,7 @@ class HeatChart extends Component {
     //draw selected group
 		d3.select('div#mychart2').select('svg').append('g')
       .attr('id','selectedHeat')
-      .attr("transform", "rotate(180) translate(5,5)")
+      .attr("transform", "rotate(180) scale(1.25)")
       .style("filter", "url(#drop-shadow)");
   }
   render() {

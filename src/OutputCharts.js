@@ -3,8 +3,8 @@ import * as d3 from 'd3';
 import CellChart from './CellChart';
 import HeatChart from './HeatChart';
 import BarChart from './barChart';
+import $ from 'jquery';
 import data from './data/1/NNVA_data';
-var $ = require('jquery');
 
 class OutputCharts extends Component {
 	constructor(props){
