@@ -39,10 +39,18 @@ class OutputCharts extends Component {
 		this.sen_mid_point = (this.sen_max + this.sen_min) / 2;
 	}
 
+	componentDidMount(){
+		const svg = d3.select('#heatSvg');
+		function zoom() {
+			svg.select('#selectedHeat')
+			.attr('transform', 'rotate(180) translate(' + -d3.event.transform.x + ',' + -d3.event.transform.y + ') scale(' + d3.event.transform.k + ')');
+		}
+		this.zoomListener = d3.zoom().scaleExtent([1, 4.5]).on("zoom", zoom);
+		svg.call(this.zoomListener);
+	}
+
 	updateSelection() {
-		//TODO: change this part to state
 		const valueLen = this.valueLen;
-		const selectV = this.selectV;
 		let start = Math.ceil(this.start);
 		let end = Math.ceil(this.end);
 		let new_selectV = [];  //array to hold new selection
@@ -66,10 +74,30 @@ class OutputCharts extends Component {
 		let eA = Math.PI*2*end/400+Math.PI;
 		if(eA>sA) eA-=Math.PI*2;
 
-		
 		mask.attr('d',d3.arc().innerRadius(50).outerRadius(35*3+50).startAngle(eA).endAngle(sA));
 
+		this.new_selectV = new_selectV;
+	
+		// regeister animation
+		this.ani = requestAnimationFrame(this.updateSelection.bind(this));
+	}
 
+	brushStart(){
+		console.log('brush started');
+		const svg = d3.select('#heatSvg');
+		const id = d3.zoomIdentity.scale(1.1);
+		svg.call(this.zoomListener.transform, id);
+		d3.select('#selectedHeat')
+		.attr('transform', 'rotate(180) scale(1)')
+		.style("filter", null);
+		$('#mask').appendTo($('#mask').parent());
+		this.ani = this.updateSelection();
+	}
+	brushEnd(){
+		console.log('brush ended');
+		cancelAnimationFrame(this.ani);
+		const selectV = this.selectV;
+		const new_selectV = this.new_selectV;
 		// calculate add and sub selection
 		let add_select=[]; //additional element comapared to old selection
 		let sub_select=[]; //canceled element compared to old
@@ -100,45 +128,25 @@ class OutputCharts extends Component {
 			}
 		}
 
-		this.add_select = add_select;
-		this.sub_select = sub_select;
-		this.selectV = new_selectV;
-	
-		// regeister animation
-		this.ani = requestAnimationFrame(this.updateSelection.bind(this));
-	}
-
-	brushStart(){
-		console.log('brush started');
-		const svg = d3.select('#heatSvg');
-		const zoomListener = d3.zoom().scaleExtent([1, 4.5]).on("zoom", zoom);
-		const id = d3.zoomIdentity.scale(1.1);
-		function zoom() {
-			svg.select('#selectedHeat')
-			.attr('transform', 'rotate(180) translate(' + -d3.event.transform.x + ',' + -d3.event.transform.y + ') scale(' + d3.event.transform.k + ')');
-		}
-		if(this.selectionStarted){
-			for(const index of this.selectV){
+		// shadow effect
+		if(!this.selectionStarted){
+			for (const index of this.new_selectV){
+				$('#selectedHeat').append($(`path.heat.v${index}`));
+			}
+			this.selectionStarted = true;
+		} else {
+			for(const index of sub_select){
 				$('.circular-heat').append($(`path.heat.v${index}`));
 			}
+			for (const index of add_select){
+				$('#selectedHeat').append($(`path.heat.v${index}`));
+			}
 		}
-		else {
-			this.selectionStarted = true;
-			svg.call(zoomListener);
-		}
-		// d3.select('#selectedHeat')
-		// .attr('transform', 'rotate(180) scale(1.1)');
-		svg.call(zoomListener.transform, id);
-		this.ani = this.updateSelection();
-	}
-	brushEnd(){
-		console.log('brush ended');
-		cancelAnimationFrame(this.ani);
-		const selectV = this.selectV;
-		// shadow effect
-		for (const index of selectV){
-			$('#selectedHeat').append($(`path.heat.v${index}`));
-		}
+		d3.select('#selectedHeat')
+		.attr('transform', 'rotate(180) scale(1.1)')
+		.style("filter", "url(#drop-shadow)");
+
+		this.selectV = new_selectV;
 
 		// update bar chart
 		let bar_svg = d3.select("#bar_svg");
