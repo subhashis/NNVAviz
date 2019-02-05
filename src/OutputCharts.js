@@ -110,11 +110,25 @@ class OutputCharts extends Component {
 
 	brushStart(){
 		console.log('brush started');
-		if(this.selectionStarted)
+		const svg = d3.select('#heatSvg');
+		const zoomListener = d3.zoom().scaleExtent([1, 4.5]).on("zoom", zoom);
+		const id = d3.zoomIdentity.scale(1.1);
+		function zoom() {
+			svg.select('#selectedHeat')
+			.attr('transform', 'rotate(180) translate(' + -d3.event.transform.x + ',' + -d3.event.transform.y + ') scale(' + d3.event.transform.k + ')');
+		}
+		if(this.selectionStarted){
 			for(const index of this.selectV){
 				$('.circular-heat').append($(`path.heat.v${index}`));
 			}
-		else this.selectionStarted = true;
+		}
+		else {
+			this.selectionStarted = true;
+			svg.call(zoomListener);
+		}
+		// d3.select('#selectedHeat')
+		// .attr('transform', 'rotate(180) scale(1.1)');
+		svg.call(zoomListener.transform, id);
 		this.ani = this.updateSelection();
 	}
 	brushEnd(){
