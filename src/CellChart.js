@@ -55,6 +55,7 @@ class CellChart extends Component {
       .outerRadius(function (d) {
         return radius + 400 * d.std;
     });
+
   }
 
   componentDidMount() {
@@ -109,6 +110,7 @@ class CellChart extends Component {
 
     // draw brush
     this.drawBrush();
+
   }
 
   draw_radial_axes() {
@@ -166,20 +168,34 @@ class CellChart extends Component {
       .on('brushstart',this.props.brushStart)
       .on('brushend',this.props.brushEnd);
 
-    d3.select("#mychart1").select('svg')
+    let g1 = d3.select("#mychart1").select('svg')
       .append("g")
       .attr("class", "brush")
-      .call(brush);
 
-    d3.select("#mychart1").select("svg").append("g")
-      .attr("class", "linear")
-      .attr("transform", "translate(40,350)");
+    let brush2 = my_radial_brush()
+      .range([0,this.props.valueLen])
+      .innerRadius(75)
+      .outerRadius(90)
+      .handleSize(0.08)
+
+    let g2 = d3.select("#mychart1").select('svg')
+      .append("g")
+      .attr("class", "brush")
+
+    //prepare group for indi
+    d3.select("#mychart1").select("svg")
+      .append('g')
+      .attr('class','indi');
+
+    g1.call(brush);
+    g2.call(brush2);
   }
 
   render() {
     return ( 
       <div className = "chart" id = "mychart1">
         <p align="center">Cell Chart</p>
+        <br></br>
       </div>
     )
   }

@@ -20,6 +20,12 @@ export default function my_radial_brush() {
 			class: "resize w"
 		}
 	];
+	var _indiData=[{
+			ang:_extent[0],
+		},
+		{
+			ang:_extent[1],
+		}];
 	var _newBrushData = [];
 	var d3_window = d3.select(window);
 	var _origin;
@@ -42,6 +48,22 @@ export default function my_radial_brush() {
 			.attr("d", _arc)
 			.attr("class", function (d) {
 				return d.class + " circularbrush"
+			})
+
+		d3.select('g.indi')
+			.selectAll('line')
+			.data(_indiData)
+			.enter()
+			.append('line')
+			.attr('id',function(_,i){
+				return `indi_${i}`;
+			})
+			.attr('x1',0).attr('y1',0)
+			.attr('x2',function(d){
+				return Math.cos(d.ang-Math.PI/2)*150;
+			})
+			.attr('y2',function(d){
+				return Math.sin(d.ang-Math.PI/2)*150;
 			})
 
 		_brushG.select("path.extent")
@@ -145,13 +167,15 @@ export default function my_radial_brush() {
 	return _circularbrush;
 
 	function resizeDown(d) {
+		console.log(_extent);
 		d3.event.preventDefault();
 		var _mouse = d3.mouse(_brushG.node());
 
-		_originalBrushData = {
-			startAngle: _brushData[0].startAngle,
-			endAngle: _brushData[0].endAngle
-		};
+		if(_brushData[0])
+			_originalBrushData = {
+				startAngle: _brushData[0].startAngle,
+				endAngle: _brushData[0].endAngle
+			};
 
 		_origin = _mouse;
 
@@ -248,6 +272,23 @@ export default function my_radial_brush() {
 		}
 
 		_extent = ([_newStartAngle, _newEndAngle]);
+
+		_indiData=[{
+			ang:_extent[0],
+		},
+		{
+			ang:_extent[1],
+		}];
+
+		d3.select('g.indi')
+			.selectAll('line')
+			.data(_indiData)
+			.attr('x2',function(d){
+				return Math.cos(d.ang-Math.PI/2)*150;
+			})
+			.attr('y2',function(d){
+				return Math.sin(d.ang-Math.PI/2)*150;
+			});
 
 		_circularbrushDispatch.call('brush');
 
