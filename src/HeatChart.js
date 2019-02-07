@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import circularHeatChart from './circularHeatChart';
+import $ from 'jquery';
 
 class HeatChart extends Component {
 
@@ -38,18 +39,17 @@ class HeatChart extends Component {
       .attr("viewBox", `-${width/2} -${width/2} ${width} ${width}`)
       .call(chart);
 
+    const svg = d3.select('#mychart2').select('svg')
     //draw mask
-    d3.select('div#mychart2').select('svg')
-      .append('path')
+    svg.append('path')
       .attr('id','mask')
       .attr('d',d3.arc().innerRadius(50).outerRadius(35*3+50).startAngle(0).endAngle(0))
-      .style('opacity','0.9')
+      .style('opacity','0.3')
       .style('fill','white')
 
     //draw drop shadow
     // create filter with id #drop-shadow
     // height=130% so that the shadow is not clipped
-    let svg = d3.select('div#mychart2').select('svg');
     svg.attr('id','heatSvg');
     let filter = svg.append("filter")
     .attr("id", "drop-shadow")
@@ -81,14 +81,31 @@ class HeatChart extends Component {
     .attr("in", "SourceGraphic");
 
     //draw selected group
-		d3.select('div#mychart2').select('svg').append('g')
+		svg.append('g')
       .attr('id','selectedHeat')
-      .attr("transform", "rotate(180) translate(5,5)")
+      .attr("transform", "rotate(180) scale(1.1)")
       .style("filter", "url(#drop-shadow)");
+
+    // add the name of chart
+    const title = document.createTextNode('Sensitivity Heat Chart');
+    $('#mychart2').append(title);
+
+    // selected value on the cornor
+    svg.append('text')
+      .text('Sen: ')
+      .attr('x',-this.props.size/2)
+      .attr('y',-this.props.size/2)
+      .style('dominant-baseline','hanging');
+    
+    svg.selectAll('path.heat')
+      .on('mouseover', (d)=>{
+        svg.select('text')
+          .text(`Sen: ${d.value}`);
+      });
   }
   render() {
     return (
-      <div className = "chart" id = "mychart2" / >
+      <div className = "chart border border-primary" id = "mychart2" / >
     );
   }
 }

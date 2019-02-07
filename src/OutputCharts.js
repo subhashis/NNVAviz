@@ -3,8 +3,8 @@ import * as d3 from 'd3';
 import CellChart from './CellChart';
 import HeatChart from './HeatChart';
 import BarChart from './barChart';
+import $ from 'jquery';
 import data from './data/1/NNVA_data';
-var $ = require('jquery');
 
 class OutputCharts extends Component {
 	constructor(props){
@@ -39,10 +39,18 @@ class OutputCharts extends Component {
 		this.sen_mid_point = (this.sen_max + this.sen_min) / 2;
 	}
 
+	componentDidMount(){
+		const svg = d3.select('#heatSvg');
+		function zoom() {
+			svg.select('#selectedHeat')
+			.attr('transform', 'rotate(180) translate(' + -d3.event.transform.x + ',' + -d3.event.transform.y + ') scale(' + d3.event.transform.k + ')');
+		}
+		this.zoomListener = d3.zoom().scaleExtent([1, 4.5]).on("zoom", zoom);
+		svg.call(this.zoomListener);
+	}
+
 	updateSelection() {
-		//TODO: change this part to state
 		const valueLen = this.valueLen;
-		const selectV = this.selectV;
 		let start = Math.ceil(this.start);
 		let end = Math.ceil(this.end);
 		let new_selectV = [];  //array to hold new selection
@@ -59,6 +67,7 @@ class OutputCharts extends Component {
 			}
 		}
 		new_selectV.sort((a,b)=>{return a-b});
+		this.new_selectV = new_selectV;
 
 		// draw mask
 		let mask = d3.select('div#mychart2').select('svg').select('#mask');
@@ -66,10 +75,29 @@ class OutputCharts extends Component {
 		let eA = Math.PI*2*end/400+Math.PI;
 		if(eA>sA) eA-=Math.PI*2;
 
-		
 		mask.attr('d',d3.arc().innerRadius(50).outerRadius(35*3+50).startAngle(eA).endAngle(sA));
 
+	
+		// regeister animation
+		this.ani = requestAnimationFrame(this.updateSelection.bind(this));
+	}
 
+	brushStart(){
+		console.log('brush started');
+		const svg = d3.select('#heatSvg');
+		const id = d3.zoomIdentity.scale(1.1);
+		svg.call(this.zoomListener.transform, id);
+		d3.select('#selectedHeat')
+		.attr('transform', 'rotate(180) scale(1)')
+		.style("filter", null);
+		$('#mask').appendTo($('#mask').parent());
+		this.ani = this.updateSelection();
+	}
+	brushEnd(){
+		console.log('brush ended');
+		cancelAnimationFrame(this.ani);
+		const selectV = this.selectV;
+		const new_selectV = this.new_selectV;
 		// calculate add and sub selection
 		let add_select=[]; //additional element comapared to old selection
 		let sub_select=[]; //canceled element compared to old
@@ -100,38 +128,34 @@ class OutputCharts extends Component {
 			}
 		}
 
-		this.add_select = add_select;
-		this.sub_select = sub_select;
-		this.selectV = new_selectV;
-	
-		// regeister animation
-		this.ani = requestAnimationFrame(this.updateSelection.bind(this));
-	}
-
-	brushStart(){
-		console.log('brush started');
-		if(this.selectionStarted)
-			for(const index of this.selectV){
+		// shadow effect
+		if(!this.selectionStarted){
+			for (const index of this.new_selectV){
+				$('#selectedHeat').append($(`path.heat.v${index}`));
+			}
+			this.selectionStarted = true;
+		} else {
+			for(const index of sub_select){
 				$('.circular-heat').append($(`path.heat.v${index}`));
 			}
-		else this.selectionStarted = true;
-		this.ani = this.updateSelection();
-	}
-	brushEnd(){
-		console.log('brush ended');
-		cancelAnimationFrame(this.ani);
-		const selectV = this.selectV;
-		// shadow effect
-		for (const index of selectV){
-			$('#selectedHeat').append($(`path.heat.v${index}`));
+			for (const index of add_select){
+				$('#selectedHeat').append($(`path.heat.v${index}`));
+			}
 		}
+		d3.select('#selectedHeat')
+		.attr('transform', 'rotate(180) scale(1.1)')
+		.style("filter", "url(#drop-shadow)");
+		
+		$('#selectedHeat').appendTo($('#selectedHeat').parent());
+
+		this.selectV = new_selectV;
 
 		// update bar chart
 		let bar_svg = d3.select("#bar_svg");
 		let bar_h = parseInt( bar_svg.style("height"), 10 )/35;
-    	let bar_w = parseInt( bar_svg.style("width"), 10 );
+		let bar_w = parseInt( bar_svg.style("width"), 10 );
 
-		let partialMax = 0;
+		let barMax = 0;
 		for( let i = 0; i < 35; i++ ){
 			let sum = 0;
 			let index = i * 400 + selectV[0];
@@ -139,19 +163,27 @@ class OutputCharts extends Component {
 				sum += this.sen_data[index + j].value;
 			}
 			this.allSenHist[i].partV = sum;//parseFloat(sum /selectV.length);
-			if( partialMax < this.allSenHist[i].partV ){
-				partialMax = this.allSenHist[i].partV
+			if( barMax < this.allSenHist[i].partV ){
+				barMax = this.allSenHist[i].partV
+			}
+			if( barMax < this.allSenHist[i].allV ){
+				barMax = this.allSenHist[i].allV
 			}
 		}
-		partialMax = partialMax<=0?1:partialMax
+		barMax = barMax<=0?1:barMax
+
+		bar_svg.selectAll("#all")
+		.data(this.allSenHist)
+		.transition().duration(750)
+		.attr("transform", function(d, i) { return "translate(" + 0 + "," + (i*bar_h) + ")"; } )
+		.attr("width", function(d) { return (d.allV/barMax)*bar_w; })
+		.attr("height", function(d) { return bar_h/2 -2 ; });
 
 		bar_svg.selectAll("#partial")
 		.data(this.allSenHist)
 		.transition().duration(750)
 		.attr("transform", function(d, i) { return "translate(" + 0 + "," + ((i+0.5)*bar_h-1) + ")"; } )
-		.attr("width", function(d) { 
-			return (d.partV/partialMax)*bar_w; 
-		})
+		.attr("width", function(d) { return (d.partV/barMax)*bar_w; })
 		.attr("height", function(d) { return bar_h/2 -2; })
 		.attr("fill", 'red');
 	}
@@ -164,7 +196,7 @@ class OutputCharts extends Component {
 
   render() {
     return (
-		<div id="outputs">
+		<div id="outputs" >
 			<CellChart 
 				radius={150} 
 				size={400} 
@@ -173,6 +205,7 @@ class OutputCharts extends Component {
 				brushEnd = {this.brushEnd.bind(this)}
 				brushMove = {this.brushMove.bind(this)}
 			/>
+			
 			<HeatChart radius={150} 
 						size={400} 
 						sen_data={this.sen_data} 
