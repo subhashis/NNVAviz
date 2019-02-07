@@ -98,10 +98,21 @@ class HeatChart extends Component {
       .style('dominant-baseline','hanging');
     
     svg.selectAll('path.heat')
-      .on('mouseover', (d)=>{
+      .on('mouseover', function(d,i){
         svg.select('text')
           .text(`Sen: ${d.value}`);
-      });
+        let classes = this.className.baseVal.split(' ');
+        d3.selectAll(`rect.${classes[1]}`)
+          .style('fill','yellow')
+        
+      })
+      .on('mouseout',function(d,i){
+        let classes = this.className.baseVal.split(' ');
+        d3.selectAll(`rect.${classes[1]}#all`)
+        .style('fill','black');
+        d3.selectAll(`rect.${classes[1]}#partial`)
+        .style('fill','red');
+      })
   }
   render() {
     return (

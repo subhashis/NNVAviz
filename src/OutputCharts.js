@@ -40,6 +40,7 @@ class OutputCharts extends Component {
 	}
 
 	componentDidMount(){
+		// set up zoom functions
 		const svg = d3.select('#heatSvg');
 		function zoom() {
 			svg.select('#selectedHeat')
