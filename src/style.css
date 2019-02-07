@@ -10,9 +10,11 @@ body {
   margin: auto;
 }
 .chart {
-  width: 40%;
+	width: 39%;
+	margin-left: 1%;
 	float: left;
-	text-align:center
+	border: 2px solid bisque;
+	border-radius: 5px;
 }
 #bar {
 	width: 20%;

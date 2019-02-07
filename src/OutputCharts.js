@@ -48,6 +48,7 @@ class OutputCharts extends Component {
 		}
 		this.zoomListener = d3.zoom().scaleExtent([1, 4.5]).on("zoom", zoom);
 		svg.call(this.zoomListener);
+		
 	}
 
 	updateSelection() {

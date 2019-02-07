@@ -1,35 +1,27 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import circularHeatChart from './circularHeatChart';
-import $ from 'jquery';
+import colorbrewer from 'colorbrewer';
 
 class HeatChart extends Component {
 
   componentDidMount(){
     // draw heat chart
     const sen_min = this.props.sen_min;
-    const sen_mid_point = this.props.sen_mid_point;
+    // const sen_mid_point = this.props.sen_mid_point;
     const sen_max = this.props.sen_max;
     const sen_data = this.props.sen_data;
     const chart = circularHeatChart();
     const width = this.props.size;
+    const paletteName = 'PiYG';
+    let colors = colorbrewer[paletteName][10];
+      colors = colors.reverse();
 
     chart.segmentHeight(3)
       .innerRadius(50)
       .numSegments(this.props.size)
-      .domain([Math.round(sen_min), Math.round(sen_mid_point), Math.round(sen_max)])
-      .range(["#276419", "#e6f5d0", "#c51b7d"])
-      .radialLabels(null)
-      .segmentLabels(null)
-      .margin({
-        top: 42,
-        right: 50,
-        bottom: 50,
-        left: 50
-      })
-      .accessor(function (d) {
-        return d.value;
-      })
+      .range(colors)
+      .accessor(accessorFun)
       .radialLabels(null)
       .segmentLabels(null);
     d3.select('#mychart2')
@@ -38,6 +30,10 @@ class HeatChart extends Component {
       .enter().append('svg')
       .attr("viewBox", `-${width/2} -${width/2} ${width} ${width}`)
       .call(chart);
+
+    function accessorFun(d){
+      return d.value;
+    }
 
     const svg = d3.select('#mychart2').select('svg')
     //draw mask
@@ -86,10 +82,6 @@ class HeatChart extends Component {
       .attr("transform", "rotate(180) scale(1.1)")
       .style("filter", "url(#drop-shadow)");
 
-    // add the name of chart
-    const title = document.createTextNode('Sensitivity Heat Chart');
-    $('#mychart2').append(title);
-
     // selected value on the cornor
     svg.append('text')
       .text('Sen: ')
@@ -113,10 +105,55 @@ class HeatChart extends Component {
         d3.selectAll(`rect.${classes[1]}#partial`)
         .style('fill','red');
       })
+
+      // set up palette
+		d3.select("#palette")
+      .on("keyup", function() {
+        var newPalette = d3.select("#palette").property("value");
+        if (newPalette != null)						// when interfaced with jQwidget, the ComboBox handles keyup event but value is then not available ?
+        changePalette(newPalette, '#heatSvg');
+      })
+      .on("change", function() {
+        var newPalette = d3.select("#palette").property("value");
+        changePalette(newPalette, '#heatSvg');
+      });
+
+    function changePalette(paletteName, heatmapId) {
+      const classesNumber = 10;
+      var colors = colorbrewer[paletteName][classesNumber];
+      colors = colors.reverse();
+      var colorScale = d3.scaleQuantize()
+        .domain([sen_min,sen_max])
+        .range(colors);
+      var svg = d3.select(heatmapId);
+      var t = svg.transition().duration(500);
+      t.selectAll("path.heat")
+        .style("fill", function(d) {
+          if (d != null) return colorScale(d.value);
+          else return "url(#diagonalHatch)";
+        })
+    }
+
+
   }
+  
   render() {
     return (
-      <div className = "chart border border-primary" id = "mychart2" / >
+      <div className = "chart" id = "mychart2">
+        <p align="center">Sensitivity Heat Chart</p>
+        Palette:
+        <select id="palette" defaultValue='PiYG'>
+          <option value="RdYlGn">RdYlGn</option>
+          <option value="Spectral">Spectral</option>
+          <option value="RdYlBu">RdYlBu</option>
+          <option value="RdGy">RdGy</option>
+          <option value="RdBu">RdBu</option>
+          <option value="PiYG">PiYG</option>
+          <option value="PRGn">PRGn</option>
+          <option value="BrBG">BrBG</option>
+          <option value="PuOr">PuOr</option>
+        </select>
+      </div>
     );
   }
 }
