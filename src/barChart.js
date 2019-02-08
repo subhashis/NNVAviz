@@ -30,6 +30,7 @@ class BarChart extends Component {
     .data(this.props.allSenHist)
     .enter().append("rect")
     .attr("id", "all")
+    .attr("class",(d,i)=>{return `p${i}`})
     .attr("transform", function(d, i) { return "translate(" + 0 + "," + (i*bar_h) + ")"; } )
     .attr("width", function(d) { return (d.allV/max_allV)*bar_w; })
     .attr("height", function(d) { return bar_h/2 -2 ; });
@@ -38,6 +39,7 @@ class BarChart extends Component {
         .data(this.props.allSenHist)
         .enter().append("rect")
         .attr("id", "partial")
+        .attr("class",(d,i)=>{return `p${i}`})
         .attr("transform", function(d, i) { return "translate(" + 0 + "," + ((i+0.5)*bar_h) + ")"; } )
         .attr("width", function(d) { return (d.partV/max_allV)*bar_w; })
         .attr("height", function(d) { return bar_h/2 -1; })

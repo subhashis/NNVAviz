@@ -32,7 +32,14 @@ path {
 	stroke: black;
 	stroke-width: 10;
 	
-  }
+	}
+	
+	.indi{
+		fill: #bfbfbf;
+		opacity: 0.7; 
+		stroke: black;
+		stroke-width: 1;
+	}
   
   .axis line,
   .axis circle {

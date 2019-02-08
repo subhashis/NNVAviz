@@ -30,7 +30,7 @@ export default function circularHeatChart() {
                 domain = d3.extent(data, accessor);
                 autoDomain = true;
             }
-            var color = d3.scaleLinear().domain(domain).range(range);
+            var color = d3.scaleQuantize().domain(domain).range(range);
             if (autoDomain)
                 domain = null;
 
