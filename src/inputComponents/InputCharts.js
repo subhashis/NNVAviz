@@ -3,14 +3,15 @@ import Parameter from './Parameter';
 import Preview from './Preview';
 
 export default class InputCharts extends Component {
-	constructor(props){
-        super(props);
-    }
     render(){
         return (
             <div id="inputs" >
                 <Parameter />
-                {/* <Preview /> */}
+                <Preview 
+                    radius={150} 
+                    size={400} 
+                    valueLen={400}
+                />
 		    </div>
         )
     }
