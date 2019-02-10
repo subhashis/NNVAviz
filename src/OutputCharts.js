@@ -145,8 +145,8 @@ class OutputCharts extends Component {
 			}
 		}
 		d3.select('#selectedHeat')
-		.attr('transform', 'rotate(180) scale(1.1)')
-		.style("filter", "url(#drop-shadow)");
+		.attr('transform', 'rotate(180) scale(1)');
+		// .style("filter", "url(#drop-shadow)");
 		
 		$('#selectedHeat').appendTo($('#selectedHeat').parent());
 
