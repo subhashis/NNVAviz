@@ -29,8 +29,8 @@ export default class Parameters extends Component {
             para.push('0');
             paraS.push(0);
         }
-        this.state.para = para;
-        this.state.paraS = paraS;
+        this.state.para = para;  //string
+        this.state.paraS = paraS; //number
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSliderChange = this.handleSliderChange.bind(this);
     }
@@ -51,6 +51,13 @@ export default class Parameters extends Component {
         new_para[id]= ""+value;
         this.setState({para: new_para, paraS: new_paraS});
     }
+    handleRunClick(){
+        let p={};
+        for (let i in this.state.paraS){
+            p['p'+i]=this.state.paraS[i];
+        }
+        this.props.run('http://127.0.0.1:5000/',p);
+    }
     render(){
         let sliders = [];
         for (let i=0;i<35;i++){
@@ -67,7 +74,7 @@ export default class Parameters extends Component {
                         defaultValue={0}
                         value={this.state.paraS[i]}
                         onChange={function(value){hsC(value,this)}}
-                        marks={{ 0.1: 'current', 0.3: 0.2, 0.12: 0.4 }}
+                        // marks={{ 0.1: 'current', 0.3: 0.2, 0.12: 0.4 }}
                         step={0.005}
                         handle={handle}
                     />
@@ -77,9 +84,9 @@ export default class Parameters extends Component {
         return (
             <div id = 'sliders'>
                 {sliders}
-                <button class="btn btn-primary">Run</button><br></br>
-                <button class="btn btn-primary">Save</button><br></br>
-                <button class="btn btn-primary">Export</button><br></br>
+                <button className="btn btn-primary" onClick={()=>this.handleRunClick()} >Run</button><br></br>
+                <button className="btn btn-primary">Save</button><br></br>
+                <button className="btn btn-primary">Export</button><br></br>
                 <div id = 'saved'>
                     <p>Saved Lines</p>
                 </div>

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
-import my_radial_brush from '../my_radial_brush';
+// import my_radial_brush from '../my_radial_brush';
 
 export default class Preview extends Component {
     constructor(props){
         super(props);
+        // console.log('cons');
     
         // prepare radial axes data
         const valueLen = this.props.valueLen;
@@ -54,8 +55,67 @@ export default class Preview extends Component {
         });
     
       }
+
+      componentDidUpdate(){
+        // console.log('didupdate');
+        // console.log(this.props.previewData);
+        const data = this.props.previewData;
+        const valueLen = this.props.valueLen;
+        const radius = this.props.radius;
+        const dummy_data = d3.range(0, 2 * Math.PI, 2 * Math.PI/valueLen); 
+        const uncertainty_scale = 500; //to keep uncertainty bands in scale
+        let my_points = [];
+        for (let i = 0; i < valueLen; i += 1) {
+          var angle = dummy_data[i];
+          var protein_value = data.curve_mean[i];
+          var std = data.curve_std[((i + valueLen/2) % valueLen)] / uncertainty_scale;
+          let tmp = {
+            'angle': angle,
+            'std': std,
+            'value': protein_value
+          };
+          my_points.push(tmp);
+        }
+        my_points.push(my_points[0]);
+        this.my_points = my_points;
+
+        //draw the std2
+        var pathData2 = this.radialAreaGenerator2(this.my_points);
+  
+        d3.select("#previewChart")
+          .select('path.std2')
+          .attr('d', pathData2);
+    
+        // draw the std1
+        var pathData1 = this.radialAreaGenerator1(this.my_points);
+    
+        d3.select("#previewChart")
+          .select('path.std1')
+          .attr('d', pathData1);
+    
+        // draw the value (marker)
+        const colorScale = this.colorScale;
+        var protein_markers = d3.select("#previewChart")
+          .select("g.protein_markers");
+    
+        var sel = protein_markers.selectAll("circle").data(my_points);
+        sel.attr("r", "1.18")
+          .attr("cy", function (d, i) {
+            return radius * Math.sin(d.angle + Math.PI / 2)
+          })
+          .attr("cx", function (d, i) {
+            return radius * Math.cos(d.angle + Math.PI / 2)
+          })
+          .attr("fill", function (d, i) {
+            return colorScale(d.value)
+          })
+          .attr("stroke", "black")
+          .attr("stroke-width", 0.15)
+          .style("opacity", 0.9);
+      }
     
       componentDidMount() {
+        // console.log('didmount');
         const width = this.props.size;
         const radius = this.props.radius;
     
@@ -66,7 +126,6 @@ export default class Preview extends Component {
         // draw radial axes
         this.draw_radial_axes();
     
-        console.log(this.my_points);
         //draw the std2
         var pathData2 = this.radialAreaGenerator2(this.my_points);
     
@@ -154,6 +213,7 @@ export default class Preview extends Component {
       }
 
       render() {
+        // console.log('render');
         return ( 
           <div className = "chart" id = "previewChart">
             <p align="center">Preview</p>

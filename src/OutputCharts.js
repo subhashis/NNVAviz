@@ -4,7 +4,7 @@ import CellChart from './CellChart';
 import HeatChart from './HeatChart';
 import BarChart from './barChart';
 import $ from 'jquery';
-import data from './data/1/NNVA_data';
+let data;
 
 class OutputCharts extends Component {
 	constructor(props){
@@ -12,6 +12,7 @@ class OutputCharts extends Component {
 		// this.state = {
 		// 	selectV: [],
 		// }
+		data = this.props.data;
 		this.selectionStarted = false;
 		this.valueLen = 400;
 		this.selectV = [];
@@ -200,6 +201,7 @@ class OutputCharts extends Component {
     return (
 		<div id="outputs" >
 			<CellChart 
+				data = {data}
 				radius={150} 
 				size={400} 
 				valueLen={400}

@@ -6,8 +6,11 @@ export default class InputCharts extends Component {
     render(){
         return (
             <div id="inputs" >
-                <Parameter />
+                <Parameter 
+                    run = {this.props.request}
+                />
                 <Preview 
+                    previewData = {this.props.previewData}
                     radius={150} 
                     size={400} 
                     valueLen={400}

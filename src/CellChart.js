@@ -1,13 +1,14 @@
 import React, {
   Component
 } from 'react';
-import data from './data/1/NNVA_data';
 import * as d3 from 'd3';
 import my_radial_brush from './my_radial_brush';
+let data;
 
 class CellChart extends Component {
   constructor(props){
     super(props);
+    data = this.props.data;
 
     // prepare radial axes data
     const valueLen = this.props.valueLen;
