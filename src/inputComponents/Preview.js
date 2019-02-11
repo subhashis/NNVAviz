@@ -1,64 +1,78 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
+import colorbrewer from 'colorbrewer';
 // import my_radial_brush from '../my_radial_brush';
 
 export default class Preview extends Component {
     constructor(props){
-        super(props);
-        // console.log('cons');
-    
-        // prepare radial axes data
-        const valueLen = this.props.valueLen;
-        // the color scale can be input 
-        this.colorScale = d3.scaleLinear().domain([0.0, valueLen]).range(["#33ccff", "#ff6600"]);
-        const dummy_data = d3.range(0, 2 * Math.PI, 2 * Math.PI/valueLen); 
-        // const uncertainty_scale = 500; //to keep uncertainty bands in scale
-        let my_points = [];
-        for (let i = 0; i < valueLen; i += 1) {
-          var angle = dummy_data[i];
-          var protein_value = 0;
-          var std = 0;
-          let tmp = {
-            'angle': angle,
-            'std': std,
-            'value': protein_value
-          };
-          my_points.push(tmp);
-        }
-        my_points.push(my_points[0]);
-        this.my_points = my_points;
-    
-        // prepare generator
-        const radius = this.props.radius;
-        this.radialAreaGenerator1 = d3.radialArea()
-          .curve(d3.curveCardinalClosed)
-          .angle(function (d) {
-            return d.angle;
-          })
-          .innerRadius(function (d) {
-            return radius - 200 * d.std;
-          })
-          .outerRadius(function (d) {
-            return radius + 200 * d.std;
-          });
-    
-        this.radialAreaGenerator2 = d3.radialArea()
-          .curve(d3.curveCardinalClosed)
-          .angle(function (d) {
-            return d.angle;
-          })
-          .innerRadius(function (d) {
-            return radius - 400 * d.std;
-          })
-          .outerRadius(function (d) {
-            return radius + 400 * d.std;
-        });
-    
+      super(props);
+      // console.log('cons');
+  
+      // prepare radial axes data
+      const valueLen = this.props.valueLen;
+      
+      // the color scale can be input 
+      const paletteName = 'PiYG';
+      let colors = colorbrewer[paletteName][11];
+      colors = colors.slice(0).reverse();
+      this.colorScale = d3.scaleQuantize().domain([0.0, valueLen]).range(colors);
+      
+
+      const dummy_data = d3.range(0, 2 * Math.PI, 2 * Math.PI/valueLen); 
+      // const uncertainty_scale = 500; //to keep uncertainty bands in scale
+      let my_points = [];
+      for (let i = 0; i < valueLen; i += 1) {
+        var angle = dummy_data[i];
+        var protein_value = 0;
+        var std = 0;
+        let tmp = {
+          'angle': angle,
+          'std': std,
+          'value': protein_value
+        };
+        my_points.push(tmp);
       }
+      my_points.push(my_points[0]);
+      this.my_points = my_points;
+  
+      // prepare generator
+      const radius = this.props.radius;
+      this.radialAreaGenerator1 = d3.radialArea()
+        .curve(d3.curveCardinalClosed)
+        .angle(function (d) {
+          return d.angle;
+        })
+        .innerRadius(function (d) {
+          return radius - 200 * d.std;
+        })
+        .outerRadius(function (d) {
+          return radius + 200 * d.std;
+        });
+  
+      this.radialAreaGenerator2 = d3.radialArea()
+        .curve(d3.curveCardinalClosed)
+        .angle(function (d) {
+          return d.angle;
+        })
+        .innerRadius(function (d) {
+          return radius - 400 * d.std;
+        })
+        .outerRadius(function (d) {
+          return radius + 400 * d.std;
+      });
+  
+    }
 
       componentDidUpdate(){
         // console.log('didupdate');
         // console.log(this.props.previewData);
+        
+      // calculate the value scale
+        if (this.props.previewData){
+          this.minValue = Math.min(...this.props.previewData.curve_mean);
+          this.maxValue = Math.max(...this.props.previewData.curve_mean);
+        }
+
         const data = this.props.previewData;
         const valueLen = this.props.valueLen;
         const radius = this.props.radius;
@@ -164,7 +178,55 @@ export default class Preview extends Component {
           .attr("stroke", "black")
           .attr("stroke-width", 0.15)
           .style("opacity", 0.9);
+
+        // set up colormap
+        const changePalette = paletteName=> {
+          const classesNumber = 11;
+          var colors = colorbrewer[paletteName][classesNumber];
+          colors = colors.slice(0).reverse();
+          this.colorScale.range(colors);
+
+          d3.select("#previewChart").select("g.protein_markers").selectAll("circle")
+            .attr("fill", d=> {
+              return this.colorScale(d.value)
+            });
+        };
+
+        d3.select("#preColorMap")
+          .on("keyup", function() {
+            var newPalette = d3.select("#preColorMap").property("value");
+            if (newPalette != null)						// when interfaced with jQwidget, the ComboBox handles keyup event but value is then not available ?
+            changePalette(newPalette);
+          })
+          .on("change", function() {
+            var newPalette = d3.select("#preColorMap").property("value");
+            changePalette(newPalette);
+          });
     
+          const changeScale = scale=> {
+            if (scale === 'full'){
+              this.colorScale.domain([0,400]);
+            }
+            else {
+              console.log(this.maxValue);
+              this.colorScale.domain([this.minValue,this.maxValue]);
+            }
+            d3.select("#previewChart").select("g.protein_markers").selectAll("circle")
+              .attr("fill", d=> {
+                return this.colorScale(d.value)
+              });
+          };
+        
+          d3.select("#preColorScale")
+            .on("keyup", function() {
+              var newScale = d3.select("#preColorScale").property("value");
+              if (newScale != null)						// when interfaced with jQwidget, the ComboBox handles keyup event but value is then not available ?
+              changeScale(newScale);
+            })
+            .on("change", function() {
+              var newScale = d3.select("#preColorScale").property("value");
+              changeScale(newScale);
+            });
       }
     
       draw_radial_axes() {
@@ -217,7 +279,23 @@ export default class Preview extends Component {
         return ( 
           <div className = "chart" id = "previewChart">
             <p align="center">Preview</p>
-            <br></br>
+            Palette:
+            <select id="preColorMap" defaultValue='PiYG'>
+              <option value="RdYlGn">RdYlGn</option>
+              <option value="Spectral">Spectral</option>
+              <option value="RdYlBu">RdYlBu</option>
+              <option value="RdGy">RdGy</option>
+              <option value="RdBu">RdBu</option>
+              <option value="PiYG">PiYG</option>
+              <option value="PRGn">PRGn</option>
+              <option value="BrBG">BrBG</option>
+              <option value="PuOr">PuOr</option>
+            </select>
+            &emsp;Scale:
+            <select id="preColorScale" defaultValue='full'>
+              <option value="full">Full</option>
+              <option value="context">Context</option>
+            </select>
           </div>
         )
       }

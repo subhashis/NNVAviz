@@ -4,7 +4,7 @@ import './style.css';
 import OutputCharts from './OutputCharts';
 import InputCharts from './inputComponents/InputCharts';
 import axios from 'axios';
-import data from './data/2/NNVA_data';
+import data from './data/1/NNVA_data';
 
 class App extends Component {
   constructor(props){

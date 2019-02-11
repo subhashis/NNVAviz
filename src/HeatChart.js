@@ -15,7 +15,7 @@ class HeatChart extends Component {
     const width = this.props.size;
     const paletteName = 'PiYG';
     let colors = colorbrewer[paletteName][10];
-      colors = colors.reverse();
+      colors = colors.slice(0).reverse();
 
     chart.segmentHeight(3)
       .innerRadius(50)
@@ -121,7 +121,7 @@ class HeatChart extends Component {
     function changePalette(paletteName, heatmapId) {
       const classesNumber = 10;
       var colors = colorbrewer[paletteName][classesNumber];
-      colors = colors.reverse();
+      colors = colors.slice(0).reverse();
       var colorScale = d3.scaleQuantize()
         .domain([sen_min,sen_max])
         .range(colors);

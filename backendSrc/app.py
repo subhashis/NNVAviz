@@ -6,6 +6,6 @@ app = Flask(__name__)
 @app.route("/")
 def hello():
     data = {}
-    with open('./data/1/NNVA_data.json') as f:
+    with open('./data/2/NNVA_data.json') as f:
         data = json.load(f)
     return jsonify(data)
