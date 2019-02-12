@@ -15,6 +15,7 @@ class App extends Component {
     }
     this.getData = this.getData.bind(this);
   }
+
   getData(url,para){
     axios.get(url,para)
       .then(res=>{
@@ -22,6 +23,11 @@ class App extends Component {
         this.setState({previewData: res.data});
       });
   }
+
+  updateCellChart(){
+    ;
+  }
+
   render() {
     return (
       <div className="App">

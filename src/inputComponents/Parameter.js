@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import Slider from 'rc-slider';
 import Tooltip from 'rc-tooltip';
+import ReactTable from "react-table";
+import 'react-table/react-table.css'
 import 'rc-slider/assets/index.css';
-import 'rc-tooltip/assets/bootstrap.css'
+import 'rc-tooltip/assets/bootstrap.css';
+import $ from 'jquery';
 
 const Handle = Slider.Handle;
 const handle = (props) => {
@@ -33,7 +36,9 @@ export default class Parameters extends Component {
         this.state.paraS = paraS; //number
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSliderChange = this.handleSliderChange.bind(this);
+        this.state.data = [];
     }
+
     handleInputChange(event){
         const id = event.target.id;
         const value = event.target.value;
@@ -43,6 +48,7 @@ export default class Parameters extends Component {
         new_paraS[id]= parseFloat(value);
         this.setState({para: new_para, paraS: new_paraS});
     }
+
     handleSliderChange(value,obj){
         const id = obj.index;
         let new_para = this.state.para.slice(0);
@@ -51,6 +57,7 @@ export default class Parameters extends Component {
         new_para[id]= ""+value;
         this.setState({para: new_para, paraS: new_paraS});
     }
+
     handleRunClick(){
         let p={};
         for (let i in this.state.paraS){
@@ -58,6 +65,7 @@ export default class Parameters extends Component {
         }
         this.props.run('http://127.0.0.1:5000/',p);
     }
+
     render(){
         let sliders = [];
         for (let i=0;i<35;i++){
@@ -81,15 +89,50 @@ export default class Parameters extends Component {
                 </div>
                 );
         }
+
+        let data = [{}];
+        for (let i =0 ;i<35;i++){
+            data[0][`p${i}`]=1;
+        }
+        
+        let columns = [];
+        const width = $(window).width()*0.75/35;
+        for (let i =0 ;i<35;i++){
+            const temp = {
+                Header: `P${i}`,
+                accessor: `p${i}`,
+                width: width,
+            }
+            columns.push(temp);
+        }
+        
         return (
             <div id = 'sliders'>
                 {sliders}
                 <button className="btn btn-primary" onClick={()=>this.handleRunClick()} >Run</button><br></br>
                 <button className="btn btn-primary">Save</button><br></br>
                 <button className="btn btn-primary">Export</button><br></br>
-                <div id = 'saved'>
-                    <p>Saved Lines</p>
-                </div>
+                <ReactTable
+                    data={data}
+                    columns={columns}
+                    defaultPageSize={5}
+                    getTdProps={(state, rowInfo, column, instance) => {
+                        return {
+                          onClick: (e, handleOriginal) => {
+                                console.log(rowInfo.index);
+                    
+                                // IMPORTANT! React-Table uses onClick internally to trigger
+                                // events like expanding SubComponents and pivots.
+                                // By default a custom 'onClick' handler will override this functionality.
+                                // If you want to fire the original onClick handler, call the
+                                // 'handleOriginal' function.
+                                if (handleOriginal) {
+                                handleOriginal();
+                                }
+                            }
+                        };
+                    }}
+                />
             </div>
         );
     }
