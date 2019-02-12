@@ -2,9 +2,19 @@
 
 To use this visuliaztion:
 
+This start up the Front-End:
+
 ```
 npm install
 npm start
+```
+
+To start the Back-End:
+
+```
+pip install Flask
+cd ./backendSrc
+flask run
 ```
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
