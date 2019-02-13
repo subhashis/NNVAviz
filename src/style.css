@@ -1,23 +1,55 @@
 /* Document styling */
 body {
-	margin: 0 auto;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 14px;
-	line-height: 20px;
 }
 #outputs {
   width: 100%;
-  margin: auto;
+  float: left;
 }
 .chart {
-	width: 39%;
+	width: 24%;
 	margin-left: 1%;
 	float: left;
 	border: 2px solid bisque;
 	border-radius: 5px;
 }
 #bar {
-	width: 20%;
-	height: 40vw;
-  float: left;
+	width: 50%;
+	height: 25vw;
+	float: left;
+}
+#inputs {
+	float: left;
+	width: 99%;
+	height: 8vw;
+	margin-left: 1%;
+}
+
+.slider {
+	height: 100%;
+	width: 5.5%;
+	padding-bottom: 2.5em;
+	float: left;
+}
+
+.paraBox {
+	width: 3.5em;
+}
+
+#sliders {
+	width: 80%;
+	height: 100%;
+	float: left;
+}
+#previewChart {
+	width: 18%;
+	float: left;
+}
+button {
+	margin-bottom: 1em;
+}
+
+#saved {
+	height: 2vw;
+	float: left;
 }

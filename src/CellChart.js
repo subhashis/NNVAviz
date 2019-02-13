@@ -1,18 +1,29 @@
 import React, {
   Component
 } from 'react';
-import data from './data/1/NNVA_data';
 import * as d3 from 'd3';
+import colorbrewer from 'colorbrewer';
 import my_radial_brush from './my_radial_brush';
+let data;
 
 class CellChart extends Component {
   constructor(props){
     super(props);
+    data = this.props.data;
 
     // prepare radial axes data
     const valueLen = this.props.valueLen;
+
     // the color scale can be input 
-    this.colorScale = d3.scaleLinear().domain([0.0, valueLen]).range(["#33ccff", "#ff6600"]);
+    const paletteName = 'PiYG';
+    let colors = colorbrewer[paletteName][11];
+    colors = colors.slice(0).reverse();
+    this.colorScale = d3.scaleQuantize().domain([0.0, 400]).range(colors);
+
+    // calculate the value scale
+    this.minValue = Math.min(...data.curve_mean);
+    this.maxValue = Math.max(...data.curve_mean);
+
     const dummy_data = d3.range(0, 2 * Math.PI, 2 * Math.PI/valueLen); 
     const uncertainty_scale = 500; //to keep uncertainty bands in scale
     let my_points = [];
@@ -23,7 +34,7 @@ class CellChart extends Component {
       let tmp = {
         'angle': angle,
         'std': std,
-        'value': protein_value
+        'value': protein_value,
       };
       my_points.push(tmp);
     }
@@ -111,6 +122,53 @@ class CellChart extends Component {
     // draw brush
     this.drawBrush();
 
+    // set up colormap
+    const changePalette = paletteName=> {
+      const classesNumber = 11;
+      var colors = colorbrewer[paletteName][classesNumber];
+      colors = colors.slice(0).reverse();
+      this.colorScale.range(colors);
+
+      d3.select("#mychart1").select("g.protein_markers").selectAll("circle")
+        .attr("fill", d=> {
+          return this.colorScale(d.value)
+        });
+    };
+
+		d3.select("#cellColorMap")
+      .on("keyup", function() {
+        var newPalette = d3.select("#cellColorMap").property("value");
+        if (newPalette != null)						// when interfaced with jQwidget, the ComboBox handles keyup event but value is then not available ?
+        changePalette(newPalette);
+      })
+      .on("change", function() {
+        var newPalette = d3.select("#cellColorMap").property("value");
+        changePalette(newPalette);
+      });
+
+    const changeScale = scale=> {
+      if (scale === 'full'){
+        this.colorScale.domain([0,400]);
+      }
+      else {
+        this.colorScale.domain([this.minValue,this.maxValue]);
+      }
+      d3.select("#mychart1").select("g.protein_markers").selectAll("circle")
+        .attr("fill", d=> {
+          return this.colorScale(d.value)
+        });
+    };
+  
+    d3.select("#cellColorScale")
+      .on("keyup", function() {
+        var newScale = d3.select("#cellColorScale").property("value");
+        if (newScale != null)						// when interfaced with jQwidget, the ComboBox handles keyup event but value is then not available ?
+        changeScale(newScale);
+      })
+      .on("change", function() {
+        var newScale = d3.select("#cellColorScale").property("value");
+        changeScale(newScale);
+      });
   }
 
   draw_radial_axes() {
@@ -195,7 +253,23 @@ class CellChart extends Component {
     return ( 
       <div className = "chart" id = "mychart1">
         <p align="center">Cell Chart</p>
-        <br></br>
+        Palette:
+        <select id="cellColorMap" defaultValue='PiYG'>
+          <option value="RdYlGn">RdYlGn</option>
+          <option value="Spectral">Spectral</option>
+          <option value="RdYlBu">RdYlBu</option>
+          <option value="RdGy">RdGy</option>
+          <option value="RdBu">RdBu</option>
+          <option value="PiYG">PiYG</option>
+          <option value="PRGn">PRGn</option>
+          <option value="BrBG">BrBG</option>
+          <option value="PuOr">PuOr</option>
+        </select>
+        &emsp;Scale:
+        <select id="cellColorScale" defaultValue='full'>
+          <option value="full">Full</option>
+          <option value="context">Context</option>
+        </select>
       </div>
     )
   }
