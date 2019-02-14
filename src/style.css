@@ -46,10 +46,14 @@ body {
 	float: left;
 }
 button {
-	margin-bottom: 1em;
+	margin-bottom: 0.5em;
 }
 
 #saved {
 	height: 2vw;
 	float: left;
+}
+
+#fileInput {
+	display: none;
 }

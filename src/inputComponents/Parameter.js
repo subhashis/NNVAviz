@@ -36,7 +36,7 @@ export default class Parameters extends Component {
         this.state.paraS = paraS; //number
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSliderChange = this.handleSliderChange.bind(this);
-        this.state.data = [];
+        this.state.data = []; //hold p0-p34 and preData
     }
 
     handleInputChange(event){
@@ -59,11 +59,51 @@ export default class Parameters extends Component {
     }
 
     handleRunClick(){
-        let p={};
+        this.p={};
         for (let i in this.state.paraS){
-            p['p'+i]=this.state.paraS[i];
+            this.p['p'+i]=this.state.paraS[i];
         }
-        this.props.run('http://127.0.0.1:5000/',p);
+        
+        this.props.run('http://127.0.0.1:5000/',this.p);
+    }
+
+    handleSaveClick(){
+        if (this.p){
+            // if run is ever clicked
+            this.p.data = this.props.previewData;
+            let new_data = this.state.data.slice(0);
+            new_data.push(this.p);
+            this.setState({data:new_data});
+        }
+    }
+
+    download(filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+    
+        element.style.display = 'none';
+        document.body.appendChild(element);
+    
+        element.click();
+    
+        document.body.removeChild(element);
+    }
+
+    handleExportClick() {
+        this.download('test',JSON.stringify(this.state.data));
+    }
+    handleImportClick() {
+        var fileInput = document.getElementById('fileInput');
+        let file = fileInput.files[0];
+
+        let reader = new FileReader();
+
+        reader.onload = (e) => {
+            let data = JSON.parse(reader.result);
+            this.setState({data:data});
+        }
+        reader.readAsText(file);
     }
 
     render(){
@@ -89,11 +129,7 @@ export default class Parameters extends Component {
                 </div>
                 );
         }
-
-        let data = [{}];
-        for (let i =0 ;i<35;i++){
-            data[0][`p${i}`]=1;
-        }
+        
         
         let columns = [];
         const width = $(window).width()*0.75/35;
@@ -109,26 +145,37 @@ export default class Parameters extends Component {
         return (
             <div id = 'sliders'>
                 {sliders}
-                <button className="btn btn-primary" onClick={()=>this.handleRunClick()} >Run</button><br></br>
-                <button className="btn btn-primary">Save</button><br></br>
-                <button className="btn btn-primary">Export</button><br></br>
+                <button className="btn btn-primary btn-sm" onClick={()=>this.handleRunClick()} >Run</button><br></br>
+                <button className="btn btn-primary btn-sm" onClick={()=>this.handleSaveClick()} >Save</button><br></br>
+                <button className="btn btn-primary btn-sm" onClick={()=>this.handleExportClick()} >Export</button><br></br>
+                <label className="btn btn-primary btn-sm">
+                    Import <input type="file" id="fileInput" onChange={()=>this.handleImportClick()} />
+                </label><br></br><br></br>
                 <ReactTable
-                    data={data}
+                    data={this.state.data}
                     columns={columns}
                     defaultPageSize={5}
                     getTdProps={(state, rowInfo, column, instance) => {
                         return {
                           onClick: (e, handleOriginal) => {
-                                console.log(rowInfo.index);
+                                if (rowInfo){
+                                    let d = this.state.data[rowInfo.index];
+                                    this.props.tableClick(d.data);
+                                    let para=[];
+                                    let paraS = [];
+                                    for (let i =0 ;i<35;i++){
+                                        paraS.push(d['p'+i]);
+                                        para.push(d['p'+i].toString());
+                                    }
+                                    this.setState({para: para, paraS: paraS});
+                                }
                     
                                 // IMPORTANT! React-Table uses onClick internally to trigger
                                 // events like expanding SubComponents and pivots.
                                 // By default a custom 'onClick' handler will override this functionality.
                                 // If you want to fire the original onClick handler, call the
                                 // 'handleOriginal' function.
-                                if (handleOriginal) {
-                                handleOriginal();
-                                }
+                                if (handleOriginal) handleOriginal();
                             }
                         };
                     }}
