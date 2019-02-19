@@ -18,6 +18,7 @@ export default class InputCharts extends Component {
                     run = {this.props.request}
                     previewData = {this.props.previewData}
                     tableClick = {(d)=>{this.handleTableClick(d)}}
+                    marks = {this.props.marks}
                 />
                 <Preview 
                     previewData = {this.state.previewData?this.state.previewData:this.props.previewData}

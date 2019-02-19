@@ -122,7 +122,7 @@ export default class Parameters extends Component {
                         defaultValue={0}
                         value={this.state.paraS[i]}
                         onChange={function(value){hsC(value,this)}}
-                        // marks={{ 0.1: 'current', 0.3: 0.2, 0.12: 0.4 }}
+                        marks={this.props.marks[i]}
                         step={0.005}
                         handle={handle}
                     />
@@ -132,7 +132,7 @@ export default class Parameters extends Component {
         
         
         let columns = [];
-        const width = $(window).width()*0.75/35;
+        const width = $(window).width()*0.78/35;
         for (let i =0 ;i<35;i++){
             const temp = {
                 Header: `P${i}`,

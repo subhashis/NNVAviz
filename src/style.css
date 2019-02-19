@@ -57,3 +57,6 @@ button {
 #fileInput {
 	display: none;
 }
+.rc-slider-mark-text {
+	font-size: xx-small;
+}
