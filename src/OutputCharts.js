@@ -155,17 +155,25 @@ class OutputCharts extends Component {
 
 		// update bar chart
 		let bar_svg = d3.select("#bar_svg");
-		let bar_h = parseInt( bar_svg.style("height"), 10 )/35;
-		let bar_w = parseInt( bar_svg.style("width"), 10 );
+		let bar_h = parseInt( bar_svg.style("height"), 10 ) / 3;
+		let bar_w = parseInt( bar_svg.style("width"), 10 )/35;
+
+		console.log(selectV);
 
 		let barMax = 0;
+		let maxElement=0;
 		for( let i = 0; i < 35; i++ ){
 			let sum = 0;
 			let index = i * 400 + selectV[0];
 			for( let j = 0; j<selectV.length; j++ ){
-				sum += this.sen_data[index + j].value;
+				sum += this.sen_data[ index + j ].value;
 			}
-			this.allSenHist[i].partV = sum;//parseFloat(sum /selectV.length);
+			for( let j = 0; j<400; j++ ){
+				if( maxElement < this.sen_data[i * 400 + j].value ){
+					maxElement = this.sen_data[i * 400 + j].value;
+				}
+			}
+			this.allSenHist[i].partV = parseFloat(sum /selectV.length);
 			if( barMax < this.allSenHist[i].partV ){
 				barMax = this.allSenHist[i].partV
 			}
@@ -173,22 +181,38 @@ class OutputCharts extends Component {
 				barMax = this.allSenHist[i].allV
 			}
 		}
-		barMax = barMax<=0?1:barMax
-
-		bar_svg.selectAll("#all")
-		.data(this.allSenHist)
-		.transition().duration(750)
-		.attr("transform", function(d, i) { return "translate(" + 0 + "," + (i*bar_h) + ")"; } )
-		.attr("width", function(d) { return (d.allV/barMax)*bar_w; })
-		.attr("height", function(d) { return bar_h/2 -2 ; });
+		barMax = maxElement;
+		maxElement = maxElement<=0?1:maxElement
 
 		bar_svg.selectAll("#partial")
 		.data(this.allSenHist)
 		.transition().duration(750)
-		.attr("transform", function(d, i) { return "translate(" + 0 + "," + ((i+0.5)*bar_h-1) + ")"; } )
-		.attr("width", function(d) { return (d.partV/barMax)*bar_w; })
-		.attr("height", function(d) { return bar_h/2 -2; })
+		.attr("transform", function(d, i) { return "translate(" + i*(bar_w+1) + "," + (bar_h-(d.partV/maxElement)*bar_h) + ")"; } )
+		.attr("width", function(d) { return bar_w; })
+		.attr("height", function(d) { return (d.partV/maxElement)*bar_h; })
 		.attr("fill", 'red');
+
+		bar_svg.selectAll("#all")
+		.data(this.allSenHist)
+		.transition().duration(750)
+		.attr("transform", function(d, i) { return "translate(" + i*(bar_w+1) + "," + (bar_h*2-(d.allV/maxElement)*bar_h) + ")"; } )
+		.attr("width", function(d) { return bar_w; })
+		.attr("height", function(d) { return (d.allV/maxElement)*bar_h; })
+
+		bar_svg.selectAll("#allBarLabel")
+			   .data( d3.range(0, 35, 1) )
+			   .transition().duration(750)
+			   .attr("transform", function (d) {
+					return "translate("+ (bar_w/3 + d*(bar_w+1)) + "," + bar_h +")rotate(90)";
+				});
+					
+		bar_svg.selectAll("#selectBarLabel")
+				.data( d3.range(0, 35, 1) )
+				.transition().duration(750)
+				.attr("transform", function (d) {
+					return "translate("+ (bar_w/3 + d*(bar_w+1)) + "," + bar_h*2 +")rotate(90)";
+				});
+
 	}
 	brushMove(brush){
 		const extent = brush.extent();
