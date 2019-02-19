@@ -21,32 +21,40 @@ body {
 #inputs {
 	float: left;
 	width: 99%;
-	height: 8vw;
 	margin-left: 1%;
 }
 
 .slider {
-	height: 100%;
+	height: 8vw;
 	width: 5.5%;
-	padding-bottom: 2.5em;
+	/* padding-bottom: 2.5em; */
 	float: left;
 }
-
+.sliderBody {
+	height: 70%;
+	/* padding-bottom: 2.5em; */
+}
+.sliderText {
+	height: 30%;
+	font-size: 0.6vw;
+	/* margin-top: 0.1vw; */
+	/* padding-bottom: 2.5em; */
+}
 .paraBox {
 	width: 3.5em;
 }
 
 #sliders {
 	width: 80%;
-	height: 100%;
 	float: left;
 }
 #previewChart {
 	width: 18%;
 	float: left;
 }
-button {
-	margin-bottom: 0.5em;
+.btn {
+	margin-bottom: 0.2vw;
+	font-size: 0.7vw;
 }
 
 #saved {
@@ -59,4 +67,14 @@ button {
 }
 .rc-slider-mark-text {
 	font-size: xx-small;
+}
+
+#controls {
+	height: 8vw;
+	float: left;
+}
+
+.ReactTable {
+	float: left;
+	width: 100%;
 }
