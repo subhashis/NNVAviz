@@ -5,7 +5,7 @@ import ReactTable from "react-table";
 import 'react-table/react-table.css'
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
-import $ from 'jquery';
+// import $ from 'jquery';
 
 const Handle = Slider.Handle;
 const handle = (props) => {
@@ -112,32 +112,36 @@ export default class Parameters extends Component {
             let hsC = this.handleSliderChange;
             sliders.push(
                 <div key ={i} className='slider'>
-                    {`P${i}:`}
-                    <input id={i} className='paraBox' type="text" value={this.state.para[i]} onChange={this.handleInputChange} />
-                    <Slider 
-                        vertical={true} 
-                        min={-1}
-                        max={1}
-                        index={i}
-                        defaultValue={0}
-                        value={this.state.paraS[i]}
-                        onChange={function(value){hsC(value,this)}}
-                        // marks={{ 0.1: 'current', 0.3: 0.2, 0.12: 0.4 }}
-                        step={0.005}
-                        handle={handle}
-                    />
+                    <div className='sliderText'>
+                        {`P${i}:`}<br></br>
+                        <input id={i} className='paraBox' type="text" value={this.state.para[i]} onChange={this.handleInputChange} />
+                    </div>
+                    <div className='sliderBody'>
+                        <Slider 
+                            vertical={true} 
+                            min={-1}
+                            max={1}
+                            index={i}
+                            defaultValue={0}
+                            value={this.state.paraS[i]}
+                            onChange={function(value){hsC(value,this)}}
+                            marks={this.props.marks[i]}
+                            step={0.005}
+                            handle={handle}
+                        />
+                    </div>
                 </div>
                 );
         }
         
         
         let columns = [];
-        const width = $(window).width()*0.75/35;
+        // const width = $(window).width()*0.78/35;
         for (let i =0 ;i<35;i++){
             const temp = {
                 Header: `P${i}`,
                 accessor: `p${i}`,
-                width: width,
+                // width: width,
             }
             columns.push(temp);
         }
@@ -145,12 +149,15 @@ export default class Parameters extends Component {
         return (
             <div id = 'sliders'>
                 {sliders}
-                <button className="btn btn-primary btn-sm" onClick={()=>this.handleRunClick()} >Run</button><br></br>
-                <button className="btn btn-primary btn-sm" onClick={()=>this.handleSaveClick()} >Save</button><br></br>
-                <button className="btn btn-primary btn-sm" onClick={()=>this.handleExportClick()} >Export</button><br></br>
-                <label className="btn btn-primary btn-sm">
-                    Import <input type="file" id="fileInput" onChange={()=>this.handleImportClick()} />
-                </label><br></br><br></br>
+                <div id='controls'>
+                    <button className="btn btn-primary btn-sm" onClick={()=>this.handleRunClick()} >Run</button><br></br>
+                    <button className="btn btn-primary btn-sm" onClick={()=>this.handleSaveClick()} >Save</button><br></br>
+                    <button className="btn btn-primary btn-sm" onClick={()=>this.handleExportClick()} >Export</button><br></br>
+                    <label className="btn btn-primary btn-sm">
+                        Import <input type="file" id="fileInput" onChange={()=>this.handleImportClick()} />
+                    </label><br></br><br></br>
+                </div>
+                
                 <ReactTable
                     data={this.state.data}
                     columns={columns}

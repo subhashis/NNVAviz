@@ -9,10 +9,19 @@ import data from './data/1/NNVA_data';
 class App extends Component {
   constructor(props){
     super(props);
+    console.log(data);
+    let marks = [];
+    for (let i=0;i<35;i++){
+      let mark = {};
+      mark[data.pset[i]]='CUR:'+data.pset[i].toFixed(2);
+      marks.push(mark);
+    }
     this.state = {
       data:data,
       previewData: null,
+      marks: marks,
     }
+    console.log(marks);
     this.getData = this.getData.bind(this);
   }
 
@@ -24,7 +33,7 @@ class App extends Component {
       });
   }
 
-  updateCellChart(){
+  updateMarks(){
     ;
   }
 
@@ -34,11 +43,12 @@ class App extends Component {
         <p align="center"><font size="8px" color="#777" fontFamily="Georgia">NNVA: Neural Network Assisted Visual Analysis</font></p>
         <OutputCharts
           data={this.state.data}
-         />
+        />
         <InputCharts
           previewData={this.state.previewData}
           request = {this.getData}
-         />
+          marks = {this.state.marks}
+        />
       </div>
     );
   }
