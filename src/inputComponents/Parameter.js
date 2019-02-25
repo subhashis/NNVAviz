@@ -124,9 +124,33 @@ export default class Parameters extends Component {
                             defaultValue={0}
                             value={this.state.paraS[i]}
                             onChange={function(value){hsC(value,this)}}
-                            marks={this.props.marks[i]}
+                            trackStyle={{
+                                backgroundColor: '#e9e9e9',
+                            }}
                             step={0.005}
                             handle={handle}
+                        />
+                    </div>
+                    <div className='sliderBody'>
+                        <Slider 
+                            vertical={true} 
+                            min={-1}
+                            max={1}
+                            index={i}
+                            defaultValue={0}
+                            value={this.state.paraS[i]}
+                            onChange={function(value){hsC(value,this)}}
+                            railStyle={{
+                                backgroundColor: '#abe2fb',
+                            }}
+                            marks={this.props.marks[i]}
+                            step={0.005}
+                            handleStyle={{
+                                visibility: 'hidden',
+                            }}
+                            dotStyle={{
+                                borderColor: '#e9e9e9',
+                            }}
                         />
                     </div>
                 </div>

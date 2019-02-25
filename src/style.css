@@ -34,6 +34,7 @@ body {
 	height: 66%;
 	margin-bottom: 4%;
 	/* padding-bottom: 2.5em; */
+	float: left;
 }
 .sliderText {
 	height: 30%;

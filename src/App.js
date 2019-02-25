@@ -13,7 +13,12 @@ class App extends Component {
     let marks = [];
     for (let i=0;i<35;i++){
       let mark = {};
-      mark[data.pset[i]]='CUR:'+data.pset[i].toFixed(2);
+      mark[data.pset[i]]={
+        label: data.pset[i].toFixed(2),
+        style:{
+          color: 'red',
+        }
+      }
       marks.push(mark);
     }
     this.state = {
