@@ -1,12 +1,11 @@
-from flask import Flask
+from flask import Flask, jsonify, request, send_from_directory
 import json
-from flask import jsonify
-from flask import request
 import surrogateModel as model
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../build')
 
-@app.route("/data")
+@app.route("/defaultData")
 def defaultData():
     data = {}
     with open('./data/2/NNVA_data.json') as f:
@@ -20,4 +19,13 @@ def previewData():
         paras.append(float(value))
     res = model.main(paras)
     return jsonify(res)
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    print(path)
+    if path != "" and os.path.exists("../build/" + path):
+        return send_from_directory('../build/', path)
+    else:
+        return send_from_directory('../build/', 'index.html')
 

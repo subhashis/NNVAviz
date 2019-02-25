@@ -1,4 +1,17 @@
 # NNVAViz
+Production Mode:
+
+```
+npm run build
+cd ./backendSrc
+
+# windows
+$env:FLASK_APP = "app"
+# Linux
+export FLASK_APP=app
+
+flask run
+```
 
 To use this visuliaztion:
 
@@ -26,6 +39,8 @@ export FLASK_APP=app
 
 flask run
 ```
+
+P.S. There may be Cors issues
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

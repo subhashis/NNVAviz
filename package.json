@@ -2,6 +2,7 @@
   "name": "react_nnvaviz",
   "version": "0.1.0",
   "private": true,
+  "homepage" : "http://127.0.0.1:5000/",
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap": "^4.2.1",
