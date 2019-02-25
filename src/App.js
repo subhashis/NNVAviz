@@ -9,7 +9,7 @@ import data from './data/1/NNVA_data';
 class App extends Component {
   constructor(props){
     super(props);
-    console.log(data);
+    // console.log(data);
     let marks = [];
     for (let i=0;i<35;i++){
       let mark = {};
@@ -21,14 +21,16 @@ class App extends Component {
       previewData: null,
       marks: marks,
     }
-    console.log(marks);
+    // console.log(marks);
     this.getData = this.getData.bind(this);
   }
 
   getData(url,para){
-    axios.get(url,para)
+    axios.get(url,{
+      params: para,
+    })
       .then(res=>{
-        console.log(res.data);
+        // console.log(res.data);
         this.setState({previewData: res.data});
       });
   }

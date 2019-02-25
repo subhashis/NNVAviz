@@ -63,8 +63,7 @@ export default class Parameters extends Component {
         for (let i in this.state.paraS){
             this.p['p'+i]=this.state.paraS[i];
         }
-        
-        this.props.run('http://127.0.0.1:5000/',this.p);
+        this.props.run('http://127.0.0.1:5000/prev',this.p);
     }
 
     handleSaveClick(){

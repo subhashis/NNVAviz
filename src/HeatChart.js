@@ -15,7 +15,7 @@ class HeatChart extends Component {
     const width = this.props.size;
     const paletteName = 'PiYG';
     let colors = colorbrewer[paletteName][10];
-      colors = colors.slice(0).reverse();
+    colors = colors.slice(0).reverse();
 
     chart.segmentHeight(3)
       .innerRadius(50)
@@ -92,7 +92,7 @@ class HeatChart extends Component {
     svg.selectAll('path.heat')
       .on('mouseover', function(d,i){
         svg.select('text')
-          .text(`Sen: ${d.value}`);
+          .text(`Sen: ${d.value.toFixed(2)}`);
         let classes = this.className.baseVal.split(' ');
         d3.selectAll(`rect.${classes[1]}`)
           .style('fill','yellow')

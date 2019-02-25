@@ -11,9 +11,19 @@ npm start
 
 To start the Back-End:
 
+Resolve dependencies for keras
+
+And then:
 ```
 pip install Flask
+
 cd ./backendSrc
+
+# windows
+$env:FLASK_APP = "app"
+# Linux
+export FLASK_APP=app
+
 flask run
 ```
 

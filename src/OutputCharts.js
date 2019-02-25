@@ -23,18 +23,18 @@ class OutputCharts extends Component {
 
 		// prepare sensitivity
 		this.sen_data = [];
-		this.sen_max = data.sensitivity[0] * 100000;
-		this.sen_min = data.sensitivity[0] * 100000;
+		this.sen_max = data.sensitivity[0] ;
+		this.sen_min = data.sensitivity[0] ;
 	
 		for (var i = 0; i < 400 * 35; i++) {
 			this.sen_data[i] = {
 			title: "Segment " + i,
-			value: Math.round((data.sensitivity[i] * 100000))
+			value: data.sensitivity[i]
 			};
-			if (data.sensitivity[i] * 100000 > this.sen_max)
-			this.sen_max = data.sensitivity[i] * 100000;
-			if (data.sensitivity[i] * 100000 < this.sen_min)
-			this.sen_min = data.sensitivity[i] * 100000;
+			if (data.sensitivity[i]  > this.sen_max)
+			this.sen_max = data.sensitivity[i] ;
+			if (data.sensitivity[i]  < this.sen_min)
+			this.sen_min = data.sensitivity[i] ;
 		}
 	
 		this.sen_mid_point = (this.sen_max + this.sen_min) / 2;
