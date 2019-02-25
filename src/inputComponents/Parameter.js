@@ -133,15 +133,15 @@ export default class Parameters extends Component {
                     </div>
                     <div className='sliderBody'>
                         <Slider 
-                            vertical={true} 
+                            vertical={true}
                             min={-1}
                             max={1}
                             index={i}
                             defaultValue={0}
                             value={this.state.paraS[i]}
                             onChange={function(value){hsC(value,this)}}
-                            railStyle={{
-                                backgroundColor: '#abe2fb',
+                            trackStyle={{
+                                backgroundColor: '#e9e9e9',
                             }}
                             marks={this.props.marks[i]}
                             step={0.005}
@@ -149,7 +149,7 @@ export default class Parameters extends Component {
                                 visibility: 'hidden',
                             }}
                             dotStyle={{
-                                borderColor: '#e9e9e9',
+                                borderColor: '#abe2fb',
                             }}
                         />
                     </div>
