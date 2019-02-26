@@ -161,16 +161,16 @@ d3.select('g')
 
 
 
-var protein_markers = svg.append("g").attr("class", "protein_markers")
-var sel = protein_markers.selectAll("circle").data(my_points)
-      sel.enter().append("circle")
-        .merge(sel)
-            .attr("r", "4")
-            .attr("cy", function(d,i) { return radius*Math.sin(d.angle + Math.PI/2) })
-            .attr("cx", function(d,i) { return radius*Math.cos(d.angle + Math.PI/2) })
-            .attr("fill", function(d,i) { return i===0 ? "000" : "#f00"})
-            .style("opacity", 0.9)
-      sel.exit().remove()
+// var protein_markers = svg.append("g").attr("class", "protein_markers")
+// var sel = protein_markers.selectAll("circle").data(my_points)
+//       sel.enter().append("circle")
+//         .merge(sel)
+//             .attr("r", "4")
+//             .attr("cy", function(d,i) { return radius*Math.sin(d.angle + Math.PI/2) })
+//             .attr("cx", function(d,i) { return radius*Math.cos(d.angle + Math.PI/2) })
+//             .attr("fill", function(d,i) { return i===0 ? "000" : "#f00"})
+//             .style("opacity", 0.9)
+//       sel.exit().remove()
 
 
 

@@ -99,7 +99,7 @@ class OutputCharts extends Component {
 	brushEnd(){
 		console.log('brush ended');
 		cancelAnimationFrame(this.ani);
-		const selectV = this.selectV;
+		let selectV = this.selectV;
 		const new_selectV = this.new_selectV;
 		// calculate add and sub selection
 		let add_select=[]; //additional element comapared to old selection
@@ -151,14 +151,14 @@ class OutputCharts extends Component {
 		
 		$('#selectedHeat').appendTo($('#selectedHeat').parent());
 
-		this.selectV = new_selectV;
+		selectV = this.selectV = new_selectV;
 
 		// update bar chart
 		let bar_svg = d3.select("#bar_svg");
 		let bar_h = parseInt( bar_svg.style("height"), 10 ) / 3;
 		let bar_w = parseInt( bar_svg.style("width"), 10 )/35;
 
-		console.log(selectV);
+		// console.log(selectV);
 
 		let barMax = 0;
 		let maxElement=0;

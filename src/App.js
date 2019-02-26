@@ -16,7 +16,7 @@ class App extends Component {
       mark[data.pset[i]]={
         label: data.pset[i].toFixed(2),
         style:{
-          color: 'red',
+          color: 'pink',
         }
       }
       marks.push(mark);

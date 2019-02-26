@@ -226,9 +226,6 @@ class CellChart extends Component {
       .on('brushstart',this.props.brushStart)
       .on('brushend',this.props.brushEnd);
 
-    let g1 = d3.select("#mychart1").select('svg')
-      .append("g")
-      .attr("class", "brush")
 
     let brush2 = my_radial_brush()
       .range([0,this.props.valueLen])
@@ -236,7 +233,19 @@ class CellChart extends Component {
       .outerRadius(90)
       .handleSize(0.08)
 
+    let brush3 = my_radial_brush()
+      .range([0,this.props.valueLen])
+      .innerRadius(45)
+      .outerRadius(60)
+      .handleSize(0.08)
+
     let g2 = d3.select("#mychart1").select('svg')
+      .append("g")
+      .attr("class", "brush")
+    let g1 = d3.select("#mychart1").select('svg')
+      .append("g")
+      .attr("class", "brush")
+    let g3 = d3.select("#mychart1").select('svg')
       .append("g")
       .attr("class", "brush")
 
@@ -247,6 +256,7 @@ class CellChart extends Component {
 
     g1.call(brush);
     g2.call(brush2);
+    g3.call(brush3);
   }
 
   render() {

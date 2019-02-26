@@ -3,29 +3,29 @@ body {
 	font-size: 14px;
 }
 #outputs {
-  width: 100%;
+  width: 1900px;
   float: left;
 }
 .chart {
-	width: 24%;
-	margin-left: 1%;
+	width: 456px;
+	margin-left: 19px;
 	float: left;
 	border: 2px solid bisque;
 	border-radius: 5px;
 }
 #bar {
-	width: 50%;
-	height: 25vw;
+	width: 950px;
+	height: 475px;
 	float: left;
 }
 #inputs {
 	float: left;
-	width: 99%;
-	margin-left: 1%;
+	width: 1881px;
+	margin-left: 19px;
 }
 
 .slider {
-	height: 8vw;
+	height: 152px;
 	width: 5.5%;
 	/* padding-bottom: 2.5em; */
 	float: left;
@@ -38,7 +38,7 @@ body {
 }
 .sliderText {
 	height: 30%;
-	font-size: 0.6vw;
+	font-size: 11px;
 	/* padding-bottom: 2.5em; */
 }
 .paraBox {
@@ -50,16 +50,16 @@ body {
 	float: left;
 }
 #previewChart {
-	width: 18%;
+	width: 324px;
 	float: left;
 }
 .btn {
-	margin-bottom: 0.2vw;
-	font-size: 0.7vw;
+	margin-bottom: 4px;
+	font-size: 13px;
 }
 
 #saved {
-	height: 2vw;
+	height: 40px;
 	float: left;
 }
 
@@ -71,7 +71,7 @@ body {
 }
 
 #controls {
-	height: 8vw;
+	height: 152px;
 	float: left;
 }
 
