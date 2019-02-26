@@ -75,7 +75,7 @@ export default class Preview extends Component {
 
         const data = this.props.previewData;
         const valueLen = this.props.valueLen;
-        const radius = this.props.radius;
+        // const radius = this.props.radius;
         const dummy_data = d3.range(0, 2 * Math.PI, 2 * Math.PI/valueLen); 
         const uncertainty_scale = 500; //to keep uncertainty bands in scale
         let my_points = [];
@@ -112,14 +112,15 @@ export default class Preview extends Component {
         var protein_markers = d3.select("#previewChart")
           .select("g.protein_markers");
     
-        var sel = protein_markers.selectAll("circle").data(my_points);
-        sel.attr("r", "1.18")
-          .attr("cy", function (d, i) {
-            return radius * Math.sin(d.angle + Math.PI / 2)
-          })
-          .attr("cx", function (d, i) {
-            return radius * Math.cos(d.angle + Math.PI / 2)
-          })
+        var sel = protein_markers.selectAll("path").data(my_points);
+        sel
+          // .attr("r", "1.18")
+          // .attr("cy", function (d, i) {
+          //   return radius * Math.sin(d.angle + Math.PI / 2)
+          // })
+          // .attr("cx", function (d, i) {
+          //   return radius * Math.cos(d.angle + Math.PI / 2)
+          // })
           .attr("fill", function (d, i) {
             return colorScale(d.value)
           })
@@ -163,15 +164,22 @@ export default class Preview extends Component {
         var protein_markers = d3.select("#previewChart").select("svg")
           .append("g").attr("class", "protein_markers");
     
-        var sel = protein_markers.selectAll("circle").data(this.my_points)
-        sel.enter().append("circle")
-          .attr("r", "1.18")
-          .attr("cy", function (d, i) {
-            return radius * Math.sin(d.angle + Math.PI / 2)
+        var sel = protein_markers.selectAll("path").data(this.my_points)
+        sel.enter()
+          .append("path")
+          .attr("d", d3.arc().innerRadius(radius-2).outerRadius(radius+2).startAngle((d)=>d.angle + Math.PI-Math.PI/400).endAngle((d)=>d.angle + Math.PI+Math.PI/400))
+          .attr("fill", function (d, i) {
+            return colorScale(d.value)
           })
-          .attr("cx", function (d, i) {
-            return radius * Math.cos(d.angle + Math.PI / 2)
-          })
+          // .append("circle")
+          // .attr("r", "1.18")
+          // .attr("cy", function (d, i) {
+          //   return radius * Math.sin(d.angle + Math.PI / 2)
+          // })
+          // .attr("cx", function (d, i) {
+          //   return radius * Math.cos(d.angle + Math.PI / 2)
+          // })
+
           .attr("fill", function (d, i) {
             return colorScale(d.value)
           })
@@ -186,7 +194,7 @@ export default class Preview extends Component {
           colors = colors.slice(0).reverse();
           this.colorScale.range(colors);
 
-          d3.select("#previewChart").select("g.protein_markers").selectAll("circle")
+          d3.select("#previewChart").select("g.protein_markers").selectAll("path")
             .attr("fill", d=> {
               return this.colorScale(d.value)
             });
@@ -211,7 +219,7 @@ export default class Preview extends Component {
               console.log(this.maxValue);
               this.colorScale.domain([this.minValue,this.maxValue]);
             }
-            d3.select("#previewChart").select("g.protein_markers").selectAll("circle")
+            d3.select("#previewChart").select("g.protein_markers").selectAll("path")
               .attr("fill", d=> {
                 return this.colorScale(d.value)
               });

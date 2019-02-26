@@ -103,21 +103,25 @@ class CellChart extends Component {
     var protein_markers = d3.select("#mychart1").select("svg")
       .append("g").attr("class", "protein_markers");
 
-    var sel = protein_markers.selectAll("circle").data(this.my_points)
-    sel.enter().append("circle")
-      .attr("r", "1.18")
-      .attr("cy", function (d, i) {
-        return radius * Math.sin(d.angle + Math.PI / 2)
-      })
-      .attr("cx", function (d, i) {
-        return radius * Math.cos(d.angle + Math.PI / 2)
-      })
+    var sel = protein_markers.selectAll("path").data(this.my_points)
+    sel.enter()
+      .append("path")
+      .attr("d", d3.arc().innerRadius(radius-2.5).outerRadius(radius+2.5).startAngle((d)=>d.angle + Math.PI-Math.PI/400).endAngle((d)=>d.angle + Math.PI+Math.PI/400))
       .attr("fill", function (d, i) {
         return colorScale(d.value)
       })
       .attr("stroke", "black")
       .attr("stroke-width", 0.15)
       .style("opacity", 0.9);
+    
+      // .append("circle")
+      // .attr("r", "1.18")
+      // .attr("cy", function (d, i) {
+      //   return radius * Math.sin(d.angle + Math.PI / 2)
+      // })
+      // .attr("cx", function (d, i) {
+      //   return radius * Math.cos(d.angle + Math.PI / 2)
+      // })
 
     // draw brush
     this.drawBrush();
@@ -129,7 +133,7 @@ class CellChart extends Component {
       colors = colors.slice(0).reverse();
       this.colorScale.range(colors);
 
-      d3.select("#mychart1").select("g.protein_markers").selectAll("circle")
+      d3.select("#mychart1").select("g.protein_markers").selectAll("path")
         .attr("fill", d=> {
           return this.colorScale(d.value)
         });
@@ -153,7 +157,7 @@ class CellChart extends Component {
       else {
         this.colorScale.domain([this.minValue,this.maxValue]);
       }
-      d3.select("#mychart1").select("g.protein_markers").selectAll("circle")
+      d3.select("#mychart1").select("g.protein_markers").selectAll("path")
         .attr("fill", d=> {
           return this.colorScale(d.value)
         });

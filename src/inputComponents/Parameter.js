@@ -67,13 +67,17 @@ export default class Parameters extends Component {
     }
 
     handleSaveClick(){
-        if (this.p){
+        // if (this.p){
             // if run is ever clicked
-            this.p.data = this.props.previewData;
+            // this.p.data = this.props.previewData;
             let new_data = this.state.data.slice(0);
+            this.p={};
+            for (let i in this.state.paraS){
+                this.p['p'+i]=this.state.paraS[i];
+            }
             new_data.push(this.p);
             this.setState({data:new_data});
-        }
+        // }
     }
 
     download(filename, text) {
@@ -190,7 +194,7 @@ export default class Parameters extends Component {
                           onClick: (e, handleOriginal) => {
                                 if (rowInfo){
                                     let d = this.state.data[rowInfo.index];
-                                    this.props.tableClick(d.data);
+                                    // this.props.tableClick(d.data);
                                     let para=[];
                                     let paraS = [];
                                     for (let i =0 ;i<35;i++){
@@ -206,6 +210,7 @@ export default class Parameters extends Component {
                                 // If you want to fire the original onClick handler, call the
                                 // 'handleOriginal' function.
                                 if (handleOriginal) handleOriginal();
+                                return false;
                             }
                         };
                     }}
