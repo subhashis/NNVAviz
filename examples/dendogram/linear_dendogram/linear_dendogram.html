@@ -26,47 +26,47 @@ var svg = d3.select("#my_dataviz")
 // read json data
 d3.json("../2687/d3-dendrogram_param_sensitivity.json", function(data) {
 
-  // Create the cluster layout:
-  var cluster = d3.cluster()
-    .size([height, width - 100]);  // 100 is the margin I will have on the right side
+// Create the cluster layout:
+var cluster = d3.cluster()
+  .size([height, width - 100]);  // 100 is the margin I will have on the right side
 
-  console.log(data);
-  // Give the data to this cluster layout:
-  var root = d3.hierarchy(data, function(d) {
-      return d.children;
-  });
-  cluster(root);
+console.log(data);
+// Give the data to this cluster layout:
+var root = d3.hierarchy(data, function(d) {
+    return d.children;
+});
+cluster(root);
+
+console.log(root);
+
+// Add the links between nodes:
+svg.selectAll('path')
+  .data( root.descendants().slice(1) )
+  .enter()
+  .append('path')
+  .attr("d", function(d) {
+      return "M" + d.y + "," + d.x
+              + "C" + (d.parent.y + 5) + "," + d.x
+              + " " + (d.parent.y + 5) + "," + d.parent.x // 50 and 150 are coordinates of inflexion, play with it to change links shape
+              + " " + d.parent.y + "," + d.parent.x;
+            })
+  .style("fill", 'none')
+  .attr("stroke", '#ccc')
 
 
-  // Add the links between nodes:
-  svg.selectAll('path')
-    .data( root.descendants().slice(1) )
+// Add a circle for each node.
+svg.selectAll("g")
+    .data(root.descendants())
     .enter()
-    .append('path')
-    .attr("d", function(d) {
-        return "M" + d.y + "," + d.x
-                + "C" + (d.parent.y + 5) + "," + d.x
-                + " " + (d.parent.y + 5) + "," + d.parent.x // 50 and 150 are coordinates of inflexion, play with it to change links shape
-                + " " + d.parent.y + "," + d.parent.x;
-              })
-    .style("fill", 'none')
-    .attr("stroke", '#ccc')
-
-
-  // Add a circle for each node.
-  svg.selectAll("g")
-      .data(root.descendants())
-      .enter()
-      .append("g")
-      .attr("transform", function(d) {
-          return "translate(" + d.y + "," + d.x + ")"
-      })
-      .append("circle")
-        .attr("r", 4)
-        .style("fill", "#69b3a2")
-        .attr("stroke", "black")
-        .style("stroke-width", 1)
-
+    .append("g")
+    .attr("transform", function(d) {
+        return "translate(" + d.y + "," + d.x + ")"
+    })
+    .append("circle")
+      .attr("r", 4)
+      .style("fill", "#69b3a2")
+      .attr("stroke", "black")
+      .style("stroke-width", 1)
 })
 
 </script>

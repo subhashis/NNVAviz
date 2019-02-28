@@ -9,9 +9,9 @@ let data;
 class OutputCharts extends Component {
 	constructor(props){
 		super(props);
-		// this.state = {
-		// 	selectV: [],
-		// }
+		this.state = {
+			allSenHist:[],
+		};
 		data = this.props.data;
 		this.selectionStarted = false;
 		this.valueLen = 400;
@@ -19,7 +19,6 @@ class OutputCharts extends Component {
 		for (let i=0;i<400;i++){
 			this.selectV.push(i);
 		}
-		this.allSenHist = [];
 
 		// prepare sensitivity
 		this.sen_data = [];
@@ -38,6 +37,27 @@ class OutputCharts extends Component {
 		}
 	
 		this.sen_mid_point = (this.sen_max + this.sen_min) / 2;
+		let maxElement=0;
+		let max_allV =0;
+		this.allSenHist = [];
+		for( let i=0; i<35; i++ ){
+			let sum = 0;
+			let index = i * 400;
+			for( let j=0; j<400; j++ ){
+			  sum += this.sen_data[index + j].value;
+			  if( maxElement < this.sen_data[index + j].value ){
+				maxElement = this.sen_data[index + j].value;
+			  }
+			}
+			let tmp = {
+			  'allV': sum / 400,
+			  'partV': 0,
+			};
+			if( max_allV < tmp.allV ){
+				max_allV = tmp.allV;
+			}
+			this.allSenHist.push( tmp );
+		}
 	}
 
 	componentDidMount(){
@@ -154,11 +174,6 @@ class OutputCharts extends Component {
 		selectV = this.selectV = new_selectV;
 
 		// update bar chart
-		let bar_svg = d3.select("#bar_svg");
-		let bar_h = 100 / 3;
-		let bar_w = 100/35;
-
-		// console.log(selectV);
 
 		let barMax = 0;
 		let maxElement=0;
@@ -182,36 +197,12 @@ class OutputCharts extends Component {
 			}
 		}
 		barMax = maxElement;
-		maxElement = maxElement<=0?1:maxElement
+		maxElement = maxElement<=0?1:maxElement;
+		this.setState({
+			allSenHist: this.allSenHist,
+			maxElement: maxElement,
+		})
 
-		bar_svg.selectAll("#partial")
-		.data(this.allSenHist)
-		.transition().duration(750)
-		.attr("transform", function(d, i) { return "translate(" + i*(bar_w) + "," + (bar_h-(d.partV/maxElement)*bar_h) + ")"; } )
-		.attr("width", function(d) { return bar_w; })
-		.attr("height", function(d) { return (d.partV/maxElement)*bar_h; })
-		.attr("fill", 'red');
-
-		bar_svg.selectAll("#all")
-		.data(this.allSenHist)
-		.transition().duration(750)
-		.attr("transform", function(d, i) { return "translate(" + i*(bar_w) + "," + (bar_h*2-(d.allV/maxElement)*bar_h) + ")"; } )
-		.attr("width", function(d) { return bar_w; })
-		.attr("height", function(d) { return (d.allV/maxElement)*bar_h; })
-
-		bar_svg.selectAll("#allBarLabel")
-			   .data( d3.range(0, 35, 1) )
-			   .transition().duration(750)
-			   .attr("transform", function (d) {
-					return "translate("+ (bar_w/3 + d*(bar_w+1)) + "," + bar_h +")rotate(90)";
-				});
-					
-		bar_svg.selectAll("#selectBarLabel")
-				.data( d3.range(0, 35, 1) )
-				.transition().duration(750)
-				.attr("transform", function (d) {
-					return "translate("+ (bar_w/3 + d*(bar_w+1)) + "," + bar_h*2 +")rotate(90)";
-				});
 
 	}
 	brushMove(brush){
@@ -245,7 +236,8 @@ class OutputCharts extends Component {
 							sen_min={this.sen_min} 
 							sen_max={this.sen_max} 
 							sen_mid_point={this.sen_mid_point}
-							allSenHist={this.allSenHist}
+							allSenHist={this.state.allSenHist}
+							maxElement={this.state.maxElement}
 				/>
 			</HeatChart>
 		</div>

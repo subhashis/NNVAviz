@@ -167,7 +167,7 @@ export default function my_radial_brush() {
 	return _circularbrush;
 
 	function resizeDown(d) {
-		console.log(_extent);
+		// console.log(_extent);
 		d3.event.preventDefault();
 		var _mouse = d3.mouse(_brushG.node());
 
