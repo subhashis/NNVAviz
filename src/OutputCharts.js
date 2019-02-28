@@ -155,8 +155,8 @@ class OutputCharts extends Component {
 
 		// update bar chart
 		let bar_svg = d3.select("#bar_svg");
-		let bar_h = parseInt( bar_svg.style("height"), 10 ) / 3;
-		let bar_w = parseInt( bar_svg.style("width"), 10 )/35;
+		let bar_h = 100 / 3;
+		let bar_w = 100/35;
 
 		// console.log(selectV);
 
@@ -187,7 +187,7 @@ class OutputCharts extends Component {
 		bar_svg.selectAll("#partial")
 		.data(this.allSenHist)
 		.transition().duration(750)
-		.attr("transform", function(d, i) { return "translate(" + i*(bar_w+1) + "," + (bar_h-(d.partV/maxElement)*bar_h) + ")"; } )
+		.attr("transform", function(d, i) { return "translate(" + i*(bar_w) + "," + (bar_h-(d.partV/maxElement)*bar_h) + ")"; } )
 		.attr("width", function(d) { return bar_w; })
 		.attr("height", function(d) { return (d.partV/maxElement)*bar_h; })
 		.attr("fill", 'red');
@@ -195,7 +195,7 @@ class OutputCharts extends Component {
 		bar_svg.selectAll("#all")
 		.data(this.allSenHist)
 		.transition().duration(750)
-		.attr("transform", function(d, i) { return "translate(" + i*(bar_w+1) + "," + (bar_h*2-(d.allV/maxElement)*bar_h) + ")"; } )
+		.attr("transform", function(d, i) { return "translate(" + i*(bar_w) + "," + (bar_h*2-(d.allV/maxElement)*bar_h) + ")"; } )
 		.attr("width", function(d) { return bar_w; })
 		.attr("height", function(d) { return (d.allV/maxElement)*bar_h; })
 

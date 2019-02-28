@@ -64,6 +64,6 @@ body {
 }
 
 .ReactTable {
+	width: 98vw;
 	float: left;
-	width: 100%;
 }

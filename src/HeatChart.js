@@ -84,15 +84,27 @@ class HeatChart extends Component {
 
     // selected value on the cornor
     svg.append('text')
-      .text('Sen: ')
-      .attr('x',-this.props.size/2)
-      .attr('y',-this.props.size/2)
+      .text('P0:')
+      .attr('id','P')
+      .attr('x',0)
+      .attr('y',0)
+      .style('text-anchor','middle')
+      .style('dominant-baseline','baseline');
+    
+    svg.append('text')
+      .text('')
+      .attr('id','senValue')
+      .attr('x',0)
+      .attr('y',0)
+      .style('text-anchor','middle')
       .style('dominant-baseline','hanging');
     
     svg.selectAll('path.heat')
       .on('mouseover', function(d,i){
-        svg.select('text')
-          .text(`Sen: ${d.value.toFixed(2)}`);
+        svg.select('#senValue')
+          .text(`${d.value.toFixed(2)}`);
+        svg.select('#P')
+          .text(`${this.getAttribute("class").split(' ')[1]}:`);
         let classes = this.className.baseVal.split(' ');
         d3.selectAll(`rect.${classes[1]}`)
           .style('fill','yellow')
