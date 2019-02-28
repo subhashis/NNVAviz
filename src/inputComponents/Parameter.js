@@ -116,7 +116,7 @@ export default class Parameters extends Component {
             sliders.push(
                 <div key ={i} className='slider'>
                     <div className='sliderText'>
-                        {`P${i}:`}<br></br>
+                        {`P${i}: `}
                         <input id={i} className='paraBox' type="text" value={this.state.para[i]} onChange={this.handleInputChange} />
                     </div>
                     <div className='sliderBody'>
@@ -133,6 +133,9 @@ export default class Parameters extends Component {
                             }}
                             step={0.005}
                             handle={handle}
+                            handleStyle={{
+                                borderColor: '#1632ff',
+                            }}
                         />
                     </div>
                     <div className='sliderBody'>
@@ -153,7 +156,7 @@ export default class Parameters extends Component {
                                 visibility: 'hidden',
                             }}
                             dotStyle={{
-                                borderColor: '#abe2fb',
+                                borderColor: '#1632ff',
                             }}
                         />
                     </div>
@@ -174,24 +177,26 @@ export default class Parameters extends Component {
         }
         
         return (
-            <div id = 'sliders'>
-                {sliders}
-                <div id='controls'>
-                    <button className="btn btn-primary btn-sm" onClick={()=>this.handleRunClick()} >Run</button><br></br>
-                    <button className="btn btn-primary btn-sm" onClick={()=>this.handleSaveClick()} >Save</button><br></br>
-                    <button className="btn btn-primary btn-sm" onClick={()=>this.handleExportClick()} >Export</button><br></br>
-                    <label className="btn btn-primary btn-sm">
-                        Import <input type="file" id="fileInput" onChange={()=>this.handleImportClick()} />
-                    </label><br></br><br></br>
+            <div>
+                <div id = 'parameters'>
+                    {sliders}
+                    <div id='controls'>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleRunClick()} >Run</button><br></br>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleSaveClick()} >Save</button><br></br>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleExportClick()} >Export</button><br></br>
+                        {/* <label className="btn btn-primary btn-sm">
+                            Import <input type="file" id="fileInput" onChange={()=>this.handleImportClick()} />
+                        </label> */}
+                        <br></br><br></br>
+                    </div>
                 </div>
-                
                 <ReactTable
                     data={this.state.data}
                     columns={columns}
                     defaultPageSize={5}
                     getTdProps={(state, rowInfo, column, instance) => {
                         return {
-                          onClick: (e, handleOriginal) => {
+                        onClick: (e, handleOriginal) => {
                                 if (rowInfo){
                                     let d = this.state.data[rowInfo.index];
                                     // this.props.tableClick(d.data);
@@ -216,6 +221,7 @@ export default class Parameters extends Component {
                     }}
                 />
             </div>
+            
         );
     }
 }

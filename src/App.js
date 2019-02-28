@@ -16,7 +16,7 @@ class App extends Component {
       mark[data.pset[i]]={
         label: data.pset[i].toFixed(2),
         style:{
-          color: 'pink',
+          color: '#ff2b75',
         }
       }
       marks.push(mark);
@@ -47,7 +47,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <p align="center"><font size="8px" color="#777" fontFamily="Georgia">NNVA: Neural Network Assisted Visual Analysis</font></p>
+        {/* <p align="center"><font size="8px" color="#777" fontFamily="Georgia">NNVA: Neural Network Assisted Visual Analysis</font></p> */}
         <OutputCharts
           data={this.state.data}
         />

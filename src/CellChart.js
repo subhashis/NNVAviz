@@ -75,7 +75,8 @@ class CellChart extends Component {
 
     // create svg
     d3.select("#mychart1").append("svg")
-      .attr("viewBox", `-${width/2} -${width/2} ${width} ${width}`);
+      .attr("viewBox", `-${width/2} -${width/2} ${width} ${width}`)
+      .attr("class", "main");
 
     // draw radial axes
     this.draw_radial_axes();
@@ -267,7 +268,7 @@ class CellChart extends Component {
     return ( 
       <div className = "chart" id = "mychart1">
         <p align="center">Cell Chart</p>
-        Palette:
+        {/* Palette:
         <select id="cellColorMap" defaultValue='PiYG'>
           <option value="RdYlGn">RdYlGn</option>
           <option value="Spectral">Spectral</option>
@@ -283,7 +284,7 @@ class CellChart extends Component {
         <select id="cellColorScale" defaultValue='full'>
           <option value="full">Full</option>
           <option value="context">Context</option>
-        </select>
+        </select> */}
       </div>
     )
   }
