@@ -1,66 +1,54 @@
 /* Document styling */
 body {
-	font-size: 14px;
-}
-#outputs {
-  width: 1900px;
-  float: left;
+	font-size: 1vw;
 }
 .chart {
-	width: 456px;
-	margin-left: 19px;
+	width: 48.5vw;
+	margin: 0.25vw;
 	float: left;
-	border: 2px solid bisque;
+	border: 2px solid rgb(116, 116, 116);
 	border-radius: 5px;
 }
 #bar {
-	width: 950px;
-	height: 475px;
+	width: 50%;
 	float: left;
-}
-#inputs {
-	float: left;
-	width: 1881px;
-	margin-left: 19px;
 }
 
-.slider {
-	height: 152px;
-	width: 5.5%;
-	/* padding-bottom: 2.5em; */
+#parameters {
+	border: 2px solid rgb(116, 116, 116);
+	border-radius: 5px;
+	margin: 0.25vw;
+	width: 72.75vw;
 	float: left;
+	height: 26.58vw;
+}
+.slider {
+	height: 33.33%;
+	width: 7%;
+	float: left;
+	padding: 0.5%;
 }
 .sliderBody {
-	height: 66%;
-	margin-bottom: 4%;
-	/* padding-bottom: 2.5em; */
+	height: 100%;
 	float: left;
 }
 .sliderText {
-	height: 30%;
-	font-size: 11px;
-	/* padding-bottom: 2.5em; */
-}
-.paraBox {
-	width: 3.5em;
+	font-size: 0.5vw;
+	height: 100%;
+	text-orientation: sideways;
+	writing-mode: sideways-lr;
+	float: left;
+	margin-right: 2%
 }
 
-#sliders {
-	width: 80%;
-	float: left;
-}
 #previewChart {
-	width: 324px;
+	width: 24.25vw;
 	float: left;
+	margin: 0.25vw;
 }
 .btn {
-	margin-bottom: 4px;
-	font-size: 13px;
-}
-
-#saved {
-	height: 40px;
-	float: left;
+	margin-bottom: 1%;
+	font-size: 0.7vw;
 }
 
 #fileInput {

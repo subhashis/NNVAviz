@@ -223,7 +223,7 @@ class OutputCharts extends Component {
 
   render() {
     return (
-		<div id="outputs" >
+		<div>
 			<CellChart 
 				data = {data}
 				radius={150} 
@@ -240,13 +240,14 @@ class OutputCharts extends Component {
 						sen_min={this.sen_min} 
 						sen_max={this.sen_max} 
 						sen_mid_point={this.sen_mid_point}
-			/>
-			<BarChart  sen_data={this.sen_data} 
-						sen_min={this.sen_min} 
-						sen_max={this.sen_max} 
-						sen_mid_point={this.sen_mid_point}
-						allSenHist={this.allSenHist}
-			/>
+			>
+				<BarChart  sen_data={this.sen_data} 
+							sen_min={this.sen_min} 
+							sen_max={this.sen_max} 
+							sen_mid_point={this.sen_mid_point}
+							allSenHist={this.allSenHist}
+				/>
+			</HeatChart>
 		</div>
     );
   }

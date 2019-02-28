@@ -287,7 +287,7 @@ export default class Preview extends Component {
         return ( 
           <div className = "chart" id = "previewChart">
             <p align="center">Preview</p>
-            Palette:
+            {/* Palette:
             <select id="preColorMap" defaultValue='PiYG'>
               <option value="RdYlGn">RdYlGn</option>
               <option value="Spectral">Spectral</option>
@@ -303,7 +303,7 @@ export default class Preview extends Component {
             <select id="preColorScale" defaultValue='full'>
               <option value="full">Full</option>
               <option value="context">Context</option>
-            </select>
+            </select> */}
           </div>
         )
       }

@@ -27,8 +27,8 @@ class HeatChart extends Component {
     d3.select('#mychart2')
       .selectAll('svg')
       .data([sen_data])
-      .enter().append('svg')
       .attr("viewBox", `-${width/2} -${width/2} ${width} ${width}`)
+      .attr("class", "main")
       .call(chart);
 
     function accessorFun(d){
@@ -141,7 +141,7 @@ class HeatChart extends Component {
     return (
       <div className = "chart" id = "mychart2">
         <p align="center">Sensitivity Heat Chart</p>
-        Palette:
+        {/* Palette:
         <select id="palette" defaultValue='PiYG'>
           <option value="RdYlGn">RdYlGn</option>
           <option value="Spectral">Spectral</option>
@@ -152,7 +152,9 @@ class HeatChart extends Component {
           <option value="PRGn">PRGn</option>
           <option value="BrBG">BrBG</option>
           <option value="PuOr">PuOr</option>
-        </select>
+        </select> */}
+        <svg ></svg>
+        {this.props.children}
       </div>
     );
   }

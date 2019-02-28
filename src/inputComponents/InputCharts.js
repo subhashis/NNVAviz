@@ -13,18 +13,18 @@ export default class InputCharts extends Component {
     }
     render(){
         return (
-            <div id="inputs" >
-                <Parameter 
-                    run = {this.props.request}
-                    previewData = {this.props.previewData}
-                    tableClick = {(d)=>{this.handleTableClick(d)}}
-                    marks = {this.props.marks}
-                />
+            <div>
                 <Preview 
                     previewData = {this.state.previewData?this.state.previewData:this.props.previewData}
                     radius={150} 
                     size={400} 
                     valueLen={400}
+                />
+                <Parameter 
+                    run = {this.props.request}
+                    previewData = {this.props.previewData}
+                    tableClick = {(d)=>{this.handleTableClick(d)}}
+                    marks = {this.props.marks}
                 />
 		    </div>
         )
