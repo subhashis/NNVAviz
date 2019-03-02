@@ -28,7 +28,7 @@ class HeatChart extends Component {
       .selectAll('svg')
       .data([sen_data])
       .attr("viewBox", `-${width/2} -${width/2} ${width} ${width}`)
-      .attr("class", "main")
+      .attr("class", "heat")
       .call(chart);
 
     function accessorFun(d){
@@ -104,7 +104,7 @@ class HeatChart extends Component {
         svg.select('#senValue')
           .text(`${d.value.toFixed(2)}`);
         svg.select('#P')
-          .text(`${this.getAttribute("class").split(' ')[1]}:`);
+          .text(`${this.getAttribute("class").split(' ')[1]}`);
         let classes = this.className.baseVal.split(' ');
         d3.selectAll(`rect.${classes[1]}`)
           .style('fill','yellow')
@@ -151,7 +151,7 @@ class HeatChart extends Component {
   
   render() {
     return (
-      <div className = "chart" id = "mychart2">
+      <div className = "block" id = "mychart2">
         <p align="center">Sensitivity Heat Chart</p>
         {/* Palette:
         <select id="palette" defaultValue='PiYG'>

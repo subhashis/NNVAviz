@@ -116,8 +116,8 @@ export default class Parameters extends Component {
             sliders.push(
                 <div key ={i} className='slider'>
                     <div className='sliderText'>
-                        {`P${i}: `}
-                        <input id={i} className='paraBox' type="text" value={this.state.para[i]} onChange={this.handleInputChange} />
+                        <span>{`P${i}: `}</span>
+                        <input id={i} className='paraBox' type="text" value={this.state.para[i]} onChange={this.handleInputChange} ></input>
                     </div>
                     <div className='sliderBody'>
                         <Slider 
@@ -178,7 +178,7 @@ export default class Parameters extends Component {
         
         return (
             <div>
-                <div id = 'parameters'>
+                <div id = 'parameters' className='block'>
                     {sliders}
                     <div id='controls'>
                         <button className="btn btn-primary btn-sm" onClick={()=>this.handleRunClick()} >Run</button><br></br>

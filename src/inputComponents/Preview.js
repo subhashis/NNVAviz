@@ -285,7 +285,7 @@ export default class Preview extends Component {
       render() {
         // console.log('render');
         return ( 
-          <div className = "chart" id = "previewChart">
+          <div className = "block" id = "previewChart">
             <p align="center">Preview</p>
             {/* Palette:
             <select id="preColorMap" defaultValue='PiYG'>

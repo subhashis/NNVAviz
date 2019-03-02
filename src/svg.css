@@ -1,7 +1,20 @@
 /* SVG styling */
-svg.main {
-	width: 50%;
+svg {
 	float: left;
+}
+
+svg.heat {
+	width: 50%;
+}
+
+svg.cell{
+	width:58.3%;
+}
+svg#rDendo {
+	width: 41.7%;
+}
+svg#legend {
+	width: 41.7%;
 }
 
 path {

@@ -2,12 +2,17 @@
 body {
 	font-size: 1vw;
 }
-.chart {
-	width: 48.5vw;
+.block {
 	margin: 0.25vw;
 	float: left;
 	border: 2px solid rgb(116, 116, 116);
 	border-radius: 5px;
+}
+#mychart1{
+	width:44.7vw;
+}
+#mychart2{
+	width:52.3vw;
 }
 #bar {
 	width: 50%;
@@ -15,32 +20,30 @@ body {
 }
 
 #parameters {
-	border: 2px solid rgb(116, 116, 116);
-	border-radius: 5px;
-	margin: 0.25vw;
 	width: 72.75vw;
 	float: left;
 	height: 26.58vw;
 }
 .slider {
 	height: 33.33%;
-	width: 7%;
 	float: left;
 	padding: 0.5%;
+	width: 6%;
+	margin-left: 2%;
 }
 .sliderBody {
 	height: 100%;
 	float: left;
 }
 .sliderText {
-	font-size: 0.5vw;
-	height: 100%;
-	text-orientation: sideways;
-	writing-mode: sideways-lr;
+	position: absolute;
+	font-size: 0.7vw;
+	transform: rotate(-90deg) translate(-3vw,-3.7vw); 
 	float: left;
-	margin-right: 2%
 }
-
+.paraBox {
+	width: 6em;
+}
 #previewChart {
 	width: 24.25vw;
 	float: left;
@@ -55,7 +58,7 @@ body {
 	display: none;
 }
 .rc-slider-mark-text {
-	font-size: xx-small;
+	font-size: 0.7vw;
 }
 
 #controls {
@@ -64,6 +67,6 @@ body {
 }
 
 .ReactTable {
-	width: 98vw;
+	width: 97.7vw;
 	float: left;
 }

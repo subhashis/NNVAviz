@@ -74,9 +74,8 @@ class CellChart extends Component {
     const radius = this.props.radius;
 
     // create svg
-    d3.select("#mychart1").append("svg")
+    d3.select("#mychart1").select("svg.cell")
       .attr("viewBox", `-${width/2} -${width/2} ${width} ${width}`)
-      .attr("class", "main");
 
     // draw radial axes
     this.draw_radial_axes();
@@ -219,6 +218,15 @@ class CellChart extends Component {
       .text(function (d) {
         return d + "°";
       });
+    const rDenSvg=d3.select('svg#rDendo');
+    rDenSvg.attr("viewBox", `0 0 100 100`);
+    rDenSvg.append('rect').attr('width','100%').attr('height','100%').style('fill','red');
+
+    const legendSvg=d3.select('svg#legend');
+    legendSvg.attr("viewBox", `0 0 70 25`);
+    legendSvg.append('rect').attr('width','100%').attr('height','100%').style('fill','black');
+    
+    console.log(rDenSvg);
   }
 
   drawBrush(){
@@ -266,8 +274,12 @@ class CellChart extends Component {
 
   render() {
     return ( 
-      <div className = "chart" id = "mychart1">
+      <div className = "block" id = "mychart1">
         <p align="center">Cell Chart</p>
+        <svg className='cell'></svg>
+        <svg id='legend'></svg>
+        <svg id='rDendo'></svg>
+
         {/* Palette:
         <select id="cellColorMap" defaultValue='PiYG'>
           <option value="RdYlGn">RdYlGn</option>
