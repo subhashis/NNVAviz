@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import './svg.css';
-import './style.css';
 import OutputCharts from './OutputCharts';
 import InputCharts from './inputComponents/InputCharts';
 import axios from 'axios';
 import data from './data/1/NNVA_data';
+import 'react-table/react-table.css'
+import 'rc-slider/assets/index.css';
+import 'rc-tooltip/assets/bootstrap.css';
+import './svg.css';
+import './style.css';
 
 class App extends Component {
   constructor(props){
@@ -13,12 +16,51 @@ class App extends Component {
     let marks = [];
     for (let i=0;i<35;i++){
       let mark = {};
-      mark[data.pset[i]]={
-        label: data.pset[i].toFixed(2),
+      let r=[];
+      r.push(data.pset[i]);
+      r.push(Math.random()*2-1);
+      r.push(Math.random()*2-1);
+      mark[r[0]]={
+        label: r[0].toFixed(2),
+        name: 'Cur',
         style:{
           color: '#ff2b75',
+          transform: r[0].transform,
         }
       }
+      mark[r[1]]={
+        label: r[1].toFixed(2),
+        name: 'Max',
+        style:{
+          color: '#ad7c0c',
+          transform: r[0].transform,
+        }
+      }
+      mark[r[2]]={
+        label: r[2].toFixed(2),
+        name: 'Min',
+        style:{
+          color: '#2b75ff',
+          transform: r[0].transform,
+        }
+      }
+      for (let i in mark){
+        mark[i].level = 0;
+      }
+      for (let i = 0;i<r.length;i++){
+        console.log(i);
+        for (let j = i+1;j<r.length;j++){
+          console.log(j);
+          if (Math.abs(r[j]-r[i])<0.12){
+            mark[r[j]].level = mark[r[i]].level+1;
+          } 
+        }
+      }
+      for (let i in mark){
+        let tmp = mark[i];
+        tmp.style.transform = 'translateX(-30%) rotate(70deg) translateX('+tmp.level*100+'%)';
+      }
+      console.log(mark);
       marks.push(mark);
     }
     this.state = {
@@ -26,7 +68,6 @@ class App extends Component {
       previewData: null,
       marks: marks,
     }
-    // console.log(marks);
     this.getData = this.getData.bind(this);
   }
 

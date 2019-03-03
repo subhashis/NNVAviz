@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import Slider from 'rc-slider';
 import Tooltip from 'rc-tooltip';
 import ReactTable from "react-table";
-import 'react-table/react-table.css'
-import 'rc-slider/assets/index.css';
-import 'rc-tooltip/assets/bootstrap.css';
 // import $ from 'jquery';
 
 const Handle = Slider.Handle;
@@ -108,6 +105,21 @@ export default class Parameters extends Component {
         }
         reader.readAsText(file);
     }
+    handleChangeClick(tar){
+        console.log(this.props.marks);
+        let new_para = this.state.para.slice(0);
+        let new_paraS = this.state.paraS.slice(0);
+        for (const i in this.props.marks){
+            let sl = this.props.marks[i];
+            for (const mark in sl){
+                if (sl[mark].name===tar){
+                    new_para[i]= mark.toString();
+                    new_paraS[i]= parseFloat(mark);
+                }
+            }
+        }
+        this.setState({para: new_para, paraS: new_paraS});
+    }
 
     render(){
         let sliders = [];
@@ -121,7 +133,7 @@ export default class Parameters extends Component {
                     </div>
                     <div className='sliderBody'>
                         <Slider 
-                            vertical={true} 
+                            vertical={false} 
                             min={-1}
                             max={1}
                             index={i}
@@ -140,7 +152,7 @@ export default class Parameters extends Component {
                     </div>
                     <div className='sliderBody'>
                         <Slider 
-                            vertical={true}
+                            vertical={false}
                             min={-1}
                             max={1}
                             index={i}
@@ -178,16 +190,20 @@ export default class Parameters extends Component {
         
         return (
             <div>
-                <div id = 'parameters' className='block'>
-                    {sliders}
+                <div className='block'>
+                    <div id = 'parameters' >
+                        {sliders}
+                    </div>
                     <div id='controls'>
-                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleRunClick()} >Run</button><br></br>
-                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleSaveClick()} >Save</button><br></br>
-                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleExportClick()} >Export</button><br></br>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleRunClick()} >Run</button>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleSaveClick()} >Save</button>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleExportClick()} >Export</button>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Cur')} style={{backgroundColor: '#ff2b75',}}>Current</button>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Max')} style={{backgroundColor: '#ad7c0c',}} >Maximize</button>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Min')} style={{backgroundColor: '#2b75ff',}}>Minimize</button>
                         {/* <label className="btn btn-primary btn-sm">
                             Import <input type="file" id="fileInput" onChange={()=>this.handleImportClick()} />
                         </label> */}
-                        <br></br><br></br>
                     </div>
                 </div>
                 <ReactTable

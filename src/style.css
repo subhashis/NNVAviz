@@ -20,37 +20,33 @@ body {
 }
 
 #parameters {
-	width: 72.75vw;
-	float: left;
-	height: 26.58vw;
+	width: 70.94vw;
+	height: 25.39vw;
+}
+#controls {
+	height: 2.75vw;
+	width: 70.94vw;
 }
 .slider {
-	height: 33.33%;
+	height: 18%;
 	float: left;
-	padding: 0.5%;
-	width: 6%;
-	margin-left: 2%;
-}
-.sliderBody {
-	height: 100%;
-	float: left;
+	width: 9%;
+	margin: 1%;
 }
 .sliderText {
-	position: absolute;
 	font-size: 0.7vw;
-	transform: rotate(-90deg) translate(-3vw,-3.7vw); 
-	float: left;
 }
 .paraBox {
 	width: 6em;
+	height: 1.2em;
 }
 #previewChart {
-	width: 24.25vw;
+	width: 26.06vw;
 	float: left;
 	margin: 0.25vw;
 }
 .btn {
-	margin-bottom: 1%;
+	margin: 0.1vw;
 	font-size: 0.7vw;
 }
 
@@ -58,13 +54,9 @@ body {
 	display: none;
 }
 .rc-slider-mark-text {
-	font-size: 0.7vw;
+	font-size: 0.6vw;
 }
 
-#controls {
-	height: 152px;
-	float: left;
-}
 
 .ReactTable {
 	width: 97.7vw;

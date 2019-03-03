@@ -226,7 +226,6 @@ class CellChart extends Component {
     legendSvg.attr("viewBox", `0 0 70 25`);
     legendSvg.append('rect').attr('width','100%').attr('height','100%').style('fill','black');
     
-    console.log(rDenSvg);
   }
 
   drawBrush(){
