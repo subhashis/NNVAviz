@@ -106,7 +106,6 @@ export default class Parameters extends Component {
         reader.readAsText(file);
     }
     handleChangeClick(tar){
-        console.log(this.props.marks);
         let new_para = this.state.para.slice(0);
         let new_paraS = this.state.paraS.slice(0);
         for (const i in this.props.marks){

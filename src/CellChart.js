@@ -5,10 +5,11 @@ import * as d3 from 'd3';
 import colorbrewer from 'colorbrewer';
 import my_radial_brush from './my_radial_brush';
 import denData from './data/d3-dendrogram_protein';
+import { template } from 'handlebars';
 let data;
 
 class CellChart extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     data = this.props.data;
 
@@ -19,19 +20,23 @@ class CellChart extends Component {
     const paletteName = 'PiYG';
     let colors = colorbrewer[paletteName][11];
     colors = colors.slice(0).reverse();
-    this.colorScale = d3.scaleQuantize().domain([0.0, 400]).range(colors);
+    let dom = [];
+    for (let i = 0; i < 11; i += 1) {
+      dom.push(i * 400 / 10);
+    }
+    this.colorScale = d3.scaleLinear().domain(dom).range(colors);
 
     // calculate the value scale
     this.minValue = Math.min(...data.curve_mean);
     this.maxValue = Math.max(...data.curve_mean);
 
-    const dummy_data = d3.range(0, 2 * Math.PI, 2 * Math.PI/valueLen); 
+    const dummy_data = d3.range(0, 2 * Math.PI, 2 * Math.PI / valueLen);
     const uncertainty_scale = 500; //to keep uncertainty bands in scale
     let my_points = [];
     for (let i = 0; i < valueLen; i += 1) {
       var angle = dummy_data[i];
       var protein_value = data.curve_mean[i];
-      var std = data.curve_std[((i + valueLen/2) % valueLen)] / uncertainty_scale;
+      var std = data.curve_std[((i + valueLen / 2) % valueLen)] / uncertainty_scale;
       let tmp = {
         'angle': angle,
         'std': std,
@@ -66,7 +71,7 @@ class CellChart extends Component {
       })
       .outerRadius(function (d) {
         return radius + 400 * d.std;
-    });
+      });
 
   }
 
@@ -107,25 +112,25 @@ class CellChart extends Component {
     var sel = protein_markers.selectAll("path").data(this.my_points)
     sel.enter()
       .append("path")
-      .attr("d", d3.arc().innerRadius(radius-2.5).outerRadius(radius+2.5).startAngle((d)=>d.angle + Math.PI-Math.PI/400).endAngle((d)=>d.angle + Math.PI+Math.PI/400))
+      .attr("d", d3.arc().innerRadius(radius - 2.5).outerRadius(radius + 2.5).startAngle((d) => d.angle + Math.PI - Math.PI / 400).endAngle((d) => d.angle + Math.PI + Math.PI / 400))
       .attr("fill", function (d, i) {
         return colorScale(d.value)
       })
       .attr("stroke", "black")
       .attr("stroke-width", 0.15)
       .style("opacity", 0.9)
-      .attr('id',function(d,i){
-        if (i===400){
+      .attr('id', function (d, i) {
+        if (i === 400) {
           return 'loc0';
         }
-        return 'loc'+i;
+        return 'loc' + i;
       });
 
     // draw brush
     this.drawBrush();
 
     // change colormap
-    const changePalette = paletteName=> {
+    const changePalette = paletteName => {
       const classesNumber = 11;
       var colors = colorbrewer[paletteName][classesNumber];
       colors = colors.slice(0).reverse();
@@ -133,55 +138,53 @@ class CellChart extends Component {
 
       //cell chart
       d3.select("#mychart1").select("g.protein_markers").selectAll("path")
-        .attr("fill", d=> {
+        .attr("fill", d => {
           return this.colorScale(d.value)
         });
 
       //legend
-      this.legend.selectAll('rect').style("fill", (d, i)=>{
+      this.legend.selectAll('rect').style("fill", (d, i) => {
         return this.colorScale(d);
       })
-      
+
       this.props.changePreColor(this.colorScale);
 
       //heat map
       let heatcolorScale = d3.scaleQuantize()
-        .domain([this.props.sen_min,this.props.sen_max])
+        .domain([this.props.sen_min, this.props.sen_max])
         .range(colors);
       d3.select('#heatSvg').selectAll("path.heat")
-        .style("fill", function(d) {
+        .style("fill", function (d) {
           if (d != null) return heatcolorScale(d.value);
           else return "url(#diagonalHatch)";
         })
     };
 
-		d3.select("#cellColorMap")
-      .on("keyup", function() {
+    d3.select("#cellColorMap")
+      .on("keyup", function () {
         var newPalette = d3.select("#cellColorMap").property("value");
-        if (newPalette != null)						// when interfaced with jQwidget, the ComboBox handles keyup event but value is then not available ?
-        changePalette(newPalette);
+        if (newPalette != null) // when interfaced with jQwidget, the ComboBox handles keyup event but value is then not available ?
+          changePalette(newPalette);
       })
-      .on("change", function() {
+      .on("change", function () {
         var newPalette = d3.select("#cellColorMap").property("value");
         changePalette(newPalette);
       });
 
-    const changeScale = scale=> {
-      let legD=[];
-      if (scale === 'full'){
-        this.colorScale.domain([0,400]);
-        for (let i=0;i<12;i++){
-          legD.push(i*400/11)
+    const changeScale = scale => {
+      let legD = [];
+      if (scale === 'full') {
+        for (let i = 0; i < 11; i++) {
+          legD.push(i * 400 / 10)
+        }
+      } else {
+        for (let i = 0; i < 11; i++) {
+          legD.push(this.minValue + i * (this.maxValue - this.minValue) / 10)
         }
       }
-      else {
-        this.colorScale.domain([this.minValue,this.maxValue]);
-        for (let i=0;i<12;i++){
-          legD.push(this.minValue+i*(this.maxValue-this.minValue)/11)
-        }
-      }
+      this.colorScale.domain(legD);
       d3.select("#mychart1").select("g.protein_markers").selectAll("path")
-        .attr("fill", d=> {
+        .attr("fill", d => {
           return this.colorScale(d.value)
         });
 
@@ -189,20 +192,146 @@ class CellChart extends Component {
 
       this.legend.data(legD)
       this.legend.select("text")
-      .text(function(d) {
+        .text(function (d) {
+          return d.toFixed(0);
+        })
+    };
+
+    d3.select("#cellColorScale")
+      .on("keyup", function () {
+        var newScale = d3.select("#cellColorScale").property("value");
+        if (newScale != null) // when interfaced with jQwidget, the ComboBox handles keyup event but value is then not available ?
+          changeScale(newScale);
+      })
+      .on("change", function () {
+        var newScale = d3.select("#cellColorScale").property("value");
+        changeScale(newScale);
+      });
+
+    let legD = [];
+    for (let i = 0; i < 11; i++) {
+      legD.push(i * 400 / 10)
+    }
+
+    const legendSvg = d3.select('svg#legend');
+    let gradientData = [];
+    for (let i=0;i<11;i++){
+      let tmp ={};
+      tmp.offset = (i*10)+'%';
+      tmp.color = this.colorScale.range()[i];
+      gradientData.push(tmp);
+    }
+    let gradient = legendSvg.append("linearGradient")
+      .attr("id", "svgGradient")
+      .attr("x1", "0%")
+      .attr("x2", "100%")
+      .attr("y1", "0%")
+      .attr("y2", "0%")
+      .selectAll("stop")
+      .data(gradientData)
+      .enter().append("stop")
+      .attr("offset", function(d) { return d.offset; })
+      .attr("stop-color", function(d) { return d.color; });
+
+    legendSvg.attr("viewBox", `0 0 70 20`);
+    var legend = legendSvg.append("g")
+      .attr("class", "legend")
+      .selectAll(".legendElement")
+      .data(legD)
+      .enter().append("g")
+      .attr("class", "legendElement");
+
+    this.legend = legend;
+
+    const legendElementWidth = 60 / 10;
+    const cellSize = 5;
+
+    legendSvg.append("rect")
+      .attr("x", 5)
+      .attr("y", 5)
+      .attr("class", "cellLegend bordered")
+      .attr("width", 60)
+      .attr("height", cellSize)
+      .style("fill", "url(#svgGradient)");
+
+    legend.append("text")
+      .attr("class", "mono legendElement")
+      .text(function (d) {
         return d.toFixed(0);
       })
-    };
-  
-    d3.select("#cellColorScale")
-      .on("keyup", function() {
-        var newScale = d3.select("#cellColorScale").property("value");
-        if (newScale != null)						// when interfaced with jQwidget, the ComboBox handles keyup event but value is then not available ?
-        changeScale(newScale);
+      .style('font-size', '0.12vw')
+      .attr("x", function (d, i) {
+        return 5 + legendElementWidth * i;
       })
-      .on("change", function() {
-        var newScale = d3.select("#cellColorScale").property("value");
-        changeScale(newScale);
+      .attr("y", 5 + cellSize +1)
+      .style('text-anchor', 'middle')
+      .style('dominant-baseline', 'hanging');
+
+    const rDenSvg = d3.select('svg#rDendo');
+    rDenSvg.attr("viewBox", `0 0 100 100`);
+    let rad = 50;
+
+    // Create the cluster layout:
+    var cluster = d3.cluster()
+      .size([360, rad]); // 360 means whole circle. radius - 60 means 60 px of margin around dendrogram
+
+    // Give the data to this cluster layout:
+    var root = d3.hierarchy(denData, function (d) {
+      return d.children;
+    });
+    cluster(root);
+
+    // Features of the links between nodes:
+    var linksGenerator = d3.linkRadial()
+      .angle(function (d) {
+        return d.x / 180 * Math.PI;
+      })
+      .radius(function (d) {
+        return d.y;
+      });
+
+    // Add the links between nodes:
+    let g = rDenSvg.append('g').attr('transform', 'translate(50,50)');
+
+    g.selectAll('path')
+      .data(root.links().slice(1))
+      .enter()
+      .append('path')
+      .attr("d", linksGenerator)
+      .style("fill", 'none')
+      .attr("stroke", '#ccc')
+      .style('visibility', (d) => {
+        return d.target.height >= 4 ? 'visible' : 'hidden';
+      })
+
+
+    // Add a circle for each node.
+    g.selectAll("g")
+      .data(root.descendants().slice(1))
+      .enter()
+      .append("g")
+      .attr("transform", function (d) {
+        return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")";
+      })
+      .append("circle")
+      .attr("r", 1)
+      .style("fill", "#69b3a2")
+      .style('visibility', (d) => {
+        return d.height >= 4 ? 'visible' : 'hidden';
+      })
+      .on('mouseover', function (d, i) {
+        const over = d.data.name.split('-');
+        for (const loc of over) {
+          d3.selectAll(`path#${loc}`)
+            .style('fill', 'yellow')
+        }
+      })
+      .on('mouseout', (d, i) => {
+        const over = d.data.name.split('-');
+        for (const p of over) {
+          d3.selectAll(`path#${p}`)
+            .style('fill', this.colorScale(d.value));
+        }
       });
   }
 
@@ -249,134 +378,29 @@ class CellChart extends Component {
       .text(function (d) {
         return d + "°";
       });
-
-    let legD = [];
-    for (let i=0;i<12;i++){
-      legD.push(i*400/11)
-    }
-
-    const legendSvg=d3.select('svg#legend');
-    legendSvg.attr("viewBox", `0 0 70 20`);
-    var legend = legendSvg.append("g")
-      .attr("class", "legend")
-      .selectAll(".legendElement")
-      .data(legD)
-      .enter().append("g")
-      .attr("class", "legendElement");
-    
-    this.legend = legend;
-
-    const legendElementWidth = 60/11;
-    const cellSize = 5;
-
-    legend.append("rect")
-        .attr("x", function(d, i) {
-          return 5+legendElementWidth * i;
-      })
-        .attr("y", 5)
-        .attr("class", "cellLegend bordered")
-        .attr("width", legendElementWidth)
-        .attr("height", cellSize)
-        .style("fill", (d, i)=>{
-            return this.colorScale(d);
-        })
-        .style('visibility',(d,i)=>{
-          return (i===11)? 'hidden':'visible';
-        })
-
-    legend.append("text")
-        .attr("class", "mono legendElement")
-        .text(function(d) {
-            return d.toFixed(0);
-        })
-        .style('font-size','0.12vw')
-        .attr("x",function(d, i) {
-          return 5+legendElementWidth * i;
-        })
-        .attr("y", 5+cellSize )
-        .style('text-anchor','middle')
-        .style('dominant-baseline','hanging');
-    
-    const rDenSvg=d3.select('svg#rDendo');
-    rDenSvg.attr("viewBox", `0 0 100 100`);
-    let rad = 50;
-
-    // Create the cluster layout:
-    var cluster = d3.cluster()
-      .size([360, rad]);  // 360 means whole circle. radius - 60 means 60 px of margin around dendrogram
-
-    // Give the data to this cluster layout:
-    var root = d3.hierarchy(denData, function(d) {
-        return d.children;
-    });
-    cluster(root);
-
-    // Features of the links between nodes:
-    var linksGenerator = d3.linkRadial()
-        .angle(function(d) { return d.x / 180 * Math.PI; })
-        .radius(function(d) { return d.y; });
-
-    // Add the links between nodes:
-    let g = rDenSvg.append('g').attr('transform','translate(50,50)');
-
-    g.selectAll('path')
-      .data(root.links().slice(1))
-      .enter()
-      .append('path')
-      .attr("d", linksGenerator)
-      .style("fill", 'none')
-      .attr("stroke", '#ccc')
-
-
-    // Add a circle for each node.
-    g.selectAll("g")
-        .data(root.descendants().slice(1))
-        .enter()
-        .append("g")
-        .attr("transform", function(d) {
-            return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")";
-        })
-        .append("circle")
-        .attr("r", 1)
-        .style("fill", "#69b3a2")
-        .style('visibility', (d)=>{
-          return d.height>=4?'visible':'hidden';
-        })
-        .on('mouseover',function(d,i){
-          const over = d.data.name.split('-');
-          for (const loc of over){
-            d3.selectAll(`path#${loc}`)
-              .style('fill','yellow')
-          }
-        })
-        .on('mouseout',(d,i)=>{
-          const over = d.data.name.split('-');
-          for (const p of over){
-            d3.selectAll(`path#${p}`)
-            .style('fill',this.colorScale(d.value));
-          }
-        });
   }
 
-  drawBrush(){
+  drawBrush() {
     let brush = my_radial_brush()
-      .range([0,this.props.valueLen])
+      .range([0, this.props.valueLen])
       .innerRadius(105)
       .outerRadius(120)
       .handleSize(0.08)
-      .on("brush", ()=>{this.props.brushMove(brush)})
-      .on('brushstart',this.props.brushStart)
-      .on('brushend',this.props.brushEnd);
+      .on("brush", () => {
+        this.props.brushMove(brush)
+      })
+      .on('brushstart', this.props.brushStart)
+      .on('brushend', this.props.brushEnd);
 
 
     let brush2 = my_radial_brush()
-      .range([0,this.props.valueLen])
+      .range([0, this.props.valueLen])
       .innerRadius(75)
       .outerRadius(90)
       .handleSize(0.08)
 
     let brush3 = my_radial_brush()
-      .range([0,this.props.valueLen])
+      .range([0, this.props.valueLen])
       .innerRadius(45)
       .outerRadius(60)
       .handleSize(0.08)
@@ -394,7 +418,7 @@ class CellChart extends Component {
     //prepare group for indi
     d3.select("#mychart1").select("svg")
       .append('g')
-      .attr('class','indi');
+      .attr('class', 'indi');
 
     g1.call(brush);
     g2.call(brush2);
@@ -406,7 +430,7 @@ class CellChart extends Component {
       <div className = "block" id = "mychart1">
         <p align="center">Cell Chart</p>
         <svg className='cell'></svg>
-        <div>
+        <div style={{fontSize:'0.8vw'}}>
           Palette:&nbsp;
           <select id="cellColorMap" defaultValue='PiYG'>
             <option value="RdYlGn">RdYlGn</option>

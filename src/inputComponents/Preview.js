@@ -62,7 +62,11 @@ export default class Preview extends Component {
       if (!this.colorScale){
         let colors = colorbrewer['PiYG'][11];
         colors = colors.slice(0).reverse();
-        this.colorScale = d3.scaleQuantize().domain([0.0, 400]).range(colors);
+        let dom = [];
+        for (let i = 0; i < 11; i += 1) {
+          dom.push(i * 400 / 10);
+        }
+        this.colorScale = d3.scaleLinear().domain(dom).range(colors);
       }
       // calculate the value scale
       if (this.props.previewData){
@@ -131,7 +135,11 @@ export default class Preview extends Component {
           this.my_points = my_points;
           let tmpC = d3.scaleQuantize();
           tmpC.range(colorScale.range());
-          tmpC.domain([minValue,maxValue]);
+          let legD = []
+          for (let i = 0; i < 11; i++) {
+            legD.push(minValue + i * (maxValue - minValue) / 10)
+          }
+          tmpC.domain(legD);
           colorScale = tmpC;
           // hide stds
           //draw the std2
