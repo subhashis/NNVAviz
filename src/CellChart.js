@@ -4,6 +4,7 @@ import React, {
 import * as d3 from 'd3';
 import colorbrewer from 'colorbrewer';
 import my_radial_brush from './my_radial_brush';
+import denData from './data/d3-dendrogram_protein';
 let data;
 
 class CellChart extends Component {
@@ -112,31 +113,46 @@ class CellChart extends Component {
       })
       .attr("stroke", "black")
       .attr("stroke-width", 0.15)
-      .style("opacity", 0.9);
-    
-      // .append("circle")
-      // .attr("r", "1.18")
-      // .attr("cy", function (d, i) {
-      //   return radius * Math.sin(d.angle + Math.PI / 2)
-      // })
-      // .attr("cx", function (d, i) {
-      //   return radius * Math.cos(d.angle + Math.PI / 2)
-      // })
+      .style("opacity", 0.9)
+      .attr('id',function(d,i){
+        if (i===400){
+          return 'loc0';
+        }
+        return 'loc'+i;
+      });
 
     // draw brush
     this.drawBrush();
 
-    // set up colormap
+    // change colormap
     const changePalette = paletteName=> {
       const classesNumber = 11;
       var colors = colorbrewer[paletteName][classesNumber];
       colors = colors.slice(0).reverse();
       this.colorScale.range(colors);
 
+      //cell chart
       d3.select("#mychart1").select("g.protein_markers").selectAll("path")
         .attr("fill", d=> {
           return this.colorScale(d.value)
         });
+
+      //legend
+      this.legend.selectAll('rect').style("fill", (d, i)=>{
+        return this.colorScale(d);
+      })
+      
+      this.props.changePreColor(this.colorScale);
+
+      //heat map
+      let heatcolorScale = d3.scaleQuantize()
+        .domain([this.props.sen_min,this.props.sen_max])
+        .range(colors);
+      d3.select('#heatSvg').selectAll("path.heat")
+        .style("fill", function(d) {
+          if (d != null) return heatcolorScale(d.value);
+          else return "url(#diagonalHatch)";
+        })
     };
 
 		d3.select("#cellColorMap")
@@ -151,16 +167,31 @@ class CellChart extends Component {
       });
 
     const changeScale = scale=> {
+      let legD=[];
       if (scale === 'full'){
         this.colorScale.domain([0,400]);
+        for (let i=0;i<12;i++){
+          legD.push(i*400/11)
+        }
       }
       else {
         this.colorScale.domain([this.minValue,this.maxValue]);
+        for (let i=0;i<12;i++){
+          legD.push(this.minValue+i*(this.maxValue-this.minValue)/11)
+        }
       }
       d3.select("#mychart1").select("g.protein_markers").selectAll("path")
         .attr("fill", d=> {
           return this.colorScale(d.value)
         });
+
+      this.props.changePreColor(this.colorScale);
+
+      this.legend.data(legD)
+      this.legend.select("text")
+      .text(function(d) {
+        return d.toFixed(0);
+      })
     };
   
     d3.select("#cellColorScale")
@@ -218,14 +249,113 @@ class CellChart extends Component {
       .text(function (d) {
         return d + "°";
       });
-    const rDenSvg=d3.select('svg#rDendo');
-    rDenSvg.attr("viewBox", `0 0 100 100`);
-    rDenSvg.append('rect').attr('width','100%').attr('height','100%').style('fill','red');
+
+    let legD = [];
+    for (let i=0;i<12;i++){
+      legD.push(i*400/11)
+    }
 
     const legendSvg=d3.select('svg#legend');
-    legendSvg.attr("viewBox", `0 0 70 25`);
-    legendSvg.append('rect').attr('width','100%').attr('height','100%').style('fill','black');
+    legendSvg.attr("viewBox", `0 0 70 20`);
+    var legend = legendSvg.append("g")
+      .attr("class", "legend")
+      .selectAll(".legendElement")
+      .data(legD)
+      .enter().append("g")
+      .attr("class", "legendElement");
     
+    this.legend = legend;
+
+    const legendElementWidth = 60/11;
+    const cellSize = 5;
+
+    legend.append("rect")
+        .attr("x", function(d, i) {
+          return 5+legendElementWidth * i;
+      })
+        .attr("y", 5)
+        .attr("class", "cellLegend bordered")
+        .attr("width", legendElementWidth)
+        .attr("height", cellSize)
+        .style("fill", (d, i)=>{
+            return this.colorScale(d);
+        })
+        .style('visibility',(d,i)=>{
+          return (i===11)? 'hidden':'visible';
+        })
+
+    legend.append("text")
+        .attr("class", "mono legendElement")
+        .text(function(d) {
+            return d.toFixed(0);
+        })
+        .style('font-size','0.12vw')
+        .attr("x",function(d, i) {
+          return 5+legendElementWidth * i;
+        })
+        .attr("y", 5+cellSize )
+        .style('text-anchor','middle')
+        .style('dominant-baseline','hanging');
+    
+    const rDenSvg=d3.select('svg#rDendo');
+    rDenSvg.attr("viewBox", `0 0 100 100`);
+    let rad = 50;
+
+    // Create the cluster layout:
+    var cluster = d3.cluster()
+      .size([360, rad]);  // 360 means whole circle. radius - 60 means 60 px of margin around dendrogram
+
+    // Give the data to this cluster layout:
+    var root = d3.hierarchy(denData, function(d) {
+        return d.children;
+    });
+    cluster(root);
+
+    // Features of the links between nodes:
+    var linksGenerator = d3.linkRadial()
+        .angle(function(d) { return d.x / 180 * Math.PI; })
+        .radius(function(d) { return d.y; });
+
+    // Add the links between nodes:
+    let g = rDenSvg.append('g').attr('transform','translate(50,50)');
+
+    g.selectAll('path')
+      .data(root.links().slice(1))
+      .enter()
+      .append('path')
+      .attr("d", linksGenerator)
+      .style("fill", 'none')
+      .attr("stroke", '#ccc')
+
+
+    // Add a circle for each node.
+    g.selectAll("g")
+        .data(root.descendants().slice(1))
+        .enter()
+        .append("g")
+        .attr("transform", function(d) {
+            return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")";
+        })
+        .append("circle")
+        .attr("r", 1)
+        .style("fill", "#69b3a2")
+        .style('visibility', (d)=>{
+          return d.height>=4?'visible':'hidden';
+        })
+        .on('mouseover',function(d,i){
+          const over = d.data.name.split('-');
+          for (const loc of over){
+            d3.selectAll(`path#${loc}`)
+              .style('fill','yellow')
+          }
+        })
+        .on('mouseout',(d,i)=>{
+          const over = d.data.name.split('-');
+          for (const p of over){
+            d3.selectAll(`path#${p}`)
+            .style('fill',this.colorScale(d.value));
+          }
+        });
   }
 
   drawBrush(){
@@ -276,26 +406,27 @@ class CellChart extends Component {
       <div className = "block" id = "mychart1">
         <p align="center">Cell Chart</p>
         <svg className='cell'></svg>
+        <div>
+          Palette:&nbsp;
+          <select id="cellColorMap" defaultValue='PiYG'>
+            <option value="RdYlGn">RdYlGn</option>
+            <option value="Spectral">Spectral</option>
+            <option value="RdYlBu">RdYlBu</option>
+            <option value="RdGy">RdGy</option>
+            <option value="RdBu">RdBu</option>
+            <option value="PiYG">PiYG</option>
+            <option value="PRGn">PRGn</option>
+            <option value="BrBG">BrBG</option>
+            <option value="PuOr">PuOr</option>
+          </select>
+          &emsp;Scale:&nbsp;
+          <select id="cellColorScale" defaultValue='full'>
+            <option value="full">Full</option>
+            <option value="context">Context</option>
+          </select>
+        </div>
         <svg id='legend'></svg>
         <svg id='rDendo'></svg>
-
-        {/* Palette:
-        <select id="cellColorMap" defaultValue='PiYG'>
-          <option value="RdYlGn">RdYlGn</option>
-          <option value="Spectral">Spectral</option>
-          <option value="RdYlBu">RdYlBu</option>
-          <option value="RdGy">RdGy</option>
-          <option value="RdBu">RdBu</option>
-          <option value="PiYG">PiYG</option>
-          <option value="PRGn">PRGn</option>
-          <option value="BrBG">BrBG</option>
-          <option value="PuOr">PuOr</option>
-        </select>
-        &emsp;Scale:
-        <select id="cellColorScale" defaultValue='full'>
-          <option value="full">Full</option>
-          <option value="context">Context</option>
-        </select> */}
       </div>
     )
   }

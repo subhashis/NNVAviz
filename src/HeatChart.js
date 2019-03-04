@@ -7,9 +7,9 @@ class HeatChart extends Component {
 
   componentDidMount(){
     // draw heat chart
-    const sen_min = this.props.sen_min;
+    // const sen_min = this.props.sen_min;
     // const sen_mid_point = this.props.sen_mid_point;
-    const sen_max = this.props.sen_max;
+    // const sen_max = this.props.sen_max;
     const sen_data = this.props.sen_data;
     const chart = circularHeatChart();
     const width = this.props.size;
@@ -99,6 +99,8 @@ class HeatChart extends Component {
       .style('text-anchor','middle')
       .style('dominant-baseline','hanging');
     
+    const partColor = d3.selectAll(`rect#partial`).attr('fill')
+    const allColor = d3.selectAll(`rect#all`).attr('fill')
     svg.selectAll('path.heat')
       .on('mouseover', function(d,i){
         svg.select('#senValue')
@@ -113,59 +115,19 @@ class HeatChart extends Component {
       .on('mouseout',function(d,i){
         let classes = this.className.baseVal.split(' ');
         d3.selectAll(`rect.${classes[1]}#all`)
-        .style('fill','black');
+        .style('fill',allColor);
         d3.selectAll(`rect.${classes[1]}#partial`)
-        .style('fill','red');
+        .style('fill',partColor);
       })
-
-      // set up palette
-		d3.select("#palette")
-      .on("keyup", function() {
-        var newPalette = d3.select("#palette").property("value");
-        if (newPalette != null)						// when interfaced with jQwidget, the ComboBox handles keyup event but value is then not available ?
-        changePalette(newPalette, '#heatSvg');
-      })
-      .on("change", function() {
-        var newPalette = d3.select("#palette").property("value");
-        changePalette(newPalette, '#heatSvg');
-      });
-
-    function changePalette(paletteName, heatmapId) {
-      const classesNumber = 10;
-      var colors = colorbrewer[paletteName][classesNumber];
-      colors = colors.slice(0).reverse();
-      var colorScale = d3.scaleQuantize()
-        .domain([sen_min,sen_max])
-        .range(colors);
-      var svg = d3.select(heatmapId);
-      var t = svg.transition().duration(500);
-      t.selectAll("path.heat")
-        .style("fill", function(d) {
-          if (d != null) return colorScale(d.value);
-          else return "url(#diagonalHatch)";
-        })
-    }
-
-
   }
   
   render() {
     return (
       <div className = "block" id = "mychart2">
-        <p align="center">Sensitivity Heat Chart</p>
-        {/* Palette:
-        <select id="palette" defaultValue='PiYG'>
-          <option value="RdYlGn">RdYlGn</option>
-          <option value="Spectral">Spectral</option>
-          <option value="RdYlBu">RdYlBu</option>
-          <option value="RdGy">RdGy</option>
-          <option value="RdBu">RdBu</option>
-          <option value="PiYG">PiYG</option>
-          <option value="PRGn">PRGn</option>
-          <option value="BrBG">BrBG</option>
-          <option value="PuOr">PuOr</option>
-        </select> */}
-        <svg ></svg>
+        <div style={{width:'50%',float:"left"}}>
+          <p align="center" style={{width:'100%',float:"left"}}>Sensitivity Heat Chart</p>
+          <svg ></svg>
+        </div>
         {this.props.children}
       </div>
     );

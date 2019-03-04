@@ -18,7 +18,9 @@ export default class InputCharts extends Component {
                     previewData = {this.state.previewData?this.state.previewData:this.props.previewData}
                     radius={150} 
                     size={400} 
+                    preColor = {this.props.preColor}
                     valueLen={400}
+                    data = {this.props.data}
                 />
                 <Parameter 
                     run = {this.props.request}

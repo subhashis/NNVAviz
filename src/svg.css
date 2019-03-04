@@ -4,7 +4,7 @@ svg {
 }
 
 svg.heat {
-	width: 50%;
+	width: 100%;
 }
 
 svg.cell{
@@ -83,3 +83,8 @@ stroke-width: 0.5;
 .resize {
 	fill: black;
 }
+
+rect.bordered {
+	stroke: #E6E6E6;
+	stroke-width:0.3px;   
+  }

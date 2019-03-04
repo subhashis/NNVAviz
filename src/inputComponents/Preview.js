@@ -1,22 +1,16 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import colorbrewer from 'colorbrewer';
-// import my_radial_brush from '../my_radial_brush';
 
 export default class Preview extends Component {
     constructor(props){
       super(props);
-      // console.log('cons');
+      this.state={
+        diff : false,
+      }
   
       // prepare radial axes data
       const valueLen = this.props.valueLen;
-      
-      // the color scale can be input 
-      const paletteName = 'PiYG';
-      let colors = colorbrewer[paletteName][11];
-      colors = colors.slice(0).reverse();
-      this.colorScale = d3.scaleQuantize().domain([0.0, valueLen]).range(colors);
-      
 
       const dummy_data = d3.range(0, 2 * Math.PI, 2 * Math.PI/valueLen); 
       // const uncertainty_scale = 500; //to keep uncertainty bands in scale
@@ -63,74 +57,112 @@ export default class Preview extends Component {
   
     }
 
-      componentDidUpdate(){
-        // console.log('didupdate');
-        // console.log(this.props.previewData);
-        
+    componentDidUpdate(){
+      this.colorScale = this.props.preColor;
+      if (!this.colorScale){
+        let colors = colorbrewer['PiYG'][11];
+        colors = colors.slice(0).reverse();
+        this.colorScale = d3.scaleQuantize().domain([0.0, 400]).range(colors);
+      }
       // calculate the value scale
-        if (this.props.previewData){
-          this.minValue = Math.min(...this.props.previewData.curve_mean);
-          this.maxValue = Math.max(...this.props.previewData.curve_mean);
-        }
+      if (this.props.previewData){
+        this.minValue = Math.min(...this.props.previewData.curve_mean);
+        this.maxValue = Math.max(...this.props.previewData.curve_mean);
 
         const data = this.props.previewData;
         const valueLen = this.props.valueLen;
-        // const radius = this.props.radius;
+        const ori = this.props.data;
         const dummy_data = d3.range(0, 2 * Math.PI, 2 * Math.PI/valueLen); 
         const uncertainty_scale = 500; //to keep uncertainty bands in scale
         let my_points = [];
-        for (let i = 0; i < valueLen; i += 1) {
-          var angle = dummy_data[i];
-          var protein_value = data.curve_mean[i];
-          var std = data.curve_std[((i + valueLen/2) % valueLen)] / uncertainty_scale;
-          let tmp = {
-            'angle': angle,
-            'std': std,
-            'value': protein_value
-          };
-          my_points.push(tmp);
+        let colorScale = this.colorScale;
+        
+        
+        
+        // normal
+        if(!this.state.diff){
+          for (let i = 0; i < valueLen; i += 1) {
+            var angle = dummy_data[i];
+            var protein_value = data.curve_mean[i];
+            var std = data.curve_std[((i + valueLen/2) % valueLen)] / uncertainty_scale;
+            let tmp = {
+              'angle': angle,
+              'std': std,
+              'value': protein_value
+            };
+            my_points.push(tmp);
+          }
+          my_points.push(my_points[0]);
+          this.my_points = my_points;
+          //draw the std2
+          let pathData2 = this.radialAreaGenerator2(this.my_points);
+    
+          d3.select("#previewChart")
+            .select('path.std2')
+            .attr('d', pathData2)
+            .style('visibility','visible');
+      
+          // draw the std1
+          let pathData1 = this.radialAreaGenerator1(this.my_points);
+      
+          d3.select("#previewChart")
+            .select('path.std1')
+            .attr('d', pathData1)
+            .style('visibility','visible');
         }
-        my_points.push(my_points[0]);
-        this.my_points = my_points;
+        // showing diff
+        else {
+          let minValue = Infinity;
+          let maxValue = -Infinity;
+          for (let i = 0; i < valueLen; i += 1) {
+            let angle = dummy_data[i];
+            let protein_value = Math.abs(data.curve_mean[i]-ori.curve_mean[i]);
+            if (protein_value>maxValue) maxValue = protein_value;
+            if (protein_value<minValue) minValue = protein_value;
+            let std = data.curve_std[((i + valueLen/2) % valueLen)] / uncertainty_scale;
+            let tmp = {
+              'angle': angle,
+              'std': std,
+              'value': protein_value
+            };
+            my_points.push(tmp);
+          }
+          my_points.push(my_points[0]);
+          this.my_points = my_points;
+          let tmpC = d3.scaleQuantize();
+          tmpC.range(colorScale.range());
+          tmpC.domain([minValue,maxValue]);
+          colorScale = tmpC;
+          // hide stds
+          //draw the std2
+          let pathData2 = this.radialAreaGenerator2(this.my_points);
+    
+          d3.select("#previewChart")
+            .select('path.std2')
+            .attr('d', pathData2)
+            .style('visibility','hidden');
+      
+          // draw the std1
+          let pathData1 = this.radialAreaGenerator1(this.my_points);
+      
+          d3.select("#previewChart")
+            .select('path.std1')
+            .attr('d', pathData1)
+            .style('visibility','hidden');
+        }
 
-        //draw the std2
-        var pathData2 = this.radialAreaGenerator2(this.my_points);
-  
-        d3.select("#previewChart")
-          .select('path.std2')
-          .attr('d', pathData2);
-    
-        // draw the std1
-        var pathData1 = this.radialAreaGenerator1(this.my_points);
-    
-        d3.select("#previewChart")
-          .select('path.std1')
-          .attr('d', pathData1);
     
         // draw the value (marker)
-        const colorScale = this.colorScale;
         var protein_markers = d3.select("#previewChart")
           .select("g.protein_markers");
-    
         var sel = protein_markers.selectAll("path").data(my_points);
-        sel
-          // .attr("r", "1.18")
-          // .attr("cy", function (d, i) {
-          //   return radius * Math.sin(d.angle + Math.PI / 2)
-          // })
-          // .attr("cx", function (d, i) {
-          //   return radius * Math.cos(d.angle + Math.PI / 2)
-          // })
-          .attr("fill", function (d, i) {
+        sel.attr("fill", (d, i)=>{
             return colorScale(d.value)
           })
-          .attr("stroke", "black")
-          .attr("stroke-width", 0.15)
-          .style("opacity", 0.9);
       }
+    }
     
-      componentDidMount() {
-        // console.log('didmount');
+    componentDidMount() {
         const width = this.props.size;
         const radius = this.props.radius;
     
@@ -160,7 +192,6 @@ export default class Preview extends Component {
           .attr('d', pathData1);
     
         // draw the value (marker)
-        const colorScale = this.colorScale;
         var protein_markers = d3.select("#previewChart").select("svg")
           .append("g").attr("class", "protein_markers");
     
@@ -168,76 +199,13 @@ export default class Preview extends Component {
         sel.enter()
           .append("path")
           .attr("d", d3.arc().innerRadius(radius-2).outerRadius(radius+2).startAngle((d)=>d.angle + Math.PI-Math.PI/400).endAngle((d)=>d.angle + Math.PI+Math.PI/400))
-          .attr("fill", function (d, i) {
-            return colorScale(d.value)
-          })
-          // .append("circle")
-          // .attr("r", "1.18")
-          // .attr("cy", function (d, i) {
-          //   return radius * Math.sin(d.angle + Math.PI / 2)
-          // })
-          // .attr("cx", function (d, i) {
-          //   return radius * Math.cos(d.angle + Math.PI / 2)
-          // })
-
-          .attr("fill", function (d, i) {
-            return colorScale(d.value)
-          })
+          .attr("fill", 'grey')
           .attr("stroke", "black")
           .attr("stroke-width", 0.15)
           .style("opacity", 0.9);
-
-        // set up colormap
-        const changePalette = paletteName=> {
-          const classesNumber = 11;
-          var colors = colorbrewer[paletteName][classesNumber];
-          colors = colors.slice(0).reverse();
-          this.colorScale.range(colors);
-
-          d3.select("#previewChart").select("g.protein_markers").selectAll("path")
-            .attr("fill", d=> {
-              return this.colorScale(d.value)
-            });
-        };
-
-        d3.select("#preColorMap")
-          .on("keyup", function() {
-            var newPalette = d3.select("#preColorMap").property("value");
-            if (newPalette != null)						// when interfaced with jQwidget, the ComboBox handles keyup event but value is then not available ?
-            changePalette(newPalette);
-          })
-          .on("change", function() {
-            var newPalette = d3.select("#preColorMap").property("value");
-            changePalette(newPalette);
-          });
+    }
     
-          const changeScale = scale=> {
-            if (scale === 'full'){
-              this.colorScale.domain([0,400]);
-            }
-            else {
-              console.log(this.maxValue);
-              this.colorScale.domain([this.minValue,this.maxValue]);
-            }
-            d3.select("#previewChart").select("g.protein_markers").selectAll("path")
-              .attr("fill", d=> {
-                return this.colorScale(d.value)
-              });
-          };
-        
-          d3.select("#preColorScale")
-            .on("keyup", function() {
-              var newScale = d3.select("#preColorScale").property("value");
-              if (newScale != null)						// when interfaced with jQwidget, the ComboBox handles keyup event but value is then not available ?
-              changeScale(newScale);
-            })
-            .on("change", function() {
-              var newScale = d3.select("#preColorScale").property("value");
-              changeScale(newScale);
-            });
-      }
-    
-      draw_radial_axes() {
+    draw_radial_axes() {
         const radius = this.props.radius;
         var r = d3.scaleLinear()
           .domain([0, .5])
@@ -280,31 +248,27 @@ export default class Preview extends Component {
           .text(function (d) {
             return d + "°";
           });
-      }
+    }
 
-      render() {
+    diffFun(){
+      this.setState({diff:~this.state.diff});
+    }
+
+    render() {
         // console.log('render');
         return ( 
           <div className = "block" id = "previewChart">
-            <p align="center">Preview</p>
-            {/* Palette:
-            <select id="preColorMap" defaultValue='PiYG'>
-              <option value="RdYlGn">RdYlGn</option>
-              <option value="Spectral">Spectral</option>
-              <option value="RdYlBu">RdYlBu</option>
-              <option value="RdGy">RdGy</option>
-              <option value="RdBu">RdBu</option>
-              <option value="PiYG">PiYG</option>
-              <option value="PRGn">PRGn</option>
-              <option value="BrBG">BrBG</option>
-              <option value="PuOr">PuOr</option>
-            </select>
-            &emsp;Scale:
-            <select id="preColorScale" defaultValue='full'>
-              <option value="full">Full</option>
-              <option value="context">Context</option>
-            </select> */}
+            <p align="center" style={{
+              float: "left",
+              width: '90%',
+            }}>Quickview</p>
+            <button 
+            className="btn btn-primary btn-sm" 
+            onClick={()=>this.diffFun()}
+            style={{
+              float: "left",
+            }} >Diff</button>
           </div>
         )
-      }
+    }
 }

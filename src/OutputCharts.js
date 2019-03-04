@@ -223,6 +223,9 @@ class OutputCharts extends Component {
 				brushStart = {this.brushStart.bind(this)}
 				brushEnd = {this.brushEnd.bind(this)}
 				brushMove = {this.brushMove.bind(this)}
+				sen_min={this.sen_min} 
+				sen_max={this.sen_max} 
+				changePreColor = {this.props.changePreColor}
 			/>
 			
 			<HeatChart radius={150} 

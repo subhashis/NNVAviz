@@ -48,10 +48,8 @@ class App extends Component {
         mark[i].level = 0;
       }
       for (let i = 0;i<r.length;i++){
-        console.log(i);
         for (let j = i+1;j<r.length;j++){
-          console.log(j);
-          if (Math.abs(r[j]-r[i])<0.12){
+          if (Math.abs(r[j]-r[i])<0.15){
             mark[r[j]].level = mark[r[i]].level+1;
           } 
         }
@@ -60,7 +58,6 @@ class App extends Component {
         let tmp = mark[i];
         tmp.style.transform = 'translateX(-30%) rotate(70deg) translateX('+tmp.level*100+'%)';
       }
-      console.log(mark);
       marks.push(mark);
     }
     this.state = {
@@ -69,6 +66,11 @@ class App extends Component {
       marks: marks,
     }
     this.getData = this.getData.bind(this);
+    this.changePreColor = this.changePreColor.bind(this);
+  }
+
+  changePreColor(c){
+    this.setState({preColor:c})
   }
 
   getData(url,para){
@@ -91,11 +93,14 @@ class App extends Component {
         {/* <p align="center"><font size="8px" color="#777" fontFamily="Georgia">NNVA: Neural Network Assisted Visual Analysis</font></p> */}
         <OutputCharts
           data={this.state.data}
+          changePreColor = {this.changePreColor}
         />
         <InputCharts
           previewData={this.state.previewData}
           request = {this.getData}
           marks = {this.state.marks}
+          preColor = {this.state.preColor}
+          data = {this.state.data}
         />
       </div>
     );

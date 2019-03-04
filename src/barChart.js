@@ -1,15 +1,43 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
+import Slider from 'rc-slider';
 import data from './data/d3-dendrogram_param_sensitivity';
 
 class BarChart extends Component {
+  constructor(props){
+    super(props);
+    this.bar_h = 30;
+    let bar_h = this.bar_h;
+    var width = 100-bar_h*2-5;
+    var height = 100;
+
+    // Create the cluster layout:
+    // var cluster = d3.cluster()
+    //   .size([height, width]);
+
+    let tree = d3.tree()
+      .size([height,width]);
+
+
+    // Give the data to this cluster layout:
+    var root = d3.hierarchy(data, function(d) {
+        return d.children;
+    });
+    tree(root);
+    this.nodeData = root.descendants().slice(1);
+    this.state = {
+      maxDepth: root.height,
+      currentDepth: 4,
+    }
+  }
 
   componentDidMount(){
     //draw basic 
-    this.bar_h = 30;
     let max_allV = 0;
     let maxElement=0;
     let bar_svg = d3.select('#bar').select('svg').attr("id", "bar_svg");
+    const allColor='#3239ff';
+    const partColor='#f46b42';
     for( let i=0; i<35; i++ ){
         let sum = 0;
         let index = i * 400;
@@ -30,41 +58,25 @@ class BarChart extends Component {
     }
     max_allV = maxElement;
 
+    this.max_allV = max_allV;
+
     bar_svg.attr("viewBox", `0 0 100 100`)
 
     let bar_h = this.bar_h;
-    // let bar_w = 100/35;
+    let bar_w = 100/35;
 
     // set up the group
     let senDen=bar_svg.append('g')
       .attr('id','senDen')
       .attr('transform','rotate(90) translate(0,-100)');
 
-    var width = 100-bar_h*2-10;
-    var height = 100;
-
-    // Create the cluster layout:
-    var cluster = d3.cluster()
-      .size([height, width]);
-
-    let tree = d3.tree()
-      .size([height,width]);
-
     let curve = function(d) {
       return "M" + d.y + "," + d.x
-              + "C" + (d.parent.y + 5) + "," + d.x
-              + " " + (d.parent.y + 5) + "," + d.parent.x // 50 and 150 are coordinates of inflexion, play with it to change links shape
+              + "L" + (d.parent.y) + "," + d.x
               + " " + d.parent.y + "," + d.parent.x;
       } 
 
-    // Give the data to this cluster layout:
-    var root = d3.hierarchy(data, function(d) {
-        return d.children;
-    });
-    tree(root);
-
-
-    let nodeData = root.descendants().slice(1);
+    let nodeData = this.nodeData;
     let leaves = [];
 
     for (const node of nodeData){
@@ -80,17 +92,19 @@ class BarChart extends Component {
     this.leaves = leaves;
 
     // Add the links between nodes:
-    senDen.selectAll('path')
+    this.links = senDen.selectAll('path')
       .data( nodeData )
       .enter()
       .append('path')
       .attr("d", curve)
       .style("fill", 'none')
       .attr("stroke", '#ccc')
-
+      .style('visibility', (d)=>{
+        return d.depth<=this.state.currentDepth?'visible':'hidden';
+      })
 
     // Add a circle for each node.
-    senDen.selectAll("g")
+    this.nodes = senDen.selectAll("g")
         .data( nodeData )
         .enter()
         .append("g")
@@ -100,6 +114,9 @@ class BarChart extends Component {
         .append("circle")
           .attr("r", 1)
           .style("fill", "#69b3a2")
+        .style('visibility', (d)=>{
+          return d.depth<=this.state.currentDepth?'visible':'hidden';
+        })
         .on('mouseover',function(d,i){
           const over = d.data.name.split('-');
           for (const p of over){
@@ -111,94 +128,137 @@ class BarChart extends Component {
           const over = d.data.name.split('-');
           for (const p of over){
             d3.selectAll(`rect.${p}#all`)
-            .style('fill','black');
+            .style('fill',allColor);
             d3.selectAll(`rect.${p}#partial`)
-            .style('fill','red');
+            .style('fill',partColor);
           }
         });
 
-    // bar_svg.selectAll("#bg")
-    //   .data(leaves.slice(0).sort((a,b)=>{return a.x-b.x}))
-    //   .enter().append("rect")
-    //   .attr("id", "bg")
-    //   .attr("transform", function(d, i) { return "translate(" + (d.x-1) + ",0)"; } )
-    //   .style('fill',function(d,i){
-    //     return (i%2===0)?'white':'#E5E7E9';
-    //   })
-    //   .attr("width", 2)
-    //   .attr("height", bar_h*2);
+    const sE = 100-2*this.bar_h;
+    const fE = sE+this.bar_h;
+    const seE = fE+this.bar_h;
+
+    bar_svg.selectAll("#bg")
+      .data(leaves.slice(0).sort((a,b)=>{return a.x-b.x}))
+      .enter().append("rect")
+      .attr("id", "bg")
+      .attr("transform", function(d, i) { return "translate(" + bar_w*i + ","+sE+")"; } )
+      .style('fill',function(d,i){
+        return (i%2===1)?'white':'#E5E7E9';
+      })
+      .attr("width", bar_w)
+      .attr("height", bar_h*2);
+
           
-    // bar_svg.selectAll("#all")
-    //   .data(leaves)
-    //   .enter().append("rect")
-    //   .attr("id", "all")
-    //   .attr("class",(d,i)=>{return d.data.name})
-    //   .attr("transform", function(d, i) { return "translate(" + (d.x-1) + "," + (bar_h*2-(d.allV/max_allV)*bar_h) + ")"; } )
-    //   .attr("width", 2)
-    //   .attr("height", function(d) { return (d.allV/max_allV)*bar_h; })
-    //   .on('mouseover', function(d,i){
-    //     const svg = d3.select('#mychart2').select('svg');
-    //     svg.select('#senValue')
-    //       .text(`${d.allV.toFixed(2)}`);
-    //     svg.select('#P')
-    //       .text(d.data.name);
-    //     d3.selectAll(`rect.${d.data.name}#all`)
-    //       .style('fill','yellow')
-    //   })
-    //   .on('mouseout',function(d,i){
-    //     d3.selectAll(`rect.${d.data.name}#all`)
-    //       .style('fill','black');
-    //   });
+    bar_svg.selectAll("#all")
+      .data(this.props.allSenHist)
+      .enter().append("rect")
+      .attr("id", "all")
+      .attr("class",(d,i)=>{return 'p'+i})
+      .attr("transform", function(d, i) { return "translate(" + bar_w*i + "," + (fE-(d.allV/max_allV)*bar_h) + ")"; } )
+      .attr("width", bar_w)
+      .attr("fill", allColor)
+      .attr("height", function(d) { return (d.allV/max_allV)*bar_h; })
+      .on('mouseover', function(d,i){
+        const svg = d3.select('#mychart2').select('svg');
+        svg.select('#senValue')
+          .text(`${d.allV.toFixed(2)}`);
+        svg.select('#P')
+          .text('p'+i);
+        d3.selectAll(`rect.${'p'+i}#all`)
+          .style('fill','yellow')
+      })
+      .on('mouseout',function(d,i){
+        d3.selectAll(`rect.${'p'+i}#all`)
+          .style('fill',allColor);
+      });
     
       
-    // bar_svg.selectAll("#partial")
-    //   .data(leaves)
-    //   .enter().append("rect")
-    //   .attr("id", "partial")
-    //   .attr("class",(d,i)=>{return d.data.name})
-    //   .attr("transform", function(d, i) { return "translate(" + (d.x-1) + "," + (bar_h-(d.partV/max_allV)*bar_h) + ")"; } )
-    //   .attr("width", 2)
-    //   .attr("height", function(d) { return (d.partV/max_allV)*bar_h; })
-    //   .attr("fill", 'red')
-    //   .on('mouseover', function(d,i){
-    //     const svg = d3.select('#mychart2').select('svg');
-    //     svg.select('#senValue')
-    //       .text(`${d.partV.toFixed(2)}`);
-    //     svg.select('#P')
-    //       .text(d.data.name);
-    //     d3.selectAll(`rect.${d.data.name}#partial`)
-    //       .style('fill','yellow')
-    //   })
-    //   .on('mouseout',function(d,i){
-    //     d3.selectAll(`rect.${d.data.name}#partial`)
-    //       .style('fill','red');
-    //   });
+    this.partial = bar_svg.selectAll("#partial")
+      .data(this.props.allSenHist)
+      .enter().append("rect")
+      .attr("id", "partial")
+      .attr("class",(d,i)=>{return 'p'+i})
+      .attr("transform", function(d, i) { return "translate(" + bar_w*i + "," + (seE-(d.partV/max_allV)*bar_h) + ")"; } )
+      .attr("width", bar_w)
+      .attr("height", function(d) { return (d.partV/max_allV)*bar_h; })
+      .attr("fill", partColor)
+      .on('mouseover', function(d,i){
+        const svg = d3.select('#mychart2').select('svg');
+        svg.select('#senValue')
+          .text(`${d.partV.toFixed(2)}`);
+        svg.select('#P')
+          .text(d.data.name);
+        d3.selectAll(`rect.${'p'+i}#partial`)
+          .style('fill','yellow')
+      })
+      .on('mouseout',function(d,i){
+        d3.selectAll(`rect.${'p'+i}#partial`)
+          .style('fill',partColor);
+      });
 
   }
   
   componentDidUpdate(){
-    let bar_svg = d3.select('#bar').select('svg');
     let bar_h = this.bar_h;
-    const maxElement = this.props.maxElement;
+    let bar_w = 100/35;
+    const sE = 100-2*this.bar_h;
+    const max_allV = this.max_allV;
+    const fE = sE+this.bar_h;
+    const seE = fE+this.bar_h;
 
     for (let node of this.leaves){
       const id = parseInt(node.data.name.slice(1));
       node.partV=this.props.allSenHist[id].partV;
     }
     
-		bar_svg.selectAll("#partial")
-      .data(this.leaves)
+		this.partial
+      .data(this.props.allSenHist)
       .transition().duration(750)
-      .attr("transform", function(d, i) { return "translate(" + (d.x-1) + "," + (bar_h-(d.partV/maxElement)*bar_h) + ")"; } )
-      .attr("width", 2)
-      .attr("height", function(d) { return (d.partV/maxElement)*bar_h; })
-      .attr("fill", 'red');
+      .attr("transform", function(d, i) { 
+        return "translate(" + bar_w*i + "," + (seE-(d.partV/max_allV)*bar_h) + ")"; } )
+      .attr("width", bar_w)
+      .attr("height", function(d) { return (d.partV/max_allV)*bar_h; })
+
+    // Update node and link
+    this.nodes.style('visibility', (d)=>{
+        return d.depth<=this.state.currentDepth?'visible':'hidden';
+      })
+    this.links.style('visibility', (d)=>{
+          return d.depth<=this.state.currentDepth?'visible':'hidden';
+        })
   }
   render() {
+    let marks = {};
+    for (let i=1;i<=this.state.maxDepth;i++){
+      marks[i]={
+        label:i,
+      }
+    }
     return (
-      <div className = "barChart" id = "bar">
-        <svg></svg>
+      <div>
+        <p style={{float:"left"}}>Depth:</p>
+        <Slider 
+          style={{
+            width: '40%',
+            float: 'left',
+            marginTop: '0.2vw',
+            marginLeft: '0.6vw',
+          }}
+          min={1}
+          max={this.state.maxDepth}
+          defaultValue={this.state.currentDepth}
+          onChange={(value)=>{
+            this.setState({currentDepth:value});
+          }}
+          step={1}
+          marks= {marks}
+        />
+        <div className = "barChart" id = "bar">
+          <svg style={{width:"95%"}}></svg>
+        </div>
       </div>
+      
     );
   }
 }
