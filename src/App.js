@@ -56,7 +56,7 @@ class App extends Component {
       }
       for (let i in mark){
         let tmp = mark[i];
-        tmp.style.transform = 'translateX(-30%) rotate(70deg) translateX('+tmp.level*100+'%)';
+        tmp.style.transform = 'translateX(-80%) rotate(-70deg) translateX(-'+tmp.level*100+'%)';
       }
       marks.push(mark);
     }
