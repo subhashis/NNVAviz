@@ -188,7 +188,7 @@ class BarChart extends Component {
         svg.select('#senValue')
           .text(`${d.partV.toFixed(2)}`);
         svg.select('#P')
-          .text(d.data.name);
+          .text('p'+i);
         d3.selectAll(`rect.${'p'+i}#partial`)
           .style('fill','yellow')
       })
