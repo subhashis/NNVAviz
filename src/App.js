@@ -12,7 +12,11 @@ import './style.css';
 class App extends Component {
   constructor(props){
     super(props);
-    this.para_names = [
+    let index_name = [];
+    for (let i =0;i<35;i++){
+      index_name.push('p'+i);
+    }
+    let para_names = [
       "k_RL",
       "k_RLm",
       "k_Rd0",
@@ -49,6 +53,7 @@ class App extends Component {
       "D_c42a",
       "D_B1m"
     ];
+    this.para_names = index_name;
     let marks = [];
     for (let i=0;i<35;i++){
       let mark = {};
