@@ -27,6 +27,7 @@ export default class InputCharts extends Component {
                     previewData = {this.props.previewData}
                     tableClick = {(d)=>{this.handleTableClick(d)}}
                     marks = {this.props.marks}
+                    paraName ={this.props.paraName}
                 />
 		    </div>
         )

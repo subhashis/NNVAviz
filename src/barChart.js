@@ -159,12 +159,12 @@ class BarChart extends Component {
       .attr("width", bar_w)
       .attr("fill", allColor)
       .attr("height", function(d) { return (d.allV/max_allV)*bar_h; })
-      .on('mouseover', function(d,i){
+      .on('mouseover', (d,i)=>{
         const svg = d3.select('#mychart2').select('svg');
         svg.select('#senValue')
           .text(`${d.allV.toFixed(2)}`);
         svg.select('#P')
-          .text('p'+i);
+          .text(this.props.paraName[i]);
         d3.selectAll(`rect.${'p'+i}#all`)
           .style('fill','yellow')
       })
@@ -183,12 +183,12 @@ class BarChart extends Component {
       .attr("width", bar_w)
       .attr("height", function(d) { return (d.partV/max_allV)*bar_h; })
       .attr("fill", partColor)
-      .on('mouseover', function(d,i){
+      .on('mouseover', (d,i)=>{
         const svg = d3.select('#mychart2').select('svg');
         svg.select('#senValue')
           .text(`${d.partV.toFixed(2)}`);
         svg.select('#P')
-          .text('p'+i);
+          .text(this.props.paraName[i]);
         d3.selectAll(`rect.${'p'+i}#partial`)
           .style('fill','yellow')
       })

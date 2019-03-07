@@ -127,7 +127,7 @@ export default class Parameters extends Component {
             sliders.push(
                 <div key ={i} className='slider'>
                     <div className='sliderText'>
-                        <span>{`P${i}: `}</span>
+                        <span>{`${this.props.paraName[i]}: `}</span>
                         <input id={i} className='paraBox' type="text" value={this.state.para[i]} onChange={this.handleInputChange} ></input>
                     </div>
                     <div className='sliderBody'>

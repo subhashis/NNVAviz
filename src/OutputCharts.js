@@ -233,6 +233,7 @@ class OutputCharts extends Component {
 						sen_min={this.sen_min} 
 						sen_max={this.sen_max} 
 						sen_mid_point={this.sen_mid_point}
+						paraName = {this.props.paraName}
 			>
 				<BarChart  sen_data={this.sen_data} 
 							sen_min={this.sen_min} 
@@ -240,6 +241,7 @@ class OutputCharts extends Component {
 							sen_mid_point={this.sen_mid_point}
 							allSenHist={this.state.allSenHist}
 							maxElement={this.state.maxElement}
+							paraName = {this.props.paraName}
 				/>
 			</HeatChart>
 		</div>

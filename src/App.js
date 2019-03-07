@@ -12,7 +12,43 @@ import './style.css';
 class App extends Component {
   constructor(props){
     super(props);
-    // console.log(data);
+    this.para_names = [
+      "k_RL",
+      "k_RLm",
+      "k_Rd0",
+      "k_Rs",
+      "k_Rd1",
+      "k_Ga",
+      "k_G1",
+      "k_Gd",
+      "k_24cm0",
+      "k_24cm1",
+      "k_24mc",
+      "k_24d",
+      "k_42a",
+      "k_42d",
+      "k_B1cm",
+      "k_B1mc",
+      "k_Cla4a",
+      "k_Cla4d",
+      "C24_t",
+      "B1_t",
+      "C42_t",
+      "G_t",
+      "R_t",
+      "q",
+      "h",
+      "D_R",
+      "D_RL",
+      "D_G",
+      "D_Ga",
+      "D_Gbg",
+      "D_Gd",
+      "D_c24m",
+      "D_c42",
+      "D_c42a",
+      "D_B1m"
+    ];
     let marks = [];
     for (let i=0;i<35;i++){
       let mark = {};
@@ -92,10 +128,12 @@ class App extends Component {
       <div className="App">
         {/* <p align="center"><font size="8px" color="#777" fontFamily="Georgia">NNVA: Neural Network Assisted Visual Analysis</font></p> */}
         <OutputCharts
+          paraName = {this.para_names}
           data={this.state.data}
           changePreColor = {this.changePreColor}
         />
         <InputCharts
+          paraName = {this.para_names}
           previewData={this.state.previewData}
           request = {this.getData}
           marks = {this.state.marks}
