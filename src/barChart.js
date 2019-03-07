@@ -104,6 +104,16 @@ class BarChart extends Component {
       })
 
     // Add a circle for each node.
+    function hiC(root,color){
+      root = d3.select('#'+root);
+      const children = root.data()[0].data.children;
+      root.style('fill',color);
+      if(children.length>0){
+        hiC('n'+children[0].name,color);
+        hiC('n'+children[1].name,color);
+      }
+    };
+    
     this.nodes = senDen.selectAll("g")
         .data( nodeData )
         .enter()
@@ -112,8 +122,11 @@ class BarChart extends Component {
             return "translate(" + d.y + "," + d.x + ")"
         })
         .append("circle")
-          .attr("r", 1)
-          .style("fill", "#69b3a2")
+        .attr("r", 1)
+        .style("fill", "#69b3a2")
+        .attr('id',(d,i)=>{
+          return 'n'+d.data.name;
+        })
         .style('visibility', (d)=>{
           return d.depth<=this.state.currentDepth?'visible':'hidden';
         })
@@ -123,6 +136,7 @@ class BarChart extends Component {
             d3.selectAll(`rect.${p}`)
               .style('fill','yellow')
           }
+          hiC('n'+d.data.name,'yellow');
         })
         .on('mouseout',function(d,i){
           const over = d.data.name.split('-');
@@ -132,6 +146,7 @@ class BarChart extends Component {
             d3.selectAll(`rect.${p}#partial`)
             .style('fill',partColor);
           }
+          hiC('n'+d.data.name,"#69b3a2");
         });
 
     const sE = 100-2*this.bar_h;

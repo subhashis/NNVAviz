@@ -305,6 +305,15 @@ class CellChart extends Component {
 
 
     // Add a circle for each node.
+    function hiC(root,color){
+      root = d3.select('#'+root);
+      const children = root.data()[0].data.children;
+      root.style('fill',color);
+      if(children.length>0){
+        hiC('n'+children[0].name,color);
+        hiC('n'+children[1].name,color);
+      }
+    };
     g.selectAll("g")
       .data(root.descendants().slice(1))
       .enter()
@@ -313,6 +322,9 @@ class CellChart extends Component {
         return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")";
       })
       .append("circle")
+      .attr('id',(d,i)=>{
+        return 'n'+d.data.name;
+      })
       .attr("r", (d,i)=>{
         return i===0?3:1;
       })
@@ -326,6 +338,7 @@ class CellChart extends Component {
           d3.selectAll(`path#${loc}`)
             .style('fill', 'yellow')
         }
+        hiC('n'+d.data.name,'yellow');
       })
       .on('mouseout', (d, i) => {
         const over = d.data.name.split('-');
@@ -333,6 +346,7 @@ class CellChart extends Component {
           d3.selectAll(`path#${p}`)
             .style('fill', this.colorScale(d.value));
         }
+        hiC('n'+d.data.name,"#69b3a2");
       });
   }
 
