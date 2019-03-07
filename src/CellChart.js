@@ -5,7 +5,6 @@ import * as d3 from 'd3';
 import colorbrewer from 'colorbrewer';
 import my_radial_brush from './my_radial_brush';
 import denData from './data/d3-dendrogram_protein';
-import { template } from 'handlebars';
 let data;
 
 class CellChart extends Component {
@@ -314,7 +313,9 @@ class CellChart extends Component {
         return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")";
       })
       .append("circle")
-      .attr("r", 1)
+      .attr("r", (d,i)=>{
+        return i===0?3:1;
+      })
       .style("fill", "#69b3a2")
       .style('visibility', (d) => {
         return d.height >= 4 ? 'visible' : 'hidden';
