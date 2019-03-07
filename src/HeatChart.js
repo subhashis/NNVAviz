@@ -87,7 +87,7 @@ class HeatChart extends Component {
       .text(this.props.paraName[0])
       .attr('id','P')
       .attr('x',0)
-      .attr('y',0)
+      .attr('y',-2)
       .style('text-anchor','middle')
       .style('dominant-baseline','baseline');
     
@@ -95,7 +95,7 @@ class HeatChart extends Component {
       .text('')
       .attr('id','senValue')
       .attr('x',0)
-      .attr('y',0)
+      .attr('y',2)
       .style('text-anchor','middle')
       .style('dominant-baseline','hanging');
     
