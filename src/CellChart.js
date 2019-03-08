@@ -16,7 +16,7 @@ class CellChart extends Component {
     const valueLen = this.props.valueLen;
 
     // the color scale can be input 
-    const paletteName = 'PiYG';
+    const paletteName = 'RdYlBu';
     let colors = colorbrewer[paletteName][11];
     colors = colors.slice(0).reverse();
     let dom = [];
@@ -457,7 +457,7 @@ class CellChart extends Component {
         <svg className='cell'></svg>
         <div style={{fontSize:'0.8vw'}}>
           Palette:&nbsp;
-          <select id="cellColorMap" defaultValue='PiYG'>
+          <select id="cellColorMap" defaultValue='RdYlBu'>
             <option value="RdYlGn">RdYlGn</option>
             <option value="Spectral">Spectral</option>
             <option value="RdYlBu">RdYlBu</option>

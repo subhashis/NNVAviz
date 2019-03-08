@@ -21,17 +21,18 @@ body {
 
 #parameters {
 	width: 70.94vw;
-	height: 25.39vw;
+	height: 33.00vw;
 }
 #controls {
 	height: 2.75vw;
 	width: 70.94vw;
 }
 .slider {
-	height: 18%;
+	height: 25%;
 	float: left;
 	width: 9%;
-	margin: 1%;
+	margin-left: 1%;
+	margin-right: 1%;
 }
 .sliderText {
 	font-size: 0.7vw;

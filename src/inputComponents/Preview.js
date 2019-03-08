@@ -8,6 +8,13 @@ export default class Preview extends Component {
       this.state={
         diff : false,
       }
+      let colors = colorbrewer['RdYlBu'][11];
+      colors = colors.slice(0).reverse();
+      let dom = [];
+      for (let i = 0; i < 11; i += 1) {
+        dom.push(i * 400 / 10);
+      }
+      this.colorScale = d3.scaleLinear().domain(dom).range(colors);
   
       // prepare radial axes data
       const valueLen = this.props.valueLen;
@@ -58,16 +65,7 @@ export default class Preview extends Component {
     }
 
     componentDidUpdate(){
-      this.colorScale = this.props.preColor;
-      if (!this.colorScale){
-        let colors = colorbrewer['PiYG'][11];
-        colors = colors.slice(0).reverse();
-        let dom = [];
-        for (let i = 0; i < 11; i += 1) {
-          dom.push(i * 400 / 10);
-        }
-        this.colorScale = d3.scaleLinear().domain(dom).range(colors);
-      }
+      if(this.props.preColor) this.colorScale = this.props.preColor;
       // calculate the value scale
       if (this.props.previewData){
         this.minValue = Math.min(...this.props.previewData.curve_mean);
@@ -113,6 +111,15 @@ export default class Preview extends Component {
             .select('path.std1')
             .attr('d', pathData1)
             .style('visibility','visible');
+
+          // change legend colormap
+          this.legendSvg.select('rect')
+            .style('fill','url(#svgGradient')
+          this.legend.data(colorScale.domain());
+          this.legend.select("text")
+              .text(function (d) {
+                return d.toFixed(0);
+              })
         }
         // showing diff
         else {
@@ -142,21 +149,23 @@ export default class Preview extends Component {
           tmpC.domain(legD);
           colorScale = tmpC;
           // hide stds
-          //draw the std2
-          let pathData2 = this.radialAreaGenerator2(this.my_points);
-    
           d3.select("#previewChart")
             .select('path.std2')
-            .attr('d', pathData2)
             .style('visibility','hidden');
-      
-          // draw the std1
-          let pathData1 = this.radialAreaGenerator1(this.my_points);
-      
           d3.select("#previewChart")
             .select('path.std1')
-            .attr('d', pathData1)
             .style('visibility','hidden');
+
+          // change legend colormap
+          this.legendSvg.select('rect')
+            .style('fill','url(#svgGradientDiff')
+          this.legend.data(legD);
+          this.legend.select("text")
+              .text(function (d) {
+                return d.toFixed(0);
+              })
+          // colorscale for diff
+          colorScale=d3.scaleLinear().domain(legD).range(this.cDiff);
         }
 
     
@@ -211,6 +220,67 @@ export default class Preview extends Component {
           .attr("stroke", "black")
           .attr("stroke-width", 0.15)
           .style("opacity", 0.9);
+
+        const legendSvg = d3.select("#previewChart").append("svg");
+        this.legendSvg = legendSvg;
+        let legD = [];
+        for (let i = 0; i < 11; i++) {
+          legD.push(i * 400 / 10)
+        }
+        let gradientData = [];
+        this.cDiff = colorbrewer['RdGy'][11];
+        this.cDiff = this.cDiff.slice(0).reverse();
+        for (let i=0;i<11;i++){
+          let tmp ={};
+          tmp.offset = (i*10)+'%';
+          tmp.color = this.cDiff[i];
+          gradientData.push(tmp);
+        }
+        legendSvg.append("linearGradient")
+          .attr("id", "svgGradientDiff")
+          .attr("x1", "0%")
+          .attr("x2", "100%")
+          .attr("y1", "0%")
+          .attr("y2", "0%")
+          .selectAll("stop")
+          .data(gradientData)
+          .enter().append("stop")
+          .attr("offset", function(d) { return d.offset; })
+          .attr("stop-color", function(d) { return d.color; });
+    
+        legendSvg.attr("viewBox", `0 0 70 20`);
+        var legend = legendSvg.append("g")
+          .attr("class", "legend")
+          .selectAll(".legendElement")
+          .data(legD)
+          .enter().append("g")
+          .attr("class", "legendElement");
+    
+        this.legend = legend;
+    
+        const legendElementWidth = 60 / 10;
+        const cellSize = 5;
+    
+        legendSvg.append("rect")
+          .attr("x", 5)
+          .attr("y", 5)
+          .attr("class", "cellLegend bordered")
+          .attr("width", 60)
+          .attr("height", cellSize)
+          .style("fill", "url(#svgGradient)");
+    
+        legend.append("text")
+          .attr("class", "mono legendElement")
+          .text(function (d) {
+            return d.toFixed(0);
+          })
+          .style('font-size', '0.12vw')
+          .attr("x", function (d, i) {
+            return 5 + legendElementWidth * i;
+          })
+          .attr("y", 5 + cellSize +1)
+          .style('text-anchor', 'middle')
+          .style('dominant-baseline', 'hanging');
     }
     
     draw_radial_axes() {
@@ -266,16 +336,17 @@ export default class Preview extends Component {
         // console.log('render');
         return ( 
           <div className = "block" id = "previewChart">
-            <p align="center" style={{
-              float: "left",
-              width: '90%',
-            }}>Quickview</p>
-            <button 
-            className="btn btn-primary btn-sm" 
-            onClick={()=>this.diffFun()}
-            style={{
-              float: "left",
-            }} >Diff</button>
+            <div >
+              <p style={{
+                float: "left",
+              }}>Quickview</p>
+              <button 
+              className="btn btn-primary btn-sm" 
+              onClick={()=>this.diffFun()}
+              style={{
+                float: "left",
+              }} >Diff</button>
+            </div>
           </div>
         )
     }
