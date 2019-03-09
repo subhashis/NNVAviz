@@ -63,3 +63,6 @@ p {
 	width: 97.7vw;
 	float: left;
 }
+.rt-noData {
+	visibility: hidden;
+}

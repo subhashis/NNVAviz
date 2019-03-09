@@ -26,7 +26,6 @@ class MatrixView extends Component {
                 .then(res=>{drawMatrix(res.data,d)});
         });
         let drawMatrix = (data,type)=>{
-            console.log(data)
             $('#matrix').empty()
             let dy,dx;
             if (type ==='m1'){
@@ -71,6 +70,10 @@ class MatrixView extends Component {
                 dom.push(min + i * (max-min) / 10);
             }
             let colorScale = d3.scaleLinear().domain(dom).range(colors);
+            let sorted = [];
+            for (let i =0;i<dy;i++){
+                sorted.push(data[i].slice(0).sort((a,b)=>(a-b)));
+            }
             svgMatrix.selectAll('.my').data(data)
                 .enter()
                 .append('g')
@@ -86,9 +89,92 @@ class MatrixView extends Component {
                         .attr('y',(d)=>{return margin+height*i})
                         .attr('height',height)
                         .style('fill',(d)=>{return colorScale(d)})
-                        .style('stroke','none')
-                        .style('stroke-width','0px')
                 })
+                .on('click',(d,i)=>{
+                    //append pop window if not visible
+                    $('svg.pop').remove();
+                    let pop = d3.select('#matrix').append('svg')
+                        .attr('class','pop')
+                        .attr("viewBox", `0 0 160 90`)
+                    pop.append('rect')
+                        .attr('width','100%')
+                        .attr('height','100%')
+                        .style('fill','white')
+                        .on('click',()=>{$('svg.pop').remove();})
+
+                    let x = d3.scaleLinear()
+                        .domain([min, max])
+                        .range([10,150]);
+                    
+                    let y = d3.scaleLinear()
+                        .domain([0.09,0.11])
+                        .range([70,5]);
+
+                    pop.append("g")
+                        .attr("class", "axis axis--x")
+                        .attr("transform", "translate(0,70)")
+                        .call(d3.axisBottom(x).tickSize(2))
+
+                    pop.append("g")
+                        .attr("class", "axis axis--y")
+                        .attr("transform", "translate(10,0)")
+                        .call(d3.axisLeft(y).tickSize(1).ticks(null, "%"));
+                    d3.selectAll('.tick').select('text')
+                        .style('font-size','2px');
+                    
+                    let density = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(40))(d);
+                    console.log(density);
+                    pop.append('path')
+                        .datum(density)
+                        .style("fill", "none")
+                        .style("stroke", "#000")
+                        .style("stroke-width", '0.4')
+                        .style("stroke-linejoin", "round")
+                        .attr("d",  d3.line()
+                            .curve(d3.curveBasis)
+                            .x(function(d) { return x(d[0]); })
+                            .y(function(d) { return y(d[1]); })
+                        )
+                    
+                    const margin = 10
+                    const width = (160-margin*2)/dx
+                    const height =8
+                    pop.selectAll('rect.bar')
+                        .data(d).enter()
+                        .append('rect')
+                        .attr('x',(d,i)=>{return margin+width*i})
+                        .attr('width',width)
+                        .attr('y','80')
+                        .attr('height',height)
+                        .style('fill',(d)=>{return colorScale(d)})
+                        
+                    
+                })
+                .on('contextmenu',function(d,i){
+                    if(type === 'm1'){
+                        d3.event.preventDefault();
+                        svgMatrix.selectAll('.my').data(sorted)
+                            .each((d,i)=>{
+                                let group = d3.select('g#y'+i).selectAll('rect')
+                                group.data(d)
+                                .style('fill',(d)=>{return colorScale(d)})
+                            })
+                    }
+                })
+        }
+
+        function kernelDensityEstimator(kernel, X) {
+            return function(V) {
+                return X.map(function(x) {
+                    return [x, d3.mean(V, function(v) { return kernel(x - v); })];
+                });
+            };
+          }
+          
+        function kernelEpanechnikov(k) {
+            return function(v) {
+                return Math.abs(v /= k) <= 1 ? 0.75 * (1 - v * v) / k : 0;
+            };
         }
 
     }

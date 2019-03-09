@@ -23,6 +23,12 @@ path {
 	/* pointer-events: all; */
 }
 
+line {
+	stroke: #777;
+	stroke-width: 0.3px;
+	/* pointer-events: all; */
+}
+
 .labels {
 	fill: #aaa;
 	font-weight: 200;
@@ -63,21 +69,21 @@ opacity: 0.2;
 }
 
 .axis :last-of-type circle {
-stroke: #269900;
-stroke-dasharray: 4,4;
-opacity: 0.4;
+	stroke: #269900;
+	stroke-dasharray: 4,4;
+	opacity: 0.4;
 }
 .std1 {
-fill: #bfbfbf;
-opacity: 0.7;
-stroke: black;  
-stroke-width: 0.5;
+	fill: #bfbfbf;
+	opacity: 0.7;
+	stroke: black;  
+	stroke-width: 0.5;
 }
 .std2 {
-fill: #d9d9d9;
-opacity: 0.7;
-stroke: black;
-stroke-width: 0.5;
+	fill: #d9d9d9;
+	opacity: 0.7;
+	stroke: black;
+	stroke-width: 0.5;
 }
 
 .resize {
@@ -96,4 +102,13 @@ rect.bordered {
 
 #matrix {
 	margin: 0.5vw;
+}
+.pop {
+	position: fixed;
+	width: 80vw;
+	left: 10vw;
+	top: 5vw;
+}
+.axis--y .domain {
+	display: none;
 }
