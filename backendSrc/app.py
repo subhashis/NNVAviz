@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, send_from_directory
 import json
 import surrogateModel as model
 import os
+import read_weight_matrix
 
 app = Flask(__name__, static_folder='../build')
 
@@ -22,7 +23,8 @@ def previewData():
 
 @app.route("/matrix/<index>")
 def previewMatrix(index):
-    return 'test'
+    res = read_weight_matrix.main(index)
+    return jsonify(res.tolist())
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
