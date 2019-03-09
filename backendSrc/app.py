@@ -20,6 +20,10 @@ def previewData():
     res = model.main(paras)
     return jsonify(res)
 
+@app.route("/matrix/<index>")
+def previewMatrix(index):
+    return 'test'
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
