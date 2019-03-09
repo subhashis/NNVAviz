@@ -88,3 +88,7 @@ rect.bordered {
 	stroke: #E6E6E6;
 	stroke-width:0.3px;   
   }
+
+svg.matrixChoose {
+	margin: 0.3vw;
+}

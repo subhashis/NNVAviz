@@ -248,7 +248,8 @@ export default class Preview extends Component {
           .attr("offset", function(d) { return d.offset; })
           .attr("stop-color", function(d) { return d.color; });
     
-        legendSvg.attr("viewBox", `0 0 70 20`);
+        legendSvg.attr("viewBox", `0 0 70 20`)
+          .style('width','100%');
         var legend = legendSvg.append("g")
           .attr("class", "legend")
           .selectAll(".legendElement")
