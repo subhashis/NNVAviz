@@ -16,7 +16,7 @@ class CellChart extends Component {
     const valueLen = this.props.valueLen;
 
     // the color scale can be input 
-    const paletteName = 'PiYG';
+    const paletteName = 'RdYlBu';
     let colors = colorbrewer[paletteName][11];
     colors = colors.slice(0).reverse();
     let dom = [];
@@ -142,9 +142,16 @@ class CellChart extends Component {
         });
 
       //legend
-      this.legend.selectAll('rect').style("fill", (d, i) => {
-        return this.colorScale(d);
-      })
+      let gradientData = [];
+      for (let i=0;i<11;i++){
+        let tmp ={};
+        tmp.offset = (i*10)+'%';
+        tmp.color = this.colorScale.range()[i];
+        gradientData.push(tmp);
+      }
+      gradient.data(gradientData)
+        .attr("offset", function(d) { return d.offset; })
+        .attr("stop-color", function(d) { return d.color; });
 
       this.props.changePreColor(this.colorScale);
 
@@ -326,7 +333,10 @@ class CellChart extends Component {
         return 'n'+d.data.name;
       })
       .attr("r", (d,i)=>{
-        return i===0?3:1;
+        return i===0?2:1;
+      })
+      .style('stroke',(d,i)=>{
+        return i===0?'yellow':'none';
       })
       .style("fill", "#69b3a2")
       .style('visibility', (d) => {
@@ -447,7 +457,7 @@ class CellChart extends Component {
         <svg className='cell'></svg>
         <div style={{fontSize:'0.8vw'}}>
           Palette:&nbsp;
-          <select id="cellColorMap" defaultValue='PiYG'>
+          <select id="cellColorMap" defaultValue='RdYlBu'>
             <option value="RdYlGn">RdYlGn</option>
             <option value="Spectral">Spectral</option>
             <option value="RdYlBu">RdYlBu</option>

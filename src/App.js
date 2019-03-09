@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import OutputCharts from './OutputCharts';
 import InputCharts from './inputComponents/InputCharts';
+import MaxtrixView from './MatrixView';
 import axios from 'axios';
 import data from './data/1/NNVA_data';
 import 'react-table/react-table.css'
@@ -145,6 +146,7 @@ class App extends Component {
           preColor = {this.state.preColor}
           data = {this.state.data}
         />
+        <MaxtrixView />
       </div>
     );
   }

@@ -13,7 +13,7 @@ class HeatChart extends Component {
     const sen_data = this.props.sen_data;
     const chart = circularHeatChart();
     const width = this.props.size;
-    const paletteName = 'PiYG';
+    const paletteName = 'RdYlBu';
     let colors = colorbrewer[paletteName][10];
     colors = colors.slice(0).reverse();
 
