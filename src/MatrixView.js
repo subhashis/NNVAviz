@@ -90,77 +90,111 @@ class MatrixView extends Component {
                         .attr('height',height)
                         .style('fill',(d)=>{return colorScale(d)})
                 })
-                .on('click',(d,i)=>{
-                    //append pop window if not visible
-                    $('svg.pop').remove();
-                    let pop = d3.select('#matrix').append('svg')
-                        .attr('class','pop')
-                        .attr("viewBox", `0 0 160 90`)
-                    pop.append('rect')
-                        .attr('width','100%')
-                        .attr('height','100%')
-                        .style('fill','white')
-                        .on('click',()=>{$('svg.pop').remove();})
-
-                    let x = d3.scaleLinear()
-                        .domain([min, max])
-                        .range([10,150]);
-                    
-                    let y = d3.scaleLinear()
-                        .domain([0.09,0.11])
-                        .range([70,5]);
-
-                    pop.append("g")
-                        .attr("class", "axis axis--x")
-                        .attr("transform", "translate(0,70)")
-                        .call(d3.axisBottom(x).tickSize(2))
-
-                    pop.append("g")
-                        .attr("class", "axis axis--y")
-                        .attr("transform", "translate(10,0)")
-                        .call(d3.axisLeft(y).tickSize(1).ticks(null, "%"));
-                    d3.selectAll('.tick').select('text')
-                        .style('font-size','2px');
-                    
-                    let density = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(40))(d);
-                    console.log(density);
-                    pop.append('path')
-                        .datum(density)
-                        .style("fill", "none")
-                        .style("stroke", "#000")
-                        .style("stroke-width", '0.4')
-                        .style("stroke-linejoin", "round")
-                        .attr("d",  d3.line()
-                            .curve(d3.curveBasis)
-                            .x(function(d) { return x(d[0]); })
-                            .y(function(d) { return y(d[1]); })
-                        )
-                    
-                    const margin = 10
-                    const width = (160-margin*2)/dx
-                    const height =8
-                    pop.selectAll('rect.bar')
-                        .data(d).enter()
-                        .append('rect')
-                        .attr('x',(d,i)=>{return margin+width*i})
-                        .attr('width',width)
-                        .attr('y','80')
-                        .attr('height',height)
-                        .style('fill',(d)=>{return colorScale(d)})
+            
+            if(type === 'm1'){
+                svgMatrix.on('contextmenu',function(d,i){
+                    d3.event.preventDefault();
+                    svgMatrix.selectAll('.my').data(sorted)
+                        .each((d,i)=>{
+                            let group = d3.select('g#y'+i).selectAll('rect')
+                            group.data(d)
+                            .style('fill',(d)=>{return colorScale(d)})
+                        })
+                })
+                let tooltip = d3.select('#matrix')
+                    .append("div")
+                    .style("position", "absolute")
+                    .style("visibility", "hidden");
+            
+                svgMatrix.selectAll('.my')
+                    .on('mouseover',(d,i)=>{
+                        $('#svgTool').empty()
+                        tooltip.html('<div class="heatmap_tooltip"><svg id = "svgTool"></svg></div>');
+                        let svgTool=d3.select('#svgTool')
+                        svgTool.attr('width','100%').attr('height','100%')
+                            .attr("viewBox", `0 0 100 100`);
+                        tooltip.style("visibility", "visible")
+                    })
+                    .on('mouseout',(d,i)=>{
+                        tooltip.style("visibility", "hidden");
+                    })
+                    .on("mousemove", function(d, i) {
                         
+                        let y = d3.event.pageY;
+                        if(d3.event.clientY>750) y-=200;
+                        let x = d3.event.pageX + 20;
+                        tooltip.style("top", y + "px").style("left", x + "px");
+                    })
+                
+                // svgMatrix.selectAll('.my')
+                //     .on('click',(d,i)=>{
+                //     //append pop window if not visible
+                //     $('svg.pop').remove();
+                //     let pop = d3.select('#matrix').append('svg')
+                //         .attr('class','pop')
+                //         .attr("viewBox", `0 0 160 90`)
+                //     pop.append('rect')
+                //         .attr('width','100%')
+                //         .attr('height','100%')
+                //         .style('fill','white')
+                //         .on('click',()=>{$('svg.pop').remove();})
+
+                //     let x = d3.scaleLinear()
+                //         .domain([min, max])
+                //         .range([10,150]);
                     
-                })
-                .on('contextmenu',function(d,i){
-                    if(type === 'm1'){
-                        d3.event.preventDefault();
-                        svgMatrix.selectAll('.my').data(sorted)
-                            .each((d,i)=>{
-                                let group = d3.select('g#y'+i).selectAll('rect')
-                                group.data(d)
-                                .style('fill',(d)=>{return colorScale(d)})
-                            })
-                    }
-                })
+                //     let max_den,min_den;
+                //     if (type ==='m1'){
+                //         max_den = 0.11
+                //         min_den = 0.09
+                //     }
+                //     else if (type ==='m4'){
+                //         max_den = 0.11
+                //         min_den = 0.08
+                //     }
+                //     let y = d3.scaleLinear()
+                //         .domain([min_den,max_den])
+                //         .range([70,5]);
+
+                //     pop.append("g")
+                //         .attr("class", "axis axis--x")
+                //         .attr("transform", "translate(0,70)")
+                //         .call(d3.axisBottom(x).tickSize(2))
+
+                //     pop.append("g")
+                //         .attr("class", "axis axis--y")
+                //         .attr("transform", "translate(10,0)")
+                //         .call(d3.axisLeft(y).tickSize(1).ticks(null, "%"));
+                //     d3.selectAll('.tick').select('text')
+                //         .style('font-size','2px');
+                    
+                //     let density = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(40))(d);
+                //     console.log(density);
+                //     pop.append('path')
+                //         .datum(density)
+                //         .style("fill", "none")
+                //         .style("stroke", "#000")
+                //         .style("stroke-width", '0.4')
+                //         .style("stroke-linejoin", "round")
+                //         .attr("d",  d3.line()
+                //             .curve(d3.curveBasis)
+                //             .x(function(d) { return x(d[0]); })
+                //             .y(function(d) { return y(d[1]); })
+                //         )
+                    
+                //     const margin = 10
+                //     const width = (160-margin*2)/dx
+                //     const height =8
+                //     pop.selectAll('rect.bar')
+                //         .data(d).enter()
+                //         .append('rect')
+                //         .attr('x',(d,i)=>{return margin+width*i})
+                //         .attr('width',width)
+                //         .attr('y','80')
+                //         .attr('height',height)
+                //         .style('fill',(d)=>{return colorScale(d)})
+                // })
+            }
         }
 
         function kernelDensityEstimator(kernel, X) {
