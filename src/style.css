@@ -227,9 +227,10 @@ rect.bordered {
 #mt-body{
 	height:95%;
 }
-#mt-slider {
-	width:10%;
+#mt-slider-div {
+	width:2%;
 	float: left;
+	height: 100%;
 }
 #mt-sen {
 	width:40%;
@@ -237,4 +238,11 @@ rect.bordered {
 }
 #mt-body-m1,#mt-body-m4{
 	height: 100%;
+}
+.left {
+	float: left;
+}
+#mt-index {
+	width:8%;
+	height:100%;
 }

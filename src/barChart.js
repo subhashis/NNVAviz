@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import Slider from 'rc-slider';
-import data from './data/d3-dendrogram_param_sensitivity';
+import data from './data/1/d3-dendrogram_param_sensitivity';
 
 class BarChart extends Component {
   constructor(props){

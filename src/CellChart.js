@@ -4,7 +4,7 @@ import React, {
 import * as d3 from 'd3';
 import colorbrewer from 'colorbrewer';
 import my_radial_brush from './my_radial_brush';
-import denData from './data/d3-dendrogram_protein';
+import denData from './data/1/d3-dendrogram_protein';
 let data;
 
 class CellChart extends Component {

@@ -127,7 +127,7 @@ export default class Preview extends Component {
           let maxValue = -Infinity;
           for (let i = 0; i < valueLen; i += 1) {
             let angle = dummy_data[i];
-            let protein_value = Math.abs(data.curve_mean[i]-ori.curve_mean[i]);
+            let protein_value = data.curve_mean[i]-ori.curve_mean[i];
             if (protein_value>maxValue) maxValue = protein_value;
             if (protein_value<minValue) minValue = protein_value;
             let std = data.curve_std[((i + valueLen/2) % valueLen)] / uncertainty_scale;

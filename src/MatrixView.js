@@ -48,6 +48,9 @@ class MatrixView extends Component {
                 .append('div')
                 .attr('id','mt-body-m1')
                 .append('svg')
+                .style('height','100%')
+                .style('width','100%')
+                .attr('preserveAspectRatio',"none")
                 .attr("viewBox", `0 0 2000 900`);
             const margin = 0
             const width = (2000-margin*2)/dx
@@ -126,7 +129,22 @@ class MatrixView extends Component {
         else if (type === 'm4'){
             dy = 500
             dx = 400
+            d3.select('#mt-index')
+                .attr('viewbox','0 0 100 536')
+            
+            let scaler = d3.scaleLinear().domain([0,499]).range([536,0])     
+            d3.select('#mt-index').append('path')
+                .attr('d',`m0 ${scaler(250)} l100 0 m-100 0 l5 5 m-5 -5 l5 -5`)
+                .attr('stroke','black')
         }
+    }
+    moveSlider(value,e,b){
+        console.log(e);
+        let scaler = d3.scaleLinear().domain([0,499]).range([536,0])   
+        console.log(scaler(value));     
+        d3.select('#mt-index').select('path')
+            .attr('d', `m 0,${scaler(value)} l 100,0 m -100,0 l 5,5 m -5,-5 l 5,-5`)
+            .style('stroke','black')
     }
     render(){
         let w1,w2,w3,w4,content;
@@ -135,10 +153,19 @@ class MatrixView extends Component {
         w2 = <img src={m2} alt="m2" className = "full" />;
         w3 = <img src={m3} alt="m2" className = "full" />;
         w4 =<div id = "mt-body-m4" >
-                <img src={m4} alt="m4" class ="half"/>
-                <div id ="mt-slider" >
+                <img src={m4} alt="m4" className ="half"/>
+                <svg className='left' id ='mt-index'></svg>
+                <div id ="mt-slider-div" >
                     <Slider 
                         vertical = {true}
+                        onChange = {this.moveSlider}
+                        trackStyle={{
+                            backgroundColor: '#e9e9e9',
+                        }}
+                        min={0}
+                        max={499}
+                        defaultValue={250}
+                        step={1}
                     />
                 </div>
                 <div id ="mt-sen">
