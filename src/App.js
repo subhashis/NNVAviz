@@ -7,7 +7,6 @@ import data from './data/1/NNVA_data';
 import 'react-table/react-table.css'
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
-import './svg.css';
 import './style.css';
 
 class App extends Component {
