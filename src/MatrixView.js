@@ -130,21 +130,31 @@ class MatrixView extends Component {
             dy = 500
             dx = 400
             d3.select('#mt-index')
-                .attr('viewbox','0 0 100 536')
+                .attr('viewBox','0 0 100 536')
             
             let scaler = d3.scaleLinear().domain([0,499]).range([536,0])     
             d3.select('#mt-index').append('path')
                 .attr('d',`m0 ${scaler(250)} l100 0 m-100 0 l5 5 m-5 -5 l5 -5`)
                 .attr('stroke','black')
+                .style('stroke-width','1')
+            d3.select('#mt-index').append('text')
+                .text('250')
+                .style('text-anchor','middle')
+                .style('dominant-baseline','hanging')
+                .attr('x',50)
+                .attr('y',scaler(250))
         }
     }
-    moveSlider(value,e,b){
-        console.log(e);
-        let scaler = d3.scaleLinear().domain([0,499]).range([536,0])   
-        console.log(scaler(value));     
+    moveSlider(value){
+        let scaler = d3.scaleLinear().domain([0,499]).range([536,0]) 
         d3.select('#mt-index').select('path')
             .attr('d', `m 0,${scaler(value)} l 100,0 m -100,0 l 5,5 m -5,-5 l 5,-5`)
-            .style('stroke','black')
+        d3.select('#mt-index').select('text')
+            .text(value)
+            .attr('x',50)
+            .attr('y',scaler(value))
+        d3.select('#mt-index').select('text')
+            .style('dominant-baseline',()=>{return value<50?'auto':'hanging'})
     }
     render(){
         let w1,w2,w3,w4,content;
