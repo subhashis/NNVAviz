@@ -12,10 +12,10 @@ import './style.css';
 class App extends Component {
   constructor(props){
     super(props);
-    let index_name = [];
-    for (let i =0;i<35;i++){
-      index_name.push('p'+i);
-    }
+    // let index_name = [];
+    // for (let i =0;i<35;i++){
+    //   index_name.push('p'+i);
+    // }
     let para_names = [
       "k_RL",
       "k_RLm",
@@ -53,7 +53,7 @@ class App extends Component {
       "D_c42a",
       "D_B1m"
     ];
-    this.para_names = index_name;
+    this.para_names = para_names;
     let marks = [];
     for (let i=0;i<35;i++){
       let mark = {};
@@ -145,7 +145,9 @@ class App extends Component {
           preColor = {this.state.preColor}
           data = {this.state.data}
         />
-        <MaxtrixView />
+        <MaxtrixView
+          paraName = {this.para_names}
+         />
       </div>
     );
   }

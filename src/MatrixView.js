@@ -36,28 +36,19 @@ class MatrixView extends Component {
         }
     }
     componentDidUpdate(prevProps,prevState){
+        if(this.state.type === prevState.type) return 0
         let type = this.state.type;
         let data = this.state.data;
         let dy,dx;
+        const paletteName = 'RdBu';
+        let colors = colorbrewer[paletteName][11];
+        colors = colors.slice(0).reverse();
+        
         if(prevState.type==='m1') $('#mt-body-m1').remove();
         if(prevState.type==='m4') $('#mt-body-m4').remove();
         if (type ==='m1'){
             dy = 35
             dx = 1024
-            let svgMatrix = d3.select('#mt-body')
-                .append('div')
-                .attr('id','mt-body-m1')
-                .append('svg')
-                .style('height','100%')
-                .style('width','100%')
-                .attr('preserveAspectRatio',"none")
-                .attr("viewBox", `0 0 2000 900`);
-            const margin = 0
-            const width = (2000-margin*2)/dx
-            const height = (900-margin*2)/dy
-            const paletteName = 'RdBu';
-            let colors = colorbrewer[paletteName][11];
-            colors = colors.slice(0).reverse();
             let max = data[0][0]
             let min = data[0][0]
             for (let i = 0;i<dy;i++){
@@ -71,6 +62,18 @@ class MatrixView extends Component {
                 dom.push(min + i * (max-min) / 10);
             }
             let colorScale = d3.scaleLinear().domain(dom).range(colors);
+            this.colorScale = colorScale;
+            let svgMatrix = d3.select('#mt-body')
+                .append('div')
+                .attr('id','mt-body-m1')
+                .append('svg')
+                .style('height','100%')
+                .style('width','100%')
+                .attr('preserveAspectRatio',"none")
+                .attr("viewBox", `0 0 2000 900`);
+            const margin = 0
+            const width = (2000-margin*2)/dx
+            const height = (900-margin*2)/dy
             let sorted = [];
             for (let i =0;i<dy;i++){
                 sorted.push(data[i].slice(0).sort((a,b)=>(a-b)));
@@ -129,10 +132,24 @@ class MatrixView extends Component {
         else if (type === 'm4'){
             dy = 500
             dx = 400
+            let max = data[0][0]
+            let min = data[0][0]
+            for (let i = 0;i<dy;i++){
+                for(let j=0;j<dx;j++){
+                    if (max<data[i][j]) max = data[i][j];
+                    else if (min>data[i][j]) min = data[i][j];
+                }
+            }
+            let dom = [];
+            for (let i = 0; i < 11; i += 1) {
+                dom.push(min + i * (max-min) / 10);
+            }
+            let colorScale = d3.scaleLinear().domain(dom).range(colors);
+            this.colorScale = colorScale;
             d3.select('#mt-index')
                 .attr('viewBox','0 0 100 536')
             
-            let scaler = d3.scaleLinear().domain([0,499]).range([536,0])     
+            let scaler = d3.scaleLinear().domain([0,499]).range([0,536])     
             d3.select('#mt-index').append('path')
                 .attr('d',`m0 ${scaler(250)} l100 0 m-100 0 l5 5 m-5 -5 l5 -5`)
                 .attr('stroke','black')
@@ -143,10 +160,103 @@ class MatrixView extends Component {
                 .style('dominant-baseline','hanging')
                 .attr('x',50)
                 .attr('y',scaler(250))
+            let url = 'http://127.0.0.1:5000/matrix/mp';
+            axios.get(url)
+                .then(res=>{
+                    let svg = d3.select('#mt-sen')
+                        .append('svg')
+                        .attr('viewBox','0 0 456 489')
+                    // expend data
+                    const data_height = 89;
+                    const data_width = 456/400;
+                    svg.append('g').selectAll('rect.expend')
+                        .data(this.state.data[250])
+                        .enter()
+                        .append('rect')
+                        .attr('class','expend')
+                        .attr('x',(d,i)=>i*data_width)
+                        .attr('width',data_width)
+                        .attr('y',400)
+                        .attr('height',data_height)
+                        .style('fill',d=>colorScale(d))
+
+                    this.sen = res.data;
+                    const margin_top = 30
+                    const margin_left = 30
+                    const margin_bottom = 60
+                    const margin_right = 5
+                    const width = 456-margin_left-margin_right
+                    const height = 400-margin_top-margin_bottom
+                    let x = d3.scaleLinear().domain([0,35]).range([margin_left,456-margin_right])
+                    let y = d3.scaleLinear().domain([0,1]).range([height,0])
+                    let bar_g = svg.append('g')
+                    bar_g.selectAll('rect.bar')
+                        .data(this.sen[250])
+                        .enter()
+                        .append('rect')
+                        .attr('class','bar')
+                        .attr('x',(d,i)=>x(i))
+                        .attr('width',width/35)
+                        .attr('y',d=>margin_top+y(d))
+                        .attr('height',d=>height-y(d))
+                        .style('fill','CadetBlue')
+                    let tmp = []
+                    for (let i=0.5;i<35;i++){
+                        tmp.push(i)
+                    }
+                    let x_axis = d3.axisBottom(x).tickValues(tmp).tickSizeOuter(0)
+                    bar_g.append("g")
+                        .attr("transform", "translate(0," + (height + margin_top) + ")")
+                        .call(x_axis)
+                        .selectAll('.tick')
+                        .select('text')
+                        .data(this.props.paraName)
+                        .text(d=>d)
+                        .style('text-anchor','end')
+                        .style('transform','rotate(-90deg) translate(-7px,-1.2em)')
+                    let y_axis = d3.axisLeft(y)
+                    bar_g.append("g")
+                        .attr("transform", `translate(${margin_left},${margin_top})`)
+                        .call(y_axis)
+                    bar_g.selectAll('.tick')
+                        .select('line')
+                        .attr('stroke','black')
+                        .style('stroke-width','1')
+                    bar_g.selectAll('.domain')
+                        .attr('stroke','black')
+                        .style('stroke-width','1')
+                    bar_g.append('text')
+                        .text('Parameter Importance')
+                        .style('text-anchor','middle')
+                        .style('dominant-baseline','hanging')
+                        .attr('x',456/2)
+                });
         }
     }
+    drawBarChart(value){
+        value = 499-value;
+        let svg = d3.select('#mt-sen')
+        svg.selectAll('rect.expend')
+            .data(this.state.data[value])
+            .style('fill',d=>this.colorScale(d))
+        const margin_top = 30
+        const margin_left = 30
+        const margin_bottom = 60
+        const margin_right = 5
+        const width = 456-margin_left-margin_right
+        const height = 400-margin_top-margin_bottom
+        let x = d3.scaleLinear().domain([0,35]).range([margin_left,456-margin_right])
+        let y = d3.scaleLinear().domain([0,1]).range([height,0])
+        svg.selectAll('rect.bar')
+            .data(this.sen[value])
+            .attr('x',(d,i)=>x(i))
+            .attr('width',width/35)
+            .attr('y',d=>margin_top+y(d))
+            .attr('height',d=>height-y(d))
+    }
     moveSlider(value){
-        let scaler = d3.scaleLinear().domain([0,499]).range([536,0]) 
+        value = 499-value;
+        let scaler = d3.scaleLinear().domain([0,499]).range([0,536]) 
         d3.select('#mt-index').select('path')
             .attr('d', `m 0,${scaler(value)} l 100,0 m -100,0 l 5,5 m -5,-5 l 5,-5`)
         d3.select('#mt-index').select('text')
@@ -154,10 +264,10 @@ class MatrixView extends Component {
             .attr('x',50)
             .attr('y',scaler(value))
         d3.select('#mt-index').select('text')
-            .style('dominant-baseline',()=>{return value<50?'auto':'hanging'})
+            .style('dominant-baseline',()=>{return value>450?'auto':'hanging'})
     }
     render(){
-        let w1,w2,w3,w4,content;
+        let w1,w2,w3,w4,content=null,title=null;
         const type = this.state.type;
         w1 = null;
         w2 = <img src={m2} alt="m2" className = "full" />;
@@ -169,23 +279,36 @@ class MatrixView extends Component {
                     <Slider 
                         vertical = {true}
                         onChange = {this.moveSlider}
+                        onAfterChange = {value=>this.drawBarChart(value)}
                         trackStyle={{
                             backgroundColor: '#e9e9e9',
                         }}
                         min={0}
                         max={499}
-                        defaultValue={250}
+                        defaultValue={249}
                         step={1}
                     />
                 </div>
                 <div id ="mt-sen">
                 </div>
             </div>
-        if(type==='m1') content = w1;
-        else if (type === 'm2') content = w2;
-        else if (type === 'm3') content = w3;
-        else if (type === 'm4') content = w4;
-        else content = null;
+        if(type==='m1') {
+            content = w1;
+            title = 'Matrix (35*1024)'
+        }
+        else if (type === 'm2') 
+        {
+            content = w2;
+            title = 'Matrix (1024*800)'
+        }
+        else if (type === 'm3') {
+            content = w3;
+            title = 'Matrix (800*500)'
+        }
+        else if (type === 'm4') {
+            content = w4;
+            title = 'Matrix (500*400)'
+        }
         return (
             <div>
                 <div 
@@ -209,7 +332,7 @@ class MatrixView extends Component {
                     className='block'
                     id = 'matrix'
                 >
-                    <div id = 'mt-title'></div>
+                    <div id = 'mt-title'>{title}</div>
                     <div id = 'mt-body'>
                         {content}
                     </div>
