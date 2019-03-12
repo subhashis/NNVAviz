@@ -107,11 +107,6 @@ path {
 	/* pointer-events: all; */
 }
 
-line {
-	stroke: #777;
-	stroke-width: 0.3px;
-	/* pointer-events: all; */
-}
 
 .labels {
 	fill: #aaa;

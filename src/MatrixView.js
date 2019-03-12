@@ -157,6 +157,40 @@ class MatrixView extends Component {
                     tooltip.style("top", y + "px").style("left", x + "px");
                 })
         }
+        else if (type === 'm2'){
+            dy = 1024
+            dx = 800
+            let max = data[0][0]
+            let min = data[0][0]
+            for (let i = 0;i<dy;i++){
+                for(let j=0;j<dx;j++){
+                    if (max<data[i][j]) max = data[i][j];
+                    else if (min>data[i][j]) min = data[i][j];
+                }
+            }
+            let dom = [];
+            for (let i = 0; i < 11; i += 1) {
+                dom.push(min + i * (max-min) / 10);
+            }
+            colorScale = d3.scaleLinear().domain(dom).range(colors);
+        }
+        else if (type === 'm3'){
+            dy = 800
+            dx = 500
+            let max = data[0][0]
+            let min = data[0][0]
+            for (let i = 0;i<dy;i++){
+                for(let j=0;j<dx;j++){
+                    if (max<data[i][j]) max = data[i][j];
+                    else if (min>data[i][j]) min = data[i][j];
+                }
+            }
+            let dom = [];
+            for (let i = 0; i < 11; i += 1) {
+                dom.push(min + i * (max-min) / 10);
+            }
+            colorScale = d3.scaleLinear().domain(dom).range(colors);
+        }
         else if (type === 'm4'){
             dy = 500
             dx = 400
