@@ -197,9 +197,10 @@ export default class Parameters extends Component {
                         <button className="btn btn-primary btn-sm" onClick={()=>this.handleRunClick()} >Run</button>
                         <button className="btn btn-primary btn-sm" onClick={()=>this.handleSaveClick()} >Save</button>
                         <button className="btn btn-primary btn-sm" onClick={()=>this.handleExportClick()} >Export</button>
-                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Cur')} style={{backgroundColor: '#ff2b75',}}>Current</button>
-                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Max')} style={{backgroundColor: '#ad7c0c',}} >Maximize</button>
-                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Min')} style={{backgroundColor: '#2b75ff',}}>Minimize</button>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Cur')} style={{backgroundColor: 'black',}}>Current</button>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Max')} style={{backgroundColor: '#cc0000',}}>Maximize</button>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Min')} style={{backgroundColor: '#3333ff',}}>Minimize</button>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Com')} style={{backgroundColor: '#801a80',}}>Combined</button>
                         {/* <label className="btn btn-primary btn-sm">
                             Import <input type="file" id="fileInput" onChange={()=>this.handleImportClick()} />
                         </label> */}

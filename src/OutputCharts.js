@@ -205,6 +205,7 @@ class OutputCharts extends Component {
 
 	}
 	brushMove(brush){
+		console.log('brush move')
 		const extent = brush.extent();
 		const valueLen = this.valueLen;
 		this.start = (extent[0]+valueLen/2)%valueLen;
@@ -225,6 +226,7 @@ class OutputCharts extends Component {
 				sen_min={this.sen_min} 
 				sen_max={this.sen_max} 
 				changePreColor = {this.props.changePreColor}
+				updateMarks = {this.props.updateMarks}
 			/>
 			
 			<HeatChart radius={150} 

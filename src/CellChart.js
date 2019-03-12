@@ -418,27 +418,49 @@ class CellChart extends Component {
       .on('brushend', this.props.brushEnd);
 
 
+    let g1 = d3.select("#mychart1").select('svg')
+      .append("g")
+      .attr("class", "brush")
+    let g2 = d3.select("#mychart1").select('svg')
+      .append("g")
+      .attr("class", "brush")
+    let g3 = d3.select("#mychart1").select('svg')
+      .append("g")
+      .attr("class", "brush")
+    let g4 = d3.select('#mychart1').select('svg')
+      .append('circle')
+      .attr('cx',0)
+      .attr('cy',0)
+      .attr('r',15)
+      .style('fill','#ff99ff')
+      .on('click',()=>{
+        lock(g2,'Max')
+        
+      })
+
     let brush2 = my_radial_brush()
       .range([0, this.props.valueLen])
       .innerRadius(75)
       .outerRadius(90)
       .handleSize(0.08)
+      .on('brush',()=>{
+        actBrushMove(g2)
+      })
+      .on('brushend',()=>{
+        actBrushEnd(g2,brush2,'Max')
+      })
 
     let brush3 = my_radial_brush()
       .range([0, this.props.valueLen])
       .innerRadius(45)
       .outerRadius(60)
       .handleSize(0.08)
-
-    let g2 = d3.select("#mychart1").select('svg')
-      .append("g")
-      .attr("class", "brush")
-    let g1 = d3.select("#mychart1").select('svg')
-      .append("g")
-      .attr("class", "brush")
-    let g3 = d3.select("#mychart1").select('svg')
-      .append("g")
-      .attr("class", "brush")
+      .on('brush',()=>{
+        actBrushMove(g3)
+      })
+      .on('brushend',()=>{
+        actBrushEnd(g3,brush3,'Min')
+      })
 
     //prepare group for indi
     d3.select("#mychart1").select("svg")
@@ -448,6 +470,64 @@ class CellChart extends Component {
     g1.call(brush);
     g2.call(brush2);
     g3.call(brush3);
+    g2.select('path.extent').style('fill','#f59ea3')
+    g3.select('path.extent').style('fill','#a3c7f5')
+    let actBrushMove = (g)=>{
+      g.actBrushMoved = true
+    }
+    let actBrushEnd = (g,b,type,color)=>{
+      snapBrush(b)
+      if(!g.actBrushMoved){
+        let extent = b.extent()
+        let start = extent[0]
+        let end = extent[1]
+        start = ((start+20)/40+5)%10
+        end = ((end-20)/40+5)%10
+        this.props.updateMarks(start,end,type)
+        lock(g,type)
+      }
+      g.actBrushMoved = false
+    }
+    let lock = (g,type)=>{
+      // lock the brush
+      g.extentFun = g.select('path.extent').on('mousedown.brush')
+      g.resizeFun = g.select('path.resize').on('mousedown.brush')
+      g.select('path.extent').on('mousedown.brush',()=>{})
+      g.selectAll('path.resize').on('mousedown.brush',()=>{})
+      if(type === 'Max'){
+        g.select('path.extent').style('fill','#cc0000')
+      }
+      else if (type === 'Min'){
+        g.select('path.extent').style('fill','#3333ff')
+      }
+      g.on('mousedown',()=>{unlock(g,type)})
+      g.locked = true
+    }
+    let unlock = (g,type)=>{
+      if (g.locked){
+        g.select('path.extent').on('mousedown.brush',g.extentFun)
+        g.selectAll('path.resize').on('mousedown.brush',g.resizeFun)
+        g.on('click',null)
+        if(type === 'Max'){
+          g.select('path.extent').style('fill','#f59ea3')
+        }
+        else if (type === 'Min'){
+          g.select('path.extent').style('fill','#a3c7f5')
+        }
+        g.locked = false
+      }
+    }
+    function snapBrush(b){
+      const n = 10
+      const interval = 400/n
+      let start = b.extent()[0]
+      let end = b.extent()[1]
+      start = (Math.floor(start/interval)*interval+interval/2)%400
+      end = (Math.floor(end/interval)*interval+interval/2)%400
+      if(end === start) start = (start -40)%400
+
+      b.extent([start,end])
+    }
   }
 
   render() {

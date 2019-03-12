@@ -8,6 +8,9 @@ import 'react-table/react-table.css'
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import './style.css';
+import act_max from './data/optimizer_data/NNVA_act_max';
+import act_min from './data/optimizer_data/NNVA_act_min';
+import act_max_min from './data/optimizer_data/NNVA_act_max_min';
 
 class App extends Component {
   constructor(props){
@@ -55,52 +58,37 @@ class App extends Component {
     ];
     this.para_names = para_names;
     let marks = [];
-    for (let i=0;i<35;i++){
-      let mark = {};
-      let r=[];
-      r.push(data.pset[i]);
-      r.push(Math.random()*2-1);
-      r.push(Math.random()*2-1);
-      mark[r[0]]={
-        label: r[0].toFixed(2),
+    for (let i = 0;i<35;i++){
+      let mark = {}
+      const datum = data.pset[i]
+      mark[datum]={
+        label: datum.toFixed(2),
         name: 'Cur',
         style:{
-          color: '#ff2b75',
-          transform: r[0].transform,
+          color: 'black'
         }
       }
-      mark[r[1]]={
-        label: r[1].toFixed(2),
-        name: 'Max',
-        style:{
-          color: '#ad7c0c',
-          transform: r[0].transform,
-        }
-      }
-      mark[r[2]]={
-        label: r[2].toFixed(2),
-        name: 'Min',
-        style:{
-          color: '#2b75ff',
-          transform: r[0].transform,
-        }
-      }
-      for (let i in mark){
-        mark[i].level = 0;
-      }
-      for (let i = 0;i<r.length;i++){
-        for (let j = i+1;j<r.length;j++){
-          if (Math.abs(r[j]-r[i])<0.15){
-            mark[r[j]].level = mark[r[i]].level+1;
-          } 
-        }
-      }
-      for (let i in mark){
-        let tmp = mark[i];
-        tmp.style.transform = 'translateX(-80%) rotate(-70deg) translateX(-'+tmp.level*100+'%)';
-      }
-      marks.push(mark);
+
+      // const test = Math.random()
+      
+      // mark[test]={
+      //   label: test.toFixed(2),
+      //   name: 'Max',
+      //   style:{
+      //     color: '#cc0000',
+      //   }
+      // }
+      // mark[r[2]]={
+      //   label: r[2].toFixed(2),
+      //   name: 'Min',
+      //   style:{
+      //     color: '#3333ff',
+      //   }
+      // }
+      marks.push(mark)
     }
+    this.sortMarks(marks)
+
     this.state = {
       data:data,
       previewData: null,
@@ -108,6 +96,28 @@ class App extends Component {
     }
     this.getData = this.getData.bind(this);
     this.changePreColor = this.changePreColor.bind(this);
+    this.updateMarks = this.updateMarks.bind(this)
+  }
+
+  sortMarks(marks){
+    for (let i=0;i<35;i++){
+      let mark = marks[i];
+      let keys = Object.keys(mark)
+      for (let i in mark){
+        mark[i].level = 0;
+      }
+      for (let i=0;i<keys.length;i++){
+        for (let j = i+1;j<keys.length;j++){
+          let diff = Math.abs(keys[j]-keys[i])
+          if (diff<0.15){
+            mark[keys[j]].level = mark[keys[i]].level+1;
+          } 
+        }
+      }
+      for (let i in mark){
+        mark[i].style.transform = 'translateX(-80%) rotate(-70deg) translateX(-'+mark[i].level*100+'%)';
+      }
+    }
   }
 
   changePreColor(c){
@@ -119,13 +129,44 @@ class App extends Component {
       params: para,
     })
       .then(res=>{
-        // console.log(res.data);
         this.setState({previewData: res.data});
       });
   }
 
-  updateMarks(){
-    ;
+  updateMarks(start,end,type){
+    let act,color;
+    if(type==='Max') {
+      act = act_max.act_max;
+      color = '#cc0000'
+    }
+    else if (type === 'Min'){
+      act = act_min.act_min;
+      color = '#3333ff'
+    } 
+    else if (type === 'Com') {
+      act = act_max_min.act_max_min;
+    }
+    let line = act[start*10+end]
+    let act_data = line[2]
+    let marks = this.state.marks.slice(0)
+    for (let i = 0;i<35;i++){
+      let mark = marks[i]
+      for (const key in mark){
+        if (mark[key].name === type)
+          delete mark[key]
+      }
+      const datum = act_data[i]
+      mark[datum]={
+        label: datum.toFixed(2),
+        name: type,
+        style:{
+          color: color,
+        }
+      }
+    }
+    this.sortMarks(marks)
+    this.setState({marks:marks})
+    console.log(act_data);
   }
 
   render() {
@@ -136,6 +177,7 @@ class App extends Component {
           paraName = {this.para_names}
           data={this.state.data}
           changePreColor = {this.changePreColor}
+          updateMarks = {this.updateMarks}
         />
         <InputCharts
           paraName = {this.para_names}

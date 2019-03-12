@@ -84,8 +84,72 @@ export default function my_radial_brush() {
 			.range([_r[0], _r[1], _r[0], _r[1]])
 
 		if (!arguments.length) return [_actualScale(_extent[0]), _actualScale(_extent[1])];
+		//update the brush when the new extent is set.
+		let _newStartAngle = _scale.invert(_value[0]);
+		let _newEndAngle = _scale.invert(_value[1])
 
-		_extent = [_scale.invert(_value[0]), _scale.invert(_value[1])];
+		if (_newEndAngle<_newStartAngle){
+			let interval = Math.ceil((_newStartAngle-_newEndAngle)/(2*Math.PI))*Math.PI*2
+			_newEndAngle+=interval;
+		}
+		_newBrushData = [{
+				startAngle: _newStartAngle,
+				endAngle: _newEndAngle,
+				class: "extent"
+			},
+			{
+				startAngle: _newStartAngle - _handleSize,
+				endAngle: _newStartAngle,
+				class: "resize e"
+			},
+			{
+				startAngle: _newEndAngle,
+				endAngle: _newEndAngle + _handleSize,
+				class: "resize w"
+			}
+		]
+
+		_brushG
+			.selectAll("path.circularbrush")
+			.data(_newBrushData)
+			.attr("d", _arc)
+
+		if (_newStartAngle > (Math.PI * 2)) {
+			_newStartAngle = (_newStartAngle - (Math.PI * 2));
+		} else if (_newStartAngle < -(Math.PI * 2)) {
+			_newStartAngle = (_newStartAngle + (Math.PI * 2));
+		}
+
+		if (_newEndAngle > (Math.PI * 2)) {
+			_newEndAngle = (_newEndAngle - (Math.PI * 2));
+		} else if (_newEndAngle < -(Math.PI * 2)) {
+			_newEndAngle = (_newEndAngle + (Math.PI * 2));
+		}
+		_extent = ([_newStartAngle, _newEndAngle]);
+		_brushData = _newBrushData;
+
+		_indiData=[{
+			ang:_extent[0],
+		},
+		{
+			ang:_extent[1],
+		}];
+
+		d3.select('g.indi')
+			.selectAll('line')
+			.data(_indiData)
+			.attr('x2',function(d){
+				return Math.cos(d.ang-Math.PI/2)*150;
+			})
+			.attr('y2',function(d){
+				return Math.sin(d.ang-Math.PI/2)*150;
+			})
+			.attr('x1',(d)=>{
+				return Math.cos(d.ang-Math.PI/2)*_arc.innerRadius()(_arc)
+			})
+			.attr('y1',(d)=>{
+				return Math.sin(d.ang-Math.PI/2)*_arc.innerRadius()(_arc)
+			})
 		return this
 	}
 
@@ -167,7 +231,6 @@ export default function my_radial_brush() {
 	return _circularbrush;
 
 	function resizeDown(d) {
-		// console.log(_extent);
 		d3.event.preventDefault();
 		var _mouse = d3.mouse(_brushG.node());
 
@@ -253,7 +316,6 @@ export default function my_radial_brush() {
 			}
 		]
 
-
 		_brushG
 			.selectAll("path.circularbrush")
 			.data(_newBrushData)
@@ -288,7 +350,13 @@ export default function my_radial_brush() {
 			})
 			.attr('y2',function(d){
 				return Math.sin(d.ang-Math.PI/2)*150;
-			});
+			})
+			.attr('x1',(d)=>{
+				return Math.cos(d.ang-Math.PI/2)*_arc.innerRadius()(_arc)
+			})
+			.attr('y1',(d)=>{
+				return Math.sin(d.ang-Math.PI/2)*_arc.innerRadius()(_arc)
+			})
 
 		_circularbrushDispatch.call('brush');
 
