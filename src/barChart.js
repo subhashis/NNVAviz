@@ -63,7 +63,37 @@ class BarChart extends Component {
     bar_svg.attr("viewBox", `0 0 100 100`)
 
     let bar_h = this.bar_h;
-    let bar_w = 100/35;
+    const margin_left = 12
+    this.margin_left = margin_left
+    const margin_bottom = 0.8
+    this.margin_bottom = margin_bottom
+    let bar_w = (100-margin_left)/35;
+    const sE = 100-2*this.bar_h-margin_bottom;
+    const fE = sE+this.bar_h;
+    const seE = fE+this.bar_h;
+
+    let y = d3.scaleLinear().domain([0,max_allV]).range([100-margin_bottom,fE])
+    let y_axis = d3.axisLeft(y).tickSizeInner(1).ticks(5).tickSizeOuter(0)
+    let axis_g = bar_svg.append('g')
+      .attr('transform',`translate(${margin_left},-0.5)`)
+      .call(y_axis)
+    axis_g.selectAll('text')
+      .style('font-size','3px')
+    axis_g.selectAll('line')
+      .style('stroke-width','0.2px')
+    axis_g.select('.domain')
+      .style('stroke-width','0.2px')
+
+    let axis_g2 = bar_svg.append('g')
+      .attr('transform',`translate(${margin_left},${-this.bar_h-0.5})`)
+      .call(y_axis)
+    axis_g2.selectAll('text')
+      .style('font-size','3px')
+    axis_g2.selectAll('line')
+      .style('stroke-width','0.2px')
+    axis_g2.select('.domain')
+      .style('stroke-width','0.2px')
+
 
     // set up the group
     let senDen=bar_svg.append('g')
@@ -155,28 +185,36 @@ class BarChart extends Component {
           hiC('n'+d.data.name,"#69b3a2");
         });
 
-    const sE = 100-2*this.bar_h;
-    const fE = sE+this.bar_h;
-    const seE = fE+this.bar_h;
-
     bar_svg.selectAll("#bg")
       .data(leaves.slice(0).sort((a,b)=>{return a.x-b.x}))
       .enter().append("rect")
       .attr("id", "bg")
-      .attr("transform", function(d, i) { return "translate(" + bar_w*i + ","+sE+")"; } )
+      .attr("transform", function(d, i) { return "translate(" + (margin_left+bar_w*i) + ","+sE+")"; } )
       .style('fill',function(d,i){
         return (i%2===1)?'white':'#E5E7E9';
       })
       .attr("width", bar_w)
       .attr("height", bar_h*2);
 
+    bar_svg.append('g').selectAll('text')
+      .data(this.props.paraName)
+      .enter()
+      .append('text')
+      .text(d=>d)
+      .style('font-size','2.2px')
+      .attr('transform','rotate(-90)')
+      .attr('y',(d,i)=>margin_left+i*bar_w)
+      .attr('x',-sE-1)
+      .style('text-anchor', 'end')
+      .style('dominant-baseline', 'hanging');
+    
           
     bar_svg.selectAll("#all")
       .data(this.props.allSenHist)
       .enter().append("rect")
       .attr("id", "all")
       .attr("class",(d,i)=>{return 'p'+i})
-      .attr("transform", function(d, i) { return "translate(" + bar_w*i + "," + (fE-(d.allV/max_allV)*bar_h) + ")"; } )
+      .attr("transform", function(d, i) { return "translate(" + (margin_left+bar_w*i) + "," + (fE-(d.allV/max_allV)*bar_h) + ")"; } )
       .attr("width", bar_w)
       .attr("fill", allColor)
       .attr("height", function(d) { return (d.allV/max_allV)*bar_h; })
@@ -205,7 +243,7 @@ class BarChart extends Component {
       .enter().append("rect")
       .attr("id", "partial")
       .attr("class",(d,i)=>{return 'p'+i})
-      .attr("transform", function(d, i) { return "translate(" + bar_w*i + "," + (seE-(d.partV/max_allV)*bar_h) + ")"; } )
+      .attr("transform", function(d, i) { return "translate(" + (margin_left+bar_w*i) + "," + (seE-(d.partV/max_allV)*bar_h) + ")"; } )
       .attr("width", bar_w)
       .attr("height", function(d) { return (d.partV/max_allV)*bar_h; })
       .attr("fill", partColor)
@@ -232,9 +270,11 @@ class BarChart extends Component {
   }
   
   componentDidUpdate(){
+    let margin_left = this.margin_left
+    let margin_bottom = this.margin_bottom
     let bar_h = this.bar_h;
-    let bar_w = 100/35;
-    const sE = 100-2*this.bar_h;
+    let bar_w = (100-margin_left)/35;
+    const sE = 100-2*this.bar_h-margin_bottom;
     const max_allV = this.max_allV;
     const fE = sE+this.bar_h;
     const seE = fE+this.bar_h;
@@ -248,7 +288,7 @@ class BarChart extends Component {
       .data(this.props.allSenHist)
       .transition().duration(750)
       .attr("transform", function(d, i) { 
-        return "translate(" + bar_w*i + "," + (seE-(d.partV/max_allV)*bar_h) + ")"; } )
+        return "translate(" + (margin_left+bar_w*i) + "," + (seE-(d.partV/max_allV)*bar_h) + ")"; } )
       .attr("width", bar_w)
       .attr("height", function(d) { return (d.partV/max_allV)*bar_h; })
 
