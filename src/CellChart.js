@@ -30,7 +30,7 @@ class CellChart extends Component {
     this.maxValue = Math.max(...data.curve_mean);
 
     const dummy_data = d3.range(0, 2 * Math.PI, 2 * Math.PI / valueLen);
-    const uncertainty_scale = 500; //to keep uncertainty bands in scale
+    const uncertainty_scale = 1; //to keep uncertainty bands in scale
     let my_points = [];
     for (let i = 0; i < valueLen; i += 1) {
       var angle = dummy_data[i];
@@ -54,11 +54,11 @@ class CellChart extends Component {
         return d.angle;
       })
       .innerRadius(function (d) {
-        let value = radius - 200 * d.std;
+        let value = radius - 0.5* d.std;
         return value;
       })
       .outerRadius(function (d) {
-        let value = radius + 200 * d.std;
+        let value = radius + 0.5* d.std;
         return value;
       });
 
@@ -68,11 +68,11 @@ class CellChart extends Component {
         return d.angle;
       })
       .innerRadius(function (d) {
-        let v = radius - 400 * d.std;
+        let v = radius - d.std;
         return v
       })
       .outerRadius(function (d) {
-        let v = radius + 400 * d.std;
+        let v = radius + d.std;
         return v
       });
 

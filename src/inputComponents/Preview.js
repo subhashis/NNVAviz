@@ -20,7 +20,6 @@ export default class Preview extends Component {
       const valueLen = this.props.valueLen;
 
       const dummy_data = d3.range(0, 2 * Math.PI, 2 * Math.PI/valueLen); 
-      // const uncertainty_scale = 500; //to keep uncertainty bands in scale
       let my_points = [];
       for (let i = 0; i < valueLen; i += 1) {
         var angle = dummy_data[i];
@@ -44,13 +43,11 @@ export default class Preview extends Component {
           return d.angle;
         })
         .innerRadius(function (d) {
-          let value = radius - 200 * d.std;
-          if (value<0) value=0
+          let value = radius - 0.5 * d.std;
           return value;
         })
         .outerRadius(function (d) {
-          let value = radius + 200 * d.std;
-          if (value>200) value = 200;
+          let value = radius + 0.5 * d.std;
           return value;
         });
 
@@ -60,13 +57,11 @@ export default class Preview extends Component {
           return d.angle;
         })
         .innerRadius(function (d) {
-          let v = radius - 400 * d.std;
-          if (v<0) v=0
+          let v = radius - d.std;
           return v
         })
         .outerRadius(function (d) {
-          let v = radius + 400 * d.std;
-          if (v>200) v = 200
+          let v = radius + d.std;
           return v
         });
   
@@ -83,7 +78,7 @@ export default class Preview extends Component {
         const valueLen = this.props.valueLen;
         const ori = this.props.data;
         const dummy_data = d3.range(0, 2 * Math.PI, 2 * Math.PI/valueLen); 
-        const uncertainty_scale = 500; //to keep uncertainty bands in scale
+        const uncertainty_scale = 1; //to keep uncertainty bands in scale
         let my_points = [];
         let colorScale = this.colorScale;
         
@@ -91,16 +86,22 @@ export default class Preview extends Component {
         
         // normal
         if(!this.state.diff){
+          let max_std=-Infinity;
           for (let i = 0; i < valueLen; i += 1) {
             var angle = dummy_data[i];
             var protein_value = data.curve_mean[i];
             var std = data.curve_std[((i + valueLen/2) % valueLen)] / uncertainty_scale;
+            if (std>max_std) max_std = std
             let tmp = {
               'angle': angle,
               'std': std,
               'value': protein_value
             };
             my_points.push(tmp);
+          }
+          let factor = max_std/50;
+          for (let i = 0; i < valueLen; i += 1){
+            my_points[i].std /=factor
           }
           my_points.push(my_points[0]);
           this.my_points = my_points;

@@ -167,7 +167,6 @@ class App extends Component {
     }
     this.sortMarks(marks)
     this.setState({marks:marks})
-    console.log(act_data);
   }
 
   render() {
