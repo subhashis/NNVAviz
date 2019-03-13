@@ -437,7 +437,7 @@ class MatrixView extends Component {
                     className='block'
                     id = 'matrix'
                 >
-                    <div id = 'mt-title'>{title}</div>
+                    <div id = 'mt-title' className='title'>{title}</div>
                     <div id = 'mt-legend'>
                         <svg viewBox='0 0 2215 100'></svg>
                     </div>

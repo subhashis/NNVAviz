@@ -346,9 +346,7 @@ export default class Preview extends Component {
         return ( 
           <div className = "block" id = "previewChart">
             <div >
-              <p style={{
-                float: "left",
-              }}>Quickview</p>
+              <p style={{float: "left",}} className='title'>Quickview</p>
               <button 
               className="btn btn-primary btn-sm" 
               onClick={()=>this.diffFun()}

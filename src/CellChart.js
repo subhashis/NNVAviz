@@ -565,7 +565,7 @@ class CellChart extends Component {
   render() {
     return ( 
       <div className = "block" id = "mychart1">
-        <p align="center">Cell Chart</p>
+        <p align="center" className="title">Cell Chart</p>
         <svg className='cell'></svg>
         <div style={{fontSize:'0.8vw'}}>
           Palette:&nbsp;
