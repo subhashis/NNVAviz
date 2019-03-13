@@ -44,23 +44,31 @@ export default class Preview extends Component {
           return d.angle;
         })
         .innerRadius(function (d) {
-          return radius - 200 * d.std;
+          let value = radius - 200 * d.std;
+          if (value<0) value=0
+          return value;
         })
         .outerRadius(function (d) {
-          return radius + 200 * d.std;
+          let value = radius + 200 * d.std;
+          if (value>200) value = 200;
+          return value;
         });
-  
+
       this.radialAreaGenerator2 = d3.radialArea()
         .curve(d3.curveCardinalClosed)
         .angle(function (d) {
           return d.angle;
         })
         .innerRadius(function (d) {
-          return radius - 400 * d.std;
+          let v = radius - 400 * d.std;
+          if (v<0) v=0
+          return v
         })
         .outerRadius(function (d) {
-          return radius + 400 * d.std;
-      });
+          let v = radius + 400 * d.std;
+          if (v>200) v = 200
+          return v
+        });
   
     }
 

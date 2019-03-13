@@ -145,6 +145,7 @@ class App extends Component {
     } 
     else if (type === 'Com') {
       act = act_max_min.act_max_min;
+      color = '#801a80'
     }
     let line = act[start*10+end]
     let act_data = line[2]

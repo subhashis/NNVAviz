@@ -54,10 +54,12 @@ class CellChart extends Component {
         return d.angle;
       })
       .innerRadius(function (d) {
-        return radius - 200 * d.std;
+        let value = radius - 200 * d.std;
+        return value;
       })
       .outerRadius(function (d) {
-        return radius + 200 * d.std;
+        let value = radius + 200 * d.std;
+        return value;
       });
 
     this.radialAreaGenerator2 = d3.radialArea()
@@ -66,10 +68,12 @@ class CellChart extends Component {
         return d.angle;
       })
       .innerRadius(function (d) {
-        return radius - 400 * d.std;
+        let v = radius - 400 * d.std;
+        return v
       })
       .outerRadius(function (d) {
-        return radius + 400 * d.std;
+        let v = radius + 400 * d.std;
+        return v
       });
 
   }
@@ -408,8 +412,8 @@ class CellChart extends Component {
   drawBrush() {
     let brush = my_radial_brush()
       .range([0, this.props.valueLen])
-      .innerRadius(105)
-      .outerRadius(120)
+      .innerRadius(90)
+      .outerRadius(105)
       .handleSize(0.08)
       .on("brush", () => {
         this.props.brushMove(brush)
@@ -433,15 +437,30 @@ class CellChart extends Component {
       .attr('cy',0)
       .attr('r',15)
       .style('fill','#ff99ff')
-      .on('click',()=>{
-        lock(g2,'Max')
-        
+      .on('click',comButton.bind(this))
+    
+    function comButton(){
+      snapBrush(brush2)
+      let extent = brush2.extent()
+      let start = extent[0]
+      let end = extent[1]
+      brush3.extent([end,start])
+      start = ((start+20)/40+5)%10
+      end = ((end-20)/40+5)%10
+      this.props.updateMarks(start,end,'Com')
+      lock(g2,'Max')
+      lock(g3,'Min')
+      g4.style('fill','#801a80')
+      g4.on('click',()=>{
+        g4.style('fill','#ff99ff')
+        g4.on('click',comButton.bind(this))
       })
+    }
 
     let brush2 = my_radial_brush()
       .range([0, this.props.valueLen])
-      .innerRadius(75)
-      .outerRadius(90)
+      .innerRadius(60)
+      .outerRadius(75)
       .handleSize(0.08)
       .on('brush',()=>{
         actBrushMove(g2)
@@ -452,8 +471,8 @@ class CellChart extends Component {
 
     let brush3 = my_radial_brush()
       .range([0, this.props.valueLen])
-      .innerRadius(45)
-      .outerRadius(60)
+      .innerRadius(30)
+      .outerRadius(45)
       .handleSize(0.08)
       .on('brush',()=>{
         actBrushMove(g3)
