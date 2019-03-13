@@ -190,6 +190,7 @@ export default class Parameters extends Component {
         return (
             <div>
                 <div className='block' style={{height:'35.10vw', width:'70.9vw'}}>
+                    <div id='paraTitle'>Parameter Control</div>
                     <div id = 'parameters' >
                         {sliders}
                     </div>

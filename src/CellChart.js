@@ -340,7 +340,10 @@ class CellChart extends Component {
         return i===0?2:1;
       })
       .style('stroke',(d,i)=>{
-        return i===0?'yellow':'none';
+        return 'black';
+      })
+      .style('stroke-width',(d,i)=>{
+        return '0.2px';
       })
       .style("fill", "#69b3a2")
       .style('visibility', (d) => {
@@ -361,7 +364,17 @@ class CellChart extends Component {
             .style('fill', this.colorScale(d.value));
         }
         hiC('n'+d.data.name,"#69b3a2");
-      });
+      })
+      rDenSvg.append('text')
+        .text('Protein Value Cluster')
+        .style('text-anchor','middle')
+        .style('dominant-baseline','baseline')
+        .attr('x',50)
+        .attr('y',100)
+        .style('font-size','6px')
+      rDenSvg.on('click',()=>{
+
+      })
   }
 
   draw_radial_axes() {

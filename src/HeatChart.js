@@ -84,7 +84,8 @@ class HeatChart extends Component {
 
     // selected value on the cornor
     svg.append('text')
-      .text(this.props.paraName[0])
+      .text('')
+      // .text(this.props.paraName[0])
       .attr('id','P')
       .attr('x',0)
       .attr('y',-2)
@@ -117,9 +118,13 @@ class HeatChart extends Component {
       .on('mouseout',function(d,i){
         let classes = this.className.baseVal.split(' ');
         d3.selectAll(`rect.${classes[1]}#all`)
-        .style('fill',allColor);
+          .style('fill',allColor);
         d3.selectAll(`rect.${classes[1]}#partial`)
-        .style('fill',partColor);
+          .style('fill',partColor);
+        svg.select('#senValue')
+          .text(``);
+        svg.select('#P')
+          .text(``);
       })
   }
   

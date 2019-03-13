@@ -124,6 +124,12 @@ class BarChart extends Component {
         .append("circle")
         .attr("r", 1)
         .style("fill", "#69b3a2")
+        .style('stroke',(d,i)=>{
+          return 'black';
+        })
+        .style('stroke-width',(d,i)=>{
+          return '0.2px';
+        })
         .attr('id',(d,i)=>{
           return 'n'+d.data.name;
         })
@@ -186,6 +192,11 @@ class BarChart extends Component {
       .on('mouseout',function(d,i){
         d3.selectAll(`rect.${'p'+i}#all`)
           .style('fill',allColor);
+        const svg = d3.select('#mychart2').select('svg');
+        svg.select('#senValue')
+          .text(``);
+        svg.select('#P')
+          .text('');
       });
     
       
@@ -210,6 +221,12 @@ class BarChart extends Component {
       .on('mouseout',function(d,i){
         d3.selectAll(`rect.${'p'+i}#partial`)
           .style('fill',partColor);
+        
+        const svg = d3.select('#mychart2').select('svg');
+        svg.select('#senValue')
+          .text(``);
+        svg.select('#P')
+          .text('');
       });
 
   }
