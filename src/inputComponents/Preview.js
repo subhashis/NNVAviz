@@ -99,7 +99,7 @@ export default class Preview extends Component {
             };
             my_points.push(tmp);
           }
-          let factor = max_std/50;
+          let factor = max_std/19.28; // scale to the max value
           for (let i = 0; i < valueLen; i += 1){
             my_points[i].std /=factor
           }

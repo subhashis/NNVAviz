@@ -32,10 +32,12 @@ class CellChart extends Component {
     const dummy_data = d3.range(0, 2 * Math.PI, 2 * Math.PI / valueLen);
     const uncertainty_scale = 1; //to keep uncertainty bands in scale
     let my_points = [];
+    let max_std=-Infinity;
     for (let i = 0; i < valueLen; i += 1) {
       var angle = dummy_data[i];
       var protein_value = data.curve_mean[i];
       var std = data.curve_std[((i + valueLen / 2) % valueLen)] / uncertainty_scale;
+      if (std>max_std) max_std = std
       let tmp = {
         'angle': angle,
         'std': std,
