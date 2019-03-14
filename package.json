@@ -2,7 +2,7 @@
   "name": "react_nnvaviz",
   "version": "0.1.0",
   "private": true,
-  "homepage" : "http://127.0.0.1:5000/",
+  "homepage": "http://127.0.0.1:5000/",
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap": "^4.2.1",
@@ -14,8 +14,9 @@
     "rc-tooltip": "^3.7.3",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
-    "react-scripts": "^2.1.5",
-    "react-table": "^6.9.2"
+    "react-scripts": "^2.1.8",
+    "react-table": "^6.9.2",
+    "react-toggle-button": "^2.2.0"
   },
   "scripts": {
     "start": "react-scripts start",

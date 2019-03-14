@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import colorbrewer from 'colorbrewer';
+import ToggleButton from 'react-toggle-button';
 
 export default class Preview extends Component {
     constructor(props){
@@ -338,22 +339,23 @@ export default class Preview extends Component {
           });
     }
 
-    diffFun(){
-      this.setState({diff:~this.state.diff});
-    }
-
     render() {
         // console.log('render');
         return ( 
           <div className = "block" id = "previewChart">
             <div >
-              <p style={{float: "left",}} className='title'>Quickview</p>
-              <button 
-              className="btn btn-primary btn-sm" 
-              onClick={()=>this.diffFun()}
-              style={{
-                float: "left",
-              }} >Diff</button>
+              <p style={{float: "left",position: 'relative',left: '40%',}} className='title'>Quickview</p>
+              <div style={{float: "left",position: 'relative',left: '17vw',top:'0.25vw'}}>
+                <ToggleButton
+                  inactiveLabel={"Val"}
+                  activeLabel={'Dif'}
+                  value={this.state.diff}
+                  onToggle={(value) => {
+                    this.setState({
+                      diff: !value,
+                    })
+                  }} />
+              </div>
             </div>
           </div>
         )

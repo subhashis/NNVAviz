@@ -60,12 +60,13 @@ class BarChart extends Component {
 
     this.max_allV = max_allV;
 
-    bar_svg.attr("viewBox", `0 0 100 100`)
+    bar_svg.attr("viewBox", `0 0 100 98`)
+      .attr('preserveAspectRatio',"none")
 
     let bar_h = this.bar_h;
     const margin_left = 12
     this.margin_left = margin_left
-    const margin_bottom = 0.8
+    const margin_bottom = 3
     this.margin_bottom = margin_bottom
     let bar_w = (100-margin_left)/35;
     const sE = 100-2*this.bar_h-margin_bottom;
@@ -309,6 +310,7 @@ class BarChart extends Component {
     }
     return (
       <div>
+        <p style={{textAlign:'center'}} className='title'>Sensitivity Cluster</p>
         <p style={{float:"left"}}>Depth:</p>
         <Slider 
           style={{
