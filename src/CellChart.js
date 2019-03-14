@@ -163,14 +163,14 @@ class CellChart extends Component {
       this.props.changePreColor(this.colorScale);
 
       //heat map
-      let heatcolorScale = d3.scaleQuantize()
-        .domain([this.props.sen_min, this.props.sen_max])
-        .range(colors);
-      d3.select('#heatSvg').selectAll("path.heat")
-        .style("fill", function (d) {
-          if (d != null) return heatcolorScale(d.value);
-          else return "url(#diagonalHatch)";
-        })
+      // let heatcolorScale = d3.scaleQuantize()
+      //   .domain([this.props.sen_min, this.props.sen_max])
+      //   .range(colors);
+      // d3.select('#heatSvg').selectAll("path.heat")
+      //   .style("fill", function (d) {
+      //     if (d != null) return heatcolorScale(d.value);
+      //     else return "url(#diagonalHatch)";
+      //   })
     };
 
     d3.select("#cellColorMap")
@@ -186,13 +186,20 @@ class CellChart extends Component {
 
     const changeScale = scale => {
       let legD = [];
+      let textD = [];
       if (scale === 'full') {
         for (let i = 0; i < 11; i++) {
           legD.push(i * 400 / 10)
         }
+        for (let i = 0; i < 5; i++) {
+          textD.push(i * 400 / 4)
+        }
       } else {
         for (let i = 0; i < 11; i++) {
           legD.push(this.minValue + i * (this.maxValue - this.minValue) / 10)
+        }
+        for (let i = 0; i < 5; i++) {
+          textD.push(this.minValue + i * (this.maxValue - this.minValue) / 4)
         }
       }
       this.colorScale.domain(legD);
@@ -203,7 +210,7 @@ class CellChart extends Component {
 
       this.props.changePreColor(this.colorScale);
 
-      this.legend.data(legD)
+      this.legend.data(textD)
       this.legend.select("text")
         .text(function (d) {
           return d.toFixed(0);
@@ -224,6 +231,10 @@ class CellChart extends Component {
     let legD = [];
     for (let i = 0; i < 11; i++) {
       legD.push(i * 400 / 10)
+    }
+    let textD = [];
+    for (let i = 0; i < 5; i++) {
+      textD.push(i * 400 / 4)
     }
 
     const legendSvg = d3.select('svg#legend');
@@ -250,13 +261,13 @@ class CellChart extends Component {
     var legend = legendSvg.append("g")
       .attr("class", "legend")
       .selectAll(".legendElement")
-      .data(legD)
+      .data(textD)
       .enter().append("g")
       .attr("class", "legendElement");
 
     this.legend = legend;
 
-    const legendElementWidth = 60 / 10;
+    const legendElementWidth = 60 / 4;
     const cellSize = 5;
 
     legendSvg.append("rect")
@@ -415,7 +426,7 @@ class CellChart extends Component {
           })
           this.std_cluster=type==='std'?true:false
           rDenSvg.select('text')
-            .text((type==='std'?'STD':'Protein')+'Value Cluster')
+            .text((type==='std'?'Uncertainty ':'Protein ')+'Value Cluster')
       }
       rDenSvg.on('click',()=>{
         if(!this.std_cluster){
@@ -619,7 +630,7 @@ class CellChart extends Component {
       <div className = "block" id = "mychart1">
         <p align="center" className="title">Cell Chart</p>
         <svg className='cell'></svg>
-        <div style={{fontSize:'0.8vw'}}>
+        <div style={{fontSize:'0.8vw',textAlign:'center'}}>
           Palette:&nbsp;
           <select id="cellColorMap" defaultValue='RdYlBu'>
             <option value="RdYlGn">RdYlGn</option>
