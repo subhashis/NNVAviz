@@ -4,7 +4,8 @@ import React, {
 import * as d3 from 'd3';
 import colorbrewer from 'colorbrewer';
 import my_radial_brush from './my_radial_brush';
-import denData from './data/1/d3-dendrogram_protein';
+import denData from './data/1/d3-dendrogram_protein'
+import stdData from './data/1/d3-dendrogram_protein_std'
 let data;
 
 class CellChart extends Component {
@@ -341,12 +342,8 @@ class CellChart extends Component {
       .attr("r", (d,i)=>{
         return i===0?2:1;
       })
-      .style('stroke',(d,i)=>{
-        return 'black';
-      })
-      .style('stroke-width',(d,i)=>{
-        return '0.2px';
-      })
+      .style('stroke','black')
+      .style('stroke-width','0.2px')
       .style("fill", "#69b3a2")
       .style('visibility', (d) => {
         return d.height >= 4 ? 'visible' : 'hidden';
@@ -374,8 +371,61 @@ class CellChart extends Component {
         .attr('x',50)
         .attr('y',100)
         .style('font-size','6px')
+      let changeView = (type)=>{
+        let root = d3.hierarchy(type==='std'?stdData:denData, function (d) {
+          return d.children;
+        });
+        cluster(root);
+        g.selectAll('path')
+          .data(root.links().slice(1))
+          .attr("d", linksGenerator)
+          .style('visibility', (d) => {
+            return d.target.height >= 4 ? 'visible' : 'hidden';
+          })
+        g.selectAll("g")
+          .data(root.descendants().slice(1))
+          .attr("transform", function (d) {
+            return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")";
+          })
+          .select("circle")
+          .attr('id',(d,i)=>{
+            return 'n'+d.data.name;
+          })
+          .attr("r", (d,i)=>{
+            return i===0?2:1;
+          })
+          .style('visibility', (d) => {
+            return d.height >= 4 ? 'visible' : 'hidden';
+          })
+          .on('mouseover', function (d, i) {
+            const over = d.data.name.split('-');
+            for (const loc of over) {
+              d3.selectAll(`path#${loc}`)
+                .style('fill', 'yellow')
+            }
+            hiC('n'+d.data.name,'yellow');
+          })
+          .on('mouseout', (d, i) => {
+            const over = d.data.name.split('-');
+            for (const p of over) {
+              d3.selectAll(`path#${p}`)
+                .style('fill', this.colorScale(d.value));
+            }
+            hiC('n'+d.data.name,"#69b3a2");
+          })
+          this.std_cluster=type==='std'?true:false
+          rDenSvg.select('text')
+            .text((type==='std'?'STD':'Protein')+'Value Cluster')
+      }
       rDenSvg.on('click',()=>{
-
+        if(!this.std_cluster){
+          // change to std cluster
+          changeView('std')
+        } 
+        else {
+          // change to value cluster
+          changeView('den')
+        }
       })
   }
 
