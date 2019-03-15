@@ -229,7 +229,8 @@ class MatrixView extends Component {
                         .style('height','100%')
                         .style('width','100%')
                         .attr('preserveAspectRatio',"none")
-                        .attr('viewBox','0 0 456 489')
+                        .attr('viewBox','0 -15 456 489')
+                        // .attr('viewBox','0 0 456 489') // this is original one
 
                     // expend data
                     const data_height = 89;
@@ -301,7 +302,7 @@ class MatrixView extends Component {
         // legend
         let svg = d3.select('#mt-legend').select('svg')
         const width = 2215/11
-        const height = 100
+        const height = 30
         svg.selectAll('rect')
             .data(colorScale.domain()).enter().append('rect')
             .attr('x',(d,i)=>width*i)
@@ -312,18 +313,22 @@ class MatrixView extends Component {
         svg.selectAll('text')
             .data(colorScale.domain()).enter().append('text')
             .attr('x',(d,i)=>width*i+width/2)
-            .attr('y',50)
+            .attr('y',35)
             .style('text-anchor','middle')
-            .style('dominant-baseline','middle')
+            .style('dominant-baseline','hanging')
             .text(d=>d.toFixed(1))
-            .style('font-size','5vw')
+            .style('font-size','3vw')
+            .style('visibility',(d,i)=>{
+                if (i%5===0) return 'visible'
+                else return 'hidden'
+            })
         svg.selectAll('text')
             .data(colorScale.domain())
             .text(d=>d.toFixed(1))
     }
     drawBarChart(value){
         value = 499-value;
-        let svg = d3.select('#mt-sen')
+        let svg = d3.select('#mt-sen').select('svg')
         svg.selectAll('rect.expend')
             .data(this.state.data[value])
             .style('fill',d=>this.colorScale(d))
@@ -382,23 +387,30 @@ class MatrixView extends Component {
             </div>
         if(type==='m1') {
             content = w1;
-            title = 'Matrix (35*1024)'
+            title = 'Weight Matrix 1 (35 X 1024)'
         }
         else if (type === 'm2') 
         {
             content = w2;
-            title = 'Matrix (1024*800)'
+            title = 'Weight Matrix 2 (1024 X 800)'
         }
         else if (type === 'm3') {
             content = w3;
-            title = 'Matrix (800*500)'
+            title = 'Weight Matrix 3 (800 X 500)'
         }
         else if (type === 'm4') {
             content = w4;
-            title = 'Matrix (500*400)'
+            title = 'Weight Matrix 4 (500 X 400)'
         }
         return (
             <div>
+                <div 
+                    style={{
+                        width: '97vw',
+                        textAlign: 'center',
+                    }}
+                    className='block title'
+                >NN Analyze</div>
                 <div 
                     style={{
                         width: '10vw',
@@ -410,21 +422,25 @@ class MatrixView extends Component {
                     <div className = 'matrixChoose grow'>
                         <div className = 'vertical-text'>35</div>
                         <img className = 'part' src={m1_thumb} alt='m1_thumb'></img>
+                        <div className = 'corner-text'>W1</div>
                         <div className = 'center-text'>1024</div>
                     </div>
                     <div className = 'matrixChoose grow'>
                         <div className = 'vertical-text'>1024</div>
                         <img className = 'part' src={m2_thumb} alt='m2_thumb'></img>
+                        <div className = 'corner-text'>W2</div>
                         <div className = 'center-text'>800</div>
                     </div>
                     <div className = 'matrixChoose grow'>
                         <div className = 'vertical-text'>800</div>
                         <img className = 'part' src={m3_thumb} alt='m3_thumb'></img>
+                        <div className = 'corner-text'>W3</div>
                         <div className = 'center-text'>500</div>
                     </div>
                     <div className = 'matrixChoose grow'>
                         <div className = 'vertical-text'>500</div>
                         <img className = 'part' src={m4_thumb} alt='m4_thumb'></img>
+                        <div className = 'corner-text'>W4</div>
                         <div className = 'center-text'>400</div>
                     </div>
                 </div>
@@ -432,7 +448,7 @@ class MatrixView extends Component {
                     style={{
                         width: '87vw',
                         height: '40vw',
-                        padding: '0.5vw',
+                        padding: '0.8vw',
                     }}
                     className='block'
                     id = 'matrix'

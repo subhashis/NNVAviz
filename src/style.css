@@ -250,6 +250,7 @@ rect.bordered {
 #mt-sen {
 	width:40%;
 	float: left;
+	height: 100%;
 }
 #mt-body-m1,#mt-body-m4{
 	height: 100%;
@@ -274,6 +275,11 @@ rect.bordered {
 	text-align: center;
 	position:absolute;
 	transform:translate(3vw,-100%);
+}
+.corner-text {
+	text-align: center;
+	position:absolute;
+	transform:translate(5.7vw,-7.5vw);
 }
 .grow { transition: all .2s ease-in-out; }
 .grow:hover { transform: scale(1.08); }
