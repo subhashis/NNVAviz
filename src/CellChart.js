@@ -5,6 +5,7 @@ import * as d3 from 'd3';
 import colorbrewer from 'colorbrewer';
 import my_radial_brush from './my_radial_brush';
 import denData from './data/1/d3-dendrogram_protein'
+import ToggleButton from 'react-toggle-button';
 import stdData from './data/1/d3-dendrogram_protein_std'
 let data;
 
@@ -12,6 +13,9 @@ class CellChart extends Component {
   constructor(props) {
     super(props);
     data = this.props.data;
+    this.state={
+      std: false,
+    } 
 
     // prepare radial axes data
     const valueLen = this.props.valueLen;
@@ -79,6 +83,10 @@ class CellChart extends Component {
         return v
       });
 
+  }
+
+  componentDidUpdate(){
+    this.changeView()
   }
 
   componentDidMount() {
@@ -292,7 +300,7 @@ class CellChart extends Component {
       .style('dominant-baseline', 'hanging');
 
     const rDenSvg = d3.select('svg#rDendo');
-    rDenSvg.attr("viewBox", `0 0 100 100`);
+    rDenSvg.attr("viewBox", `0 10 100 90`);
     let rad = 50;
 
     // Create the cluster layout:
@@ -377,12 +385,13 @@ class CellChart extends Component {
       })
       rDenSvg.append('text')
         .text('Protein Value Cluster')
-        .style('text-anchor','middle')
+        .style('text-anchor','start')
         .style('dominant-baseline','baseline')
-        .attr('x',50)
-        .attr('y',100)
+        .attr('x',5)
+        .attr('y',95)
         .style('font-size','6px')
-      let changeView = (type)=>{
+      this.changeView = ()=>{
+        let type = this.state.std?'std':'den'
         let root = d3.hierarchy(type==='std'?stdData:denData, function (d) {
           return d.children;
         });
@@ -428,16 +437,6 @@ class CellChart extends Component {
           rDenSvg.select('text')
             .text((type==='std'?'Uncertainty ':'Protein ')+'Value Cluster')
       }
-      rDenSvg.on('click',()=>{
-        if(!this.std_cluster){
-          // change to std cluster
-          changeView('std')
-        } 
-        else {
-          // change to value cluster
-          changeView('den')
-        }
-      })
   }
 
   draw_radial_axes() {
@@ -650,7 +649,20 @@ class CellChart extends Component {
           </select>
         </div>
         <svg id='legend'></svg>
-        <svg id='rDendo'></svg>
+        <div className='block' style={{float:'left',width:'40%'}}>
+          <div style={{position: 'absolute',transform:'translate(14vw,14vw)',fontSize:'0.8vw'}}>
+            <ToggleButton
+              inactiveLabel={"Pro"}
+              activeLabel={'Uct'}
+              value={this.state.std}
+              onToggle={(value) => {
+                this.setState({
+                  std: !value,
+                })
+              }} />
+          </div>
+          <svg id='rDendo' ></svg>
+        </div>
       </div>
     )
   }
