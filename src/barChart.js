@@ -6,7 +6,7 @@ import data from './data/1/d3-dendrogram_param_sensitivity';
 class BarChart extends Component {
   constructor(props){
     super(props);
-    this.bar_h = 44;
+    this.bar_h = 40;
     let bar_h = this.bar_h;
     var width = 112-bar_h*2-5;
     var height = 100;
