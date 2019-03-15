@@ -27,7 +27,7 @@ class HeatChart extends Component {
     d3.select('#mychart2')
       .select('svg#heatSvg')
       .data([sen_data])
-      .attr("viewBox", `-200 -160 400 330`)
+      .attr("viewBox", `-200 -200 400 399`)
       .attr("class", "heat")
       .call(chart);
 
@@ -241,6 +241,7 @@ class HeatChart extends Component {
         <div style={{width:'50%',float:"left"}}>
           <p align="center" className='title' style={{width:'100%',float:"left"}}>Sensitivity Heat Chart</p>
           <div>
+            <svg id="heatSvg"></svg>
             <div style={{fontSize:'0.8vw',textAlign:'center'}}>
               Palette:&nbsp;
               <select id="heatColorMap" defaultValue='RdYlBu'>
@@ -256,7 +257,6 @@ class HeatChart extends Component {
               </select>
               <svg id='legend'></svg>
             </div>
-            <svg id="heatSvg"></svg>
           </div>
         </div>
         {this.props.children}

@@ -6,9 +6,9 @@ import data from './data/1/d3-dendrogram_param_sensitivity';
 class BarChart extends Component {
   constructor(props){
     super(props);
-    this.bar_h = 30;
+    this.bar_h = 44;
     let bar_h = this.bar_h;
-    var width = 100-bar_h*2-5;
+    var width = 112-bar_h*2-5;
     var height = 100;
 
     // Create the cluster layout:
@@ -60,7 +60,7 @@ class BarChart extends Component {
 
     this.max_allV = max_allV;
 
-    bar_svg.attr("viewBox", `0 0 100 98`)
+    bar_svg.attr("viewBox", `0 0 100 112`)
       .attr('preserveAspectRatio',"none")
 
     let bar_h = this.bar_h;
@@ -69,11 +69,11 @@ class BarChart extends Component {
     const margin_bottom = 3
     this.margin_bottom = margin_bottom
     let bar_w = (100-margin_left)/35;
-    const sE = 100-2*this.bar_h-margin_bottom;
+    const sE = 112-2*this.bar_h-margin_bottom;
     const fE = sE+this.bar_h;
     const seE = fE+this.bar_h;
 
-    let y = d3.scaleLinear().domain([0,max_allV]).range([100-margin_bottom,fE])
+    let y = d3.scaleLinear().domain([0,max_allV]).range([112-margin_bottom,fE])
     let y_axis = d3.axisLeft(y).tickSizeInner(1).ticks(5).tickSizeOuter(0)
     let axis_g = bar_svg.append('g')
       .attr('transform',`translate(${margin_left},-0.5)`)
@@ -153,7 +153,7 @@ class BarChart extends Component {
             return "translate(" + d.y + "," + d.x + ")"
         })
         .append("circle")
-        .attr("r", 1)
+        .attr("r", 0.7)
         .style("fill", "#69b3a2")
         .style('stroke',(d,i)=>{
           return 'black';
@@ -275,7 +275,7 @@ class BarChart extends Component {
     let margin_bottom = this.margin_bottom
     let bar_h = this.bar_h;
     let bar_w = (100-margin_left)/35;
-    const sE = 100-2*this.bar_h-margin_bottom;
+    const sE = 112-2*this.bar_h-margin_bottom;
     const max_allV = this.max_allV;
     const fE = sE+this.bar_h;
     const seE = fE+this.bar_h;
@@ -329,7 +329,7 @@ class BarChart extends Component {
           marks= {marks}
         />
         <div className = "barChart" id = "bar">
-          <svg style={{width:"95%"}}></svg>
+          <svg style={{width:"95%",position:'relative',top:'1vw'}}></svg>
         </div>
       </div>
       

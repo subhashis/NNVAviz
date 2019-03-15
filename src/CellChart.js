@@ -254,6 +254,8 @@ class CellChart extends Component {
 
     legendSvg.attr("viewBox", `0 3 70 12`)
       .style('width','100%')
+      .style('padding-left','14%')
+      .style('padding-right','14%')
     var legend = legendSvg.append("g")
       .attr("class", "legend")
       .selectAll(".legendElement")
@@ -616,28 +618,28 @@ class CellChart extends Component {
     return ( 
       <div className = "block" id = "mychart1">
         <p align="center" className="title">Cell Chart</p>
-        <svg className='cell'></svg>
-          <div style={{fontSize:'0.8vw',textAlign:'center', width:'41.7%',float:"left",}}>
-            Palette:&nbsp;
-            <select id="cellColorMap" defaultValue='RdYlBu'>
-              <option value="RdYlGn">RdYlGn</option>
-              <option value="Spectral">Spectral</option>
-              <option value="RdYlBu">RdYlBu</option>
-              <option value="RdGy">RdGy</option>
-              <option value="RdBu">RdBu</option>
-              <option value="PiYG">PiYG</option>
-              <option value="PRGn">PRGn</option>
-              <option value="BrBG">BrBG</option>
-              <option value="PuOr">PuOr</option>
-            </select>
-            &emsp;Scale:&nbsp;
-            <select id="cellColorScale" defaultValue='full'>
-              <option value="full">Full</option>
-              <option value="context">Context</option>
-            </select>
-            <svg id='legend'></svg>
-          </div>
-        <div className='block' style={{float:'left',width:'40%',position:'relative',top:'2.5vw'}}>
+        <div style={{fontSize:'0.8vw',textAlign:'center', width:'58.3%',float:"left",}}>
+          <svg className='cell'></svg>
+          Palette:&nbsp;
+          <select id="cellColorMap" defaultValue='RdYlBu'>
+            <option value="RdYlGn">RdYlGn</option>
+            <option value="Spectral">Spectral</option>
+            <option value="RdYlBu">RdYlBu</option>
+            <option value="RdGy">RdGy</option>
+            <option value="RdBu">RdBu</option>
+            <option value="PiYG">PiYG</option>
+            <option value="PRGn">PRGn</option>
+            <option value="BrBG">BrBG</option>
+            <option value="PuOr">PuOr</option>
+          </select>
+          &emsp;Scale:&nbsp;
+          <select id="cellColorScale" defaultValue='full'>
+            <option value="full">Full</option>
+            <option value="context">Context</option>
+          </select>
+          <svg id='legend'></svg>
+        </div>
+        <div style={{float:'left',width:'40%',position:'relative',top:'5.5vw'}}>
           <div style={{position: 'absolute',transform:'translate(14vw,14.8vw)',fontSize:'0.8vw'}}>
             <ToggleButton
               inactiveLabel={"Pro"}
@@ -651,6 +653,7 @@ class CellChart extends Component {
           </div>
           <svg id='rDendo' ></svg>
         </div>
+      
       </div>
     )
   }
