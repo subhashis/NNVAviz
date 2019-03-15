@@ -7,14 +7,14 @@ class HeatChart extends Component {
 
   componentDidMount(){
     // draw heat chart
-    // const sen_min = this.props.sen_min;
+    const sen_min = this.props.sen_min;
     // const sen_mid_point = this.props.sen_mid_point;
-    // const sen_max = this.props.sen_max;
+    const sen_max = this.props.sen_max;
     const sen_data = this.props.sen_data;
     const chart = circularHeatChart();
-    const width = this.props.size;
+    // const width = this.props.size;
     const paletteName = 'RdYlBu';
-    let colors = colorbrewer[paletteName][10];
+    let colors = colorbrewer[paletteName][11];
     colors = colors.slice(0).reverse();
 
     chart.segmentHeight(3)
@@ -25,9 +25,9 @@ class HeatChart extends Component {
       .radialLabels(null)
       .segmentLabels(null);
     d3.select('#mychart2')
-      .selectAll('svg')
+      .select('svg#heatSvg')
       .data([sen_data])
-      .attr("viewBox", `-${width/2} -${width/2} ${width} ${width}`)
+      .attr("viewBox", `-200 -160 400 330`)
       .attr("class", "heat")
       .call(chart);
 
@@ -35,7 +35,7 @@ class HeatChart extends Component {
       return d.value;
     }
 
-    const svg = d3.select('#mychart2').select('svg')
+    const svg = d3.select('#mychart2').select('svg#heatSvg')
     //draw mask
     svg.append('path')
       .attr('id','mask')
@@ -126,6 +126,113 @@ class HeatChart extends Component {
         svg.select('#P')
           .text(``);
       })
+    const legendSvg = d3.select('#mychart2').select('svg#legend')
+    legendSvg.style('width','100%')
+      .attr("viewBox", `0 3 70 12`)
+      .style('padding-left','14.4%')
+      .style('padding-right','14.4%')
+    
+    let legD = [];
+    for (let i = 0; i < 11; i++) {
+      legD.push(sen_min+ i * (sen_max-sen_min) / 10)
+    }
+    this.colorScale = d3.scaleLinear().domain(legD).range(colors)
+    let textD = [];
+    for (let i = 0; i < 5; i++) {
+      textD.push(sen_min+ i * (sen_max-sen_min) / 4)
+    }
+    let gradientData = [];
+    for (let i=0;i<11;i++){
+      let tmp ={};
+      tmp.offset = (i*10)+'%';
+      tmp.color = this.colorScale.range()[i];
+      gradientData.push(tmp);
+    }
+    let gradient = legendSvg.append("linearGradient")
+      .attr("id", "heatGradient")
+      .attr("x1", "0%")
+      .attr("x2", "100%")
+      .attr("y1", "0%")
+      .attr("y2", "0%")
+      .selectAll("stop")
+      .data(gradientData)
+      .enter().append("stop")
+      .attr("offset", function(d) { return d.offset; })
+      .attr("stop-color", function(d) { return d.color; });
+
+    var legend = legendSvg.append("g")
+      .attr("class", "legend")
+      .selectAll(".legendElement")
+      .data(textD)
+      .enter().append("g")
+      .attr("class", "legendElement");
+
+    this.legend = legend;
+
+    const legendElementWidth = 60 / 4;
+    const cellSize = 5;
+
+    legendSvg.append("rect")
+      .attr("x", 5)
+      .attr("y", 5)
+      .attr("class", "cellLegend bordered")
+      .attr("width", 60)
+      .attr("height", cellSize)
+      .style("fill", "url(#heatGradient)");
+
+    legend.append("text")
+      .attr("class", "mono legendElement")
+      .text(function (d) {
+        return d.toFixed(0);
+      })
+      .style('font-size', '0.12vw')
+      .attr("x", function (d, i) {
+        return 5 + legendElementWidth * i;
+      })
+      .attr("y", 5 + cellSize +1)
+      .style('text-anchor', 'middle')
+      .style('dominant-baseline', 'hanging');
+
+    // change colormap
+    const changePalette = paletteName => {
+      const classesNumber = 11;
+      var colors = colorbrewer[paletteName][classesNumber];
+      colors = colors.slice(0).reverse();
+      this.colorScale.range(colors);
+
+      //legend
+      let gradientData = [];
+      for (let i=0;i<11;i++){
+        let tmp ={};
+        tmp.offset = (i*10)+'%';
+        tmp.color = this.colorScale.range()[i];
+        gradientData.push(tmp);
+      }
+      gradient.data(gradientData)
+        .attr("offset", function(d) { return d.offset; })
+        .attr("stop-color", function(d) { return d.color; });
+
+      //heat map
+      let heatcolorScale = d3.scaleLinear()
+        .domain(legD)
+        .range(colors);
+      d3.select('#heatSvg').selectAll("path.heat")
+        .style("fill", function (d) {
+          if (d != null) return heatcolorScale(d.value);
+          else return "url(#diagonalHatch)";
+        })
+    };
+
+    d3.select("#heatColorMap")
+      .on("keyup", function () {
+        var newPalette = d3.select("#heatColorMap").property("value");
+        if (newPalette != null) // when interfaced with jQwidget, the ComboBox handles keyup event but value is then not available ?
+          changePalette(newPalette);
+      })
+      .on("change", function () {
+        var newPalette = d3.select("#heatColorMap").property("value");
+        changePalette(newPalette);
+      });
   }
   
   render() {
@@ -133,7 +240,24 @@ class HeatChart extends Component {
       <div className = "block" id = "mychart2">
         <div style={{width:'50%',float:"left"}}>
           <p align="center" className='title' style={{width:'100%',float:"left"}}>Sensitivity Heat Chart</p>
-          <svg ></svg>
+          <div>
+            <div style={{fontSize:'0.8vw',textAlign:'center'}}>
+              Palette:&nbsp;
+              <select id="heatColorMap" defaultValue='RdYlBu'>
+                <option value="RdYlGn">RdYlGn</option>
+                <option value="Spectral">Spectral</option>
+                <option value="RdYlBu">RdYlBu</option>
+                <option value="RdGy">RdGy</option>
+                <option value="RdBu">RdBu</option>
+                <option value="PiYG">PiYG</option>
+                <option value="PRGn">PRGn</option>
+                <option value="BrBG">BrBG</option>
+                <option value="PuOr">PuOr</option>
+              </select>
+              <svg id='legend'></svg>
+            </div>
+            <svg id="heatSvg"></svg>
+          </div>
         </div>
         {this.props.children}
       </div>

@@ -168,17 +168,6 @@ class CellChart extends Component {
         .attr("offset", function(d) { return d.offset; })
         .attr("stop-color", function(d) { return d.color; });
 
-      this.props.changePreColor(this.colorScale);
-
-      //heat map
-      // let heatcolorScale = d3.scaleQuantize()
-      //   .domain([this.props.sen_min, this.props.sen_max])
-      //   .range(colors);
-      // d3.select('#heatSvg').selectAll("path.heat")
-      //   .style("fill", function (d) {
-      //     if (d != null) return heatcolorScale(d.value);
-      //     else return "url(#diagonalHatch)";
-      //   })
     };
 
     d3.select("#cellColorMap")
@@ -215,8 +204,6 @@ class CellChart extends Component {
         .attr("fill", d => {
           return this.colorScale(d.value)
         });
-
-      this.props.changePreColor(this.colorScale);
 
       this.legend.data(textD)
       this.legend.select("text")
@@ -265,7 +252,8 @@ class CellChart extends Component {
       .attr("offset", function(d) { return d.offset; })
       .attr("stop-color", function(d) { return d.color; });
 
-    legendSvg.attr("viewBox", `0 0 70 20`);
+    legendSvg.attr("viewBox", `0 3 70 12`)
+      .style('width','100%')
     var legend = legendSvg.append("g")
       .attr("class", "legend")
       .selectAll(".legendElement")
@@ -300,7 +288,7 @@ class CellChart extends Component {
       .style('dominant-baseline', 'hanging');
 
     const rDenSvg = d3.select('svg#rDendo');
-    rDenSvg.attr("viewBox", `0 10 100 90`);
+    rDenSvg.attr("viewBox", `0 10 100 100`);
     let rad = 50;
 
     // Create the cluster layout:
@@ -388,7 +376,7 @@ class CellChart extends Component {
         .style('text-anchor','start')
         .style('dominant-baseline','baseline')
         .attr('x',5)
-        .attr('y',95)
+        .attr('y',100)
         .style('font-size','6px')
       this.changeView = ()=>{
         let type = this.state.std?'std':'den'
@@ -629,28 +617,28 @@ class CellChart extends Component {
       <div className = "block" id = "mychart1">
         <p align="center" className="title">Cell Chart</p>
         <svg className='cell'></svg>
-        <div style={{fontSize:'0.8vw',textAlign:'center'}}>
-          Palette:&nbsp;
-          <select id="cellColorMap" defaultValue='RdYlBu'>
-            <option value="RdYlGn">RdYlGn</option>
-            <option value="Spectral">Spectral</option>
-            <option value="RdYlBu">RdYlBu</option>
-            <option value="RdGy">RdGy</option>
-            <option value="RdBu">RdBu</option>
-            <option value="PiYG">PiYG</option>
-            <option value="PRGn">PRGn</option>
-            <option value="BrBG">BrBG</option>
-            <option value="PuOr">PuOr</option>
-          </select>
-          &emsp;Scale:&nbsp;
-          <select id="cellColorScale" defaultValue='full'>
-            <option value="full">Full</option>
-            <option value="context">Context</option>
-          </select>
-        </div>
-        <svg id='legend'></svg>
-        <div className='block' style={{float:'left',width:'40%'}}>
-          <div style={{position: 'absolute',transform:'translate(14vw,14vw)',fontSize:'0.8vw'}}>
+          <div style={{fontSize:'0.8vw',textAlign:'center', width:'41.7%',float:"left",}}>
+            Palette:&nbsp;
+            <select id="cellColorMap" defaultValue='RdYlBu'>
+              <option value="RdYlGn">RdYlGn</option>
+              <option value="Spectral">Spectral</option>
+              <option value="RdYlBu">RdYlBu</option>
+              <option value="RdGy">RdGy</option>
+              <option value="RdBu">RdBu</option>
+              <option value="PiYG">PiYG</option>
+              <option value="PRGn">PRGn</option>
+              <option value="BrBG">BrBG</option>
+              <option value="PuOr">PuOr</option>
+            </select>
+            &emsp;Scale:&nbsp;
+            <select id="cellColorScale" defaultValue='full'>
+              <option value="full">Full</option>
+              <option value="context">Context</option>
+            </select>
+            <svg id='legend'></svg>
+          </div>
+        <div className='block' style={{float:'left',width:'40%',position:'relative',top:'2.5vw'}}>
+          <div style={{position: 'absolute',transform:'translate(14vw,14.8vw)',fontSize:'0.8vw'}}>
             <ToggleButton
               inactiveLabel={"Pro"}
               activeLabel={'Uct'}
