@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import * as d3 from 'd3';
 import colorbrewer from 'colorbrewer';
 import ToggleButton from 'react-toggle-button';
-// #4d4d4d grey
-// dodgerblue blue
-// #0c4 green
-// #ff1a1a red
+// #4d4d4d grey 
+// dodgerblue blue #cceaff
+// #0c4 green #ccffdd
+// #ff1a1a red #ffcccc
 
 export default class Preview extends Component {
     constructor(props){

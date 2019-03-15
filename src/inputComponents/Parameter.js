@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Slider from 'rc-slider';
 import Tooltip from 'rc-tooltip';
 import ReactTable from "react-table";
-// import $ from 'jquery';
 
 const Handle = Slider.Handle;
 const handle = (props) => {
@@ -145,7 +144,7 @@ export default class Parameters extends Component {
                             step={0.005}
                             handle={handle}
                             handleStyle={{
-                                borderColor: '#1632ff',
+                                borderColor: '#4d4d4d',
                             }}
                         />
                     </div>
@@ -167,7 +166,7 @@ export default class Parameters extends Component {
                                 visibility: 'hidden',
                             }}
                             dotStyle={{
-                                borderColor: '#1632ff',
+                                borderColor: '#4d4d4d',
                             }}
                         />
                     </div>
@@ -198,10 +197,10 @@ export default class Parameters extends Component {
                         <button className="btn btn-primary btn-sm" onClick={()=>this.handleRunClick()} >Run</button>
                         <button className="btn btn-primary btn-sm" onClick={()=>this.handleSaveClick()} >Save</button>
                         <button className="btn btn-primary btn-sm" onClick={()=>this.handleExportClick()} >Export</button>
-                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Cur')} style={{backgroundColor: 'black',}}>Current</button>
-                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Max')} style={{backgroundColor: '#cc0000',}}>Maximize</button>
-                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Min')} style={{backgroundColor: '#3333ff',}}>Minimize</button>
-                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Com')} style={{backgroundColor: '#801a80',}}>Combined</button>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Cur')} style={{backgroundColor: '#4d4d4d',}}>Current</button>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Max')} style={{backgroundColor: '#ff1a1a',}}>Maximize</button>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Min')} style={{backgroundColor: 'dodgerblue',}}>Minimize</button>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Com')} style={{backgroundColor: '#0c4',}}>Combined</button>
                         {/* <label className="btn btn-primary btn-sm">
                             Import <input type="file" id="fileInput" onChange={()=>this.handleImportClick()} />
                         </label> */}

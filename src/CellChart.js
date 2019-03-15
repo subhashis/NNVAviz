@@ -512,7 +512,7 @@ class CellChart extends Component {
       .attr('cx',0)
       .attr('cy',0)
       .attr('r',15)
-      .style('fill','#ff99ff')
+      .style('fill','#ccffdd')
       .on('click',comButton.bind(this))
     
     function comButton(){
@@ -526,9 +526,9 @@ class CellChart extends Component {
       this.props.updateMarks(start,end,'Com')
       lock(g2,'Max')
       lock(g3,'Min')
-      g4.style('fill','#801a80')
+      g4.style('fill','#0c4')
       g4.on('click',()=>{
-        g4.style('fill','#ff99ff')
+        g4.style('fill','#ccffdd')
         g4.on('click',comButton.bind(this))
       })
     }
@@ -565,8 +565,8 @@ class CellChart extends Component {
     g1.call(brush);
     g2.call(brush2);
     g3.call(brush3);
-    g2.select('path.extent').style('fill','#f59ea3')
-    g3.select('path.extent').style('fill','#a3c7f5')
+    g2.select('path.extent').style('fill','#ffcccc')
+    g3.select('path.extent').style('fill','#cceaff')
     let actBrushMove = (g)=>{
       g.actBrushMoved = true
     }
@@ -590,10 +590,10 @@ class CellChart extends Component {
       g.select('path.extent').on('mousedown.brush',()=>{})
       g.selectAll('path.resize').on('mousedown.brush',()=>{})
       if(type === 'Max'){
-        g.select('path.extent').style('fill','#cc0000')
+        g.select('path.extent').style('fill','#ff1a1a')
       }
       else if (type === 'Min'){
-        g.select('path.extent').style('fill','#3333ff')
+        g.select('path.extent').style('fill','dodgerblue')
       }
       g.on('mousedown',()=>{unlock(g,type)})
       g.locked = true
@@ -604,10 +604,10 @@ class CellChart extends Component {
         g.selectAll('path.resize').on('mousedown.brush',g.resizeFun)
         g.on('click',null)
         if(type === 'Max'){
-          g.select('path.extent').style('fill','#f59ea3')
+          g.select('path.extent').style('fill','#ffcccc')
         }
         else if (type === 'Min'){
-          g.select('path.extent').style('fill','#a3c7f5')
+          g.select('path.extent').style('fill','#cceaff')
         }
         g.locked = false
       }

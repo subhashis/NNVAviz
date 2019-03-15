@@ -15,10 +15,6 @@ import act_max_min from './data/optimizer_data/NNVA_act_max_min';
 class App extends Component {
   constructor(props){
     super(props);
-    // let index_name = [];
-    // for (let i =0;i<35;i++){
-    //   index_name.push('p'+i);
-    // }
     let para_names = [
       "k_RL",
       "k_RLm",
@@ -62,29 +58,12 @@ class App extends Component {
       let mark = {}
       const datum = data.pset[i]
       mark[datum]={
-        label: datum.toFixed(2),
+        label: `(${datum.toFixed(2)})`,
         name: 'Cur',
         style:{
-          color: 'black'
+          color: '#4d4d4d'
         }
       }
-
-      // const test = Math.random()
-      
-      // mark[test]={
-      //   label: test.toFixed(2),
-      //   name: 'Max',
-      //   style:{
-      //     color: '#cc0000',
-      //   }
-      // }
-      // mark[r[2]]={
-      //   label: r[2].toFixed(2),
-      //   name: 'Min',
-      //   style:{
-      //     color: '#3333ff',
-      //   }
-      // }
       marks.push(mark)
     }
     this.sortMarks(marks)
@@ -137,15 +116,15 @@ class App extends Component {
     let act,color;
     if(type==='Max') {
       act = act_max.act_max;
-      color = '#cc0000'
+      color = '#ff1a1a'
     }
     else if (type === 'Min'){
       act = act_min.act_min;
-      color = '#3333ff'
+      color = 'dodgerblue'
     } 
     else if (type === 'Com') {
       act = act_max_min.act_max_min;
-      color = '#801a80'
+      color = '#0c4'
     }
     let line = act[start*10+end]
     let act_data = line[2]
@@ -158,7 +137,7 @@ class App extends Component {
       }
       const datum = act_data[i]
       mark[datum]={
-        label: datum.toFixed(2),
+        label: `(${datum.toFixed(2)})`,
         name: type,
         style:{
           color: color,
