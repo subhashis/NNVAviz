@@ -189,7 +189,7 @@ export default class Parameters extends Component {
         return (
             <div>
                 <div className='block' style={{height:'35.10vw', width:'70.9vw'}}>
-                    <div id='paraTitle' className='title'>Parameter Control</div>
+                    <div id='paraTitle' className='title'>Parameter Control Board</div>
                     <div id = 'parameters' >
                         {sliders}
                     </div>
@@ -200,7 +200,7 @@ export default class Parameters extends Component {
                         <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Cur')} style={{backgroundColor: '#4d4d4d',}}>Current</button>
                         <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Max')} style={{backgroundColor: '#ff1a1a',}}>Maximize</button>
                         <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Min')} style={{backgroundColor: 'dodgerblue',}}>Minimize</button>
-                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Com')} style={{backgroundColor: '#0c4',}}>Combined</button>
+                        <button className="btn btn-primary btn-sm" onClick={()=>this.handleChangeClick('Com')} style={{backgroundColor: '#0c4',}}>MaxMin</button>
                         {/* <label className="btn btn-primary btn-sm">
                             Import <input type="file" id="fileInput" onChange={()=>this.handleImportClick()} />
                         </label> */}

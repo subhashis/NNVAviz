@@ -239,7 +239,7 @@ class HeatChart extends Component {
     return (
       <div className = "block" id = "mychart2">
         <div style={{width:'50%',float:"left"}}>
-          <p align="center" className='title' style={{width:'100%',float:"left"}}>Sensitivity Heat Chart</p>
+          <p align="center" className='title' style={{width:'100%',float:"left"}}>Parameter Sensitivity View</p>
           <div>
             <svg id="heatSvg"></svg>
             <div style={{fontSize:'0.8vw',textAlign:'center'}}>

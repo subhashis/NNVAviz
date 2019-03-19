@@ -451,8 +451,8 @@ export default class Preview extends Component {
                 <p style={{position: 'relative',left: '40%',float:'left'}} className='title'>Quickview</p>
                 <div style={{position: 'relative',left: '17vw',top:'0.25vw',float:'left',fontSize:'0.8vw'}}>
                   <ToggleButton
-                    inactiveLabel={"Val"}
-                    activeLabel={'Dif'}
+                    inactiveLabel={"Cdc"}
+                    activeLabel={'Diff'}
                     value={this.state.diff}
                     onToggle={(value) => {
                       this.setState({
