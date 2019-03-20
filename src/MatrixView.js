@@ -22,7 +22,8 @@ class MatrixView extends Component {
     constructor(props){
         super(props);
         this.state = {type:undefined};
-        this.images = importAll(require.context('./data/weight_distribution_images/', false, /\.(png|jpe?g|svg)$/));
+        this.images = importAll(require.context('./data/weight_distribution_images/', false, /\.(png|jpe?g|svg)$/))
+        console.log(this.images)
     }
 
     componentDidMount(){
