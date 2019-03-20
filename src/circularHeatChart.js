@@ -35,7 +35,6 @@ export default function circularHeatChart() {
                     tmp.push(domain[0]+int*i)
                 }
                 domain = tmp
-                console.log(domain)
                 autoDomain = true;
             }
             var color = d3.scaleLinear().domain(domain).range(range);

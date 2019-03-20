@@ -444,7 +444,6 @@ export default class Preview extends Component {
         let scale = this.state.diff?this.state.diffColor:this.state.preColor
         let p = scale.palette
         let s = scale.scale
-        console.log(p)
         return ( 
           <div className = "block" id = "previewChart">
               <div style = {{height:'2vw'}}>
