@@ -310,7 +310,7 @@ class BarChart extends Component {
     }
     return (
       <div>
-        <p style={{textAlign:'center'}} className='title'>Sensitivity Cluster</p>
+        <p style={{textAlign:'center'}} className='title'>Parameter Clustering</p>
         <p style={{float:"left"}}>Depth:</p>
         <Slider 
           style={{

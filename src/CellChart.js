@@ -374,7 +374,7 @@ class CellChart extends Component {
         hiC('n'+d.data.name,"#69b3a2");
       })
       rDenSvg.append('text')
-        .text('Protein Value Cluster')
+        .text('Cdc42 Clustering')
         .style('text-anchor','start')
         .style('dominant-baseline','baseline')
         .attr('x',5)
@@ -425,7 +425,7 @@ class CellChart extends Component {
           })
           this.std_cluster=type==='std'?true:false
           rDenSvg.select('text')
-            .text((type==='std'?'Uncertainty ':'Protein ')+'Value Cluster')
+            .text((type==='std'?'Uncertainty ':'Cdc42 ')+'Clustering')
       }
   }
 
@@ -617,7 +617,7 @@ class CellChart extends Component {
   render() {
     return ( 
       <div className = "block" id = "mychart1">
-        <p align="center" className="title">Cell Chart</p>
+        <p align="center" className="title">Cdc42 Viz</p>
         <div style={{fontSize:'0.8vw',textAlign:'center', width:'58.3%',float:"left",}}>
           <svg className='cell'></svg>
           Palette:&nbsp;
@@ -642,8 +642,8 @@ class CellChart extends Component {
         <div style={{float:'left',width:'40%',position:'relative',top:'5.5vw'}}>
           <div style={{position: 'absolute',transform:'translate(14vw,14.8vw)',fontSize:'0.8vw'}}>
             <ToggleButton
-              inactiveLabel={"Pro"}
-              activeLabel={'Uct'}
+              inactiveLabel={"Cdc"}
+              activeLabel={'UQ'}
               value={this.state.std}
               onToggle={(value) => {
                 this.setState({
