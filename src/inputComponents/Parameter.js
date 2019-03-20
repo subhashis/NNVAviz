@@ -90,7 +90,18 @@ export default class Parameters extends Component {
     }
 
     handleExportClick() {
-        this.download('test',JSON.stringify(this.state.data));
+        let exp = []
+        let row = {}
+        for (const r of this.state.data){
+            let i = 0
+            for (let key in r){
+                row[this.props.paraName[i]]=r[key]
+                i++
+            }
+            exp.push(row)
+            row = {}
+        }
+        this.download('test',JSON.stringify(exp));
     }
     handleImportClick() {
         var fileInput = document.getElementById('fileInput');
@@ -179,7 +190,7 @@ export default class Parameters extends Component {
         // const width = $(window).width()*0.78/35;
         for (let i =0 ;i<35;i++){
             const temp = {
-                Header: `P${i}`,
+                Header: this.props.paraName[i],
                 accessor: `p${i}`,
                 // width: width,
             }
@@ -215,6 +226,7 @@ export default class Parameters extends Component {
                         onClick: (e, handleOriginal) => {
                                 if (rowInfo){
                                     let d = this.state.data[rowInfo.index];
+                                    console.log(d);
                                     // this.props.tableClick(d.data);
                                     let para=[];
                                     let paraS = [];
