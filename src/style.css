@@ -286,3 +286,7 @@ rect.bordered {
 .title{
 	font-weight: bold;
 }
+.rc-slider-vertical{
+	width:10px;
+	transform: translate(-3px,0);
+}

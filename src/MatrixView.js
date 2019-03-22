@@ -297,6 +297,11 @@ class MatrixView extends Component {
                         .style('dominant-baseline','hanging')
                         .attr('x',456/2)
                 });
+            
+            d3.select('#mt-slider-div')
+            .select('.rc-slider-rail')
+            .style('width','10px')
+            .style('transform', 'translate(-3px,0)')
         }
         this.colorScale = colorScale;
         // legend
