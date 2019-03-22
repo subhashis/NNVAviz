@@ -374,7 +374,13 @@ class MatrixView extends Component {
                         onChange = {this.moveSlider}
                         onAfterChange = {value=>this.drawBarChart(value)}
                         trackStyle={{
-                            backgroundColor: '#e9e9e9',
+                            backgroundColor: '#cccccc',
+                        }}
+                        railStyle={{
+                            backgroundColor: '#cccccc',
+                        }}
+                        handleStyle={{
+                            borderColor: '#4d4d4d',
                         }}
                         min={0}
                         max={499}
