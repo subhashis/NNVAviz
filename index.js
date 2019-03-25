@@ -7,13 +7,18 @@ const selectedColor = 'yellow';
 const normalColor = '#777';
 let heatColorMap;
 var colors1 = colorbrewer["PiYG"][10];
+colors1 = colors1.slice(1).reverse();
 
 var colorScale = d3.scaleQuantize()
   .domain([0.0, 1.0])
   .range(colors1);
 
 var colorScale1 = d3.scaleLinear().domain([0.0, 1.0]).range(["#33ccff", "#ff6600"]);
-var colorScale2687 = d3.scaleLinear().domain([0.0, valueLen]).range(["#33ccff", "#ff6600"]);
+let dom = []
+for (let i=0;i<11;i++){
+  dom.push(i*40);
+}
+var colorScale2687 = d3.scaleLinear().domain(dom).range(colors1);
 
 //old filename: NNVA_data_6088.json
 
