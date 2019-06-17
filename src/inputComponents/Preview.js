@@ -355,7 +355,7 @@ export default class Preview extends Component {
           let curScale = this.state.diff?'diffColor':'preColor'
           const classesNumber = 11;
           var colors;
-          if(paletteName=="seqGreen" || paletteName=="seqOrange" || paletteName=="seqPurple"){
+          if(paletteName==="seqGreen" || paletteName==="seqOrange" || paletteName==="seqPurple"){
             switch(paletteName){
               case "seqGreen":
                 colors = colorbrewer["PRGn"][classesNumber];
@@ -368,6 +368,8 @@ export default class Preview extends Component {
               case "seqPurple":
                 colors = colorbrewer["PRGn"][classesNumber];
                 colors = colors.slice(0).reverse();
+                break;
+              default:
                 break;
             }
             colors = colors.slice(5);

@@ -147,7 +147,7 @@ class CellChart extends Component {
     const changePalette = paletteName => {
       const classesNumber = 11;
       var colors;
-      if(paletteName=="seqGreen" || paletteName=="seqOrange" || paletteName=="seqPurple"){
+      if(paletteName==="seqGreen" || paletteName==="seqOrange" || paletteName==="seqPurple"){
         switch(paletteName){
           case "seqGreen":
             colors = colorbrewer["PRGn"][classesNumber];
@@ -160,6 +160,8 @@ class CellChart extends Component {
           case "seqPurple":
             colors = colorbrewer["PRGn"][classesNumber];
             colors = colors.slice(0).reverse();
+            break;
+          default:
             break;
         }
         colors = colors.slice(5);
