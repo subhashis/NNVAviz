@@ -22,7 +22,7 @@ class CellChart extends Component {
 
     // the color scale can be input 
     const paletteName = 'RdYlBu';
-    let colors = colorbrewer[paletteName][11];
+    var colors = colorbrewer[paletteName][11];
     colors = colors.slice(0).reverse();
     let dom = [];
     for (let i = 0; i < 11; i += 1) {
@@ -146,8 +146,30 @@ class CellChart extends Component {
     // change colormap
     const changePalette = paletteName => {
       const classesNumber = 11;
-      var colors = colorbrewer[paletteName][classesNumber];
-      colors = colors.slice(0).reverse();
+      var colors;
+      if(paletteName=="seqGreen" || paletteName=="seqOrange" || paletteName=="seqPurple"){
+        switch(paletteName){
+          case "seqGreen":
+            colors = colorbrewer["PRGn"][classesNumber];
+            colors = colors.slice(0);
+            break;
+          case "seqOrange":
+            colors = colorbrewer["PuOr"][classesNumber];
+            colors = colors.slice(0).reverse();
+            break;
+          case "seqPurple":
+            colors = colorbrewer["PRGn"][classesNumber];
+            colors = colors.slice(0).reverse();
+            break;
+        }
+        colors = colors.slice(5);
+        for (let i =0 ;i<10;i+=2){
+          colors.splice(i+1,0,d3.interpolateRgb(colors[i],colors[i+1])(0.5));
+        }
+      }else{
+        colors = colorbrewer[paletteName][classesNumber];
+        colors = colors.slice(0).reverse();
+      }
       this.colorScale.range(colors);
 
       //cell chart
@@ -631,6 +653,9 @@ class CellChart extends Component {
             <option value="PRGn">PRGn</option>
             <option value="BrBG">BrBG</option>
             <option value="PuOr">PuOr</option>
+            <option value="seqPurple">seqPurple</option>
+            <option value="seqGreen">seqGreen</option>
+            <option value="seqOrange">seqOrange</option>
           </select>
           &emsp;Scale:&nbsp;
           <select id="cellColorScale" defaultValue='full'>

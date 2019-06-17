@@ -354,9 +354,31 @@ export default class Preview extends Component {
         const changePalette = paletteName => {
           let curScale = this.state.diff?'diffColor':'preColor'
           const classesNumber = 11;
-          let colors = colorbrewer[paletteName][classesNumber];
+          var colors;
+          if(paletteName=="seqGreen" || paletteName=="seqOrange" || paletteName=="seqPurple"){
+            switch(paletteName){
+              case "seqGreen":
+                colors = colorbrewer["PRGn"][classesNumber];
+                colors = colors.slice(0);
+                break;
+              case "seqOrange":
+                colors = colorbrewer["PuOr"][classesNumber];
+                colors = colors.slice(0).reverse();
+                break;
+              case "seqPurple":
+                colors = colorbrewer["PRGn"][classesNumber];
+                colors = colors.slice(0).reverse();
+                break;
+            }
+            colors = colors.slice(5);
+            for (let i =0 ;i<10;i+=2){
+              colors.splice(i+1,0,d3.interpolateRgb(colors[i],colors[i+1])(0.5));
+            }
+          }else{
+            colors = colorbrewer[paletteName][classesNumber];
+            colors = colors.slice(0).reverse();
+          }
           let scale = d3.scaleLinear().domain(this.state[curScale].domain())
-          colors = colors.slice(0).reverse();
           scale.range(colors);
           scale.palette = paletteName
           let tmp = {}
@@ -473,6 +495,9 @@ export default class Preview extends Component {
                   <option value="PRGn">PRGn</option>
                   <option value="BrBG">BrBG</option>
                   <option value="PuOr">PuOr</option>
+                  <option value="seqPurple">seqPurple</option>
+                  <option value="seqGreen">seqGreen</option>
+                  <option value="seqOrange">seqOrange</option>
                 </select>
                 &emsp;Scale:&nbsp;
                 <select id="preColorScale" value = {s} readOnly>
