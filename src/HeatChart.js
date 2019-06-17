@@ -13,9 +13,13 @@ class HeatChart extends Component {
     const sen_data = this.props.sen_data;
     const chart = circularHeatChart();
     // const width = this.props.size;
-    const paletteName = 'RdYlBu';
+    const paletteName = 'PRGn';
     let colors = colorbrewer[paletteName][11];
     colors = colors.slice(0).reverse();
+    colors = colors.slice(5);
+    for (let i =0 ;i<10;i+=2){
+      colors.splice(i+1,0,d3.interpolateRgb(colors[i],colors[i+1])(0.5));
+    }
 
     chart.segmentHeight(3)
       .innerRadius(50)
@@ -198,6 +202,10 @@ class HeatChart extends Component {
       const classesNumber = 11;
       var colors = colorbrewer[paletteName][classesNumber];
       colors = colors.slice(0).reverse();
+      colors = colors.slice(5);
+      for (let i =0 ;i<10;i+=2){
+        colors.splice(i+1,0,d3.interpolateRgb(colors[i],colors[i+1])(0.5));
+      }
       this.colorScale.range(colors);
 
       //legend
@@ -244,16 +252,12 @@ class HeatChart extends Component {
             <svg id="heatSvg"></svg>
             <div style={{fontSize:'0.8vw',textAlign:'center'}}>
               Palette:&nbsp;
-              <select id="heatColorMap" defaultValue='RdYlBu'>
-                <option value="RdYlGn">RdYlGn</option>
-                <option value="Spectral">Spectral</option>
-                <option value="RdYlBu">RdYlBu</option>
-                <option value="RdGy">RdGy</option>
-                <option value="RdBu">RdBu</option>
-                <option value="PiYG">PiYG</option>
-                <option value="PRGn">PRGn</option>
-                <option value="BrBG">BrBG</option>
-                <option value="PuOr">PuOr</option>
+              <select id="heatColorMap" defaultValue='PRGn'>
+                <option value="RdBu">Red</option>
+                <option value="PiYG">Pink</option>
+                <option value="PRGn">Purple</option>
+                <option value="BrBG">Brown</option>
+                <option value="PuOr">Orange</option>
               </select>
               <svg id='legend'></svg>
             </div>

@@ -10,17 +10,25 @@ import ToggleButton from 'react-toggle-button';
 export default class Preview extends Component {
     constructor(props){
       super(props);
-      let colors = colorbrewer['RdYlBu'][11];
+      let colors = colorbrewer['PRGn'][11];
       colors = colors.slice(0).reverse();
+      colors = colors.slice(5);
+      for (let i =0 ;i<10;i+=2){
+        colors.splice(i+1,0,d3.interpolateRgb(colors[i],colors[i+1])(0.5));
+      }
       let dom = [];
       for (let i = 0; i < 11; i += 1) {
         dom.push(i * 400 / 10);
       }
       let colorScale = d3.scaleLinear().domain(dom).range(colors);
       colorScale.scale = 'Full';
-      colorScale.palette = 'RdYlBu'
+      colorScale.palette = 'PRGn'
       let cDiff = colorbrewer['RdGy'][11];
       cDiff = cDiff.slice(0).reverse();
+      cDiff = cDiff.slice(5);
+      for (let i =0 ;i<10;i+=2){
+        cDiff.splice(i+1,0,d3.interpolateRgb(cDiff[i],cDiff[i+1])(0.5));
+      }
       let diffColor = d3.scaleLinear().range(cDiff)
       diffColor.scale = 'Context';
       diffColor.palette = 'RdGy'
@@ -357,6 +365,10 @@ export default class Preview extends Component {
           let colors = colorbrewer[paletteName][classesNumber];
           let scale = d3.scaleLinear().domain(this.state[curScale].domain())
           colors = colors.slice(0).reverse();
+          colors = colors.slice(5);
+          for (let i =0 ;i<10;i+=2){
+            colors.splice(i+1,0,d3.interpolateRgb(colors[i],colors[i+1])(0.5));
+          }
           scale.range(colors);
           scale.palette = paletteName
           let tmp = {}
@@ -464,15 +476,11 @@ export default class Preview extends Component {
               <div style={{fontSize:'0.8vw',textAlign:'center'}}>
                 Palette:&nbsp;
                 <select id="preColorMap" value = {p} readOnly>
-                  <option value="RdYlGn">RdYlGn</option>
-                  <option value="Spectral">Spectral</option>
-                  <option value="RdYlBu">RdYlBu</option>
-                  <option value="RdGy">RdGy</option>
-                  <option value="RdBu">RdBu</option>
-                  <option value="PiYG">PiYG</option>
-                  <option value="PRGn">PRGn</option>
-                  <option value="BrBG">BrBG</option>
-                  <option value="PuOr">PuOr</option>
+                  <option value="RdBu">Red</option>
+                  <option value="PiYG">Pink</option>
+                  <option value="PRGn">Purple</option>
+                  <option value="BrBG">Brown</option>
+                  <option value="PuOr">Orange</option>
                 </select>
                 &emsp;Scale:&nbsp;
                 <select id="preColorScale" value = {s} readOnly>

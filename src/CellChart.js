@@ -21,9 +21,14 @@ class CellChart extends Component {
     const valueLen = this.props.valueLen;
 
     // the color scale can be input 
-    const paletteName = 'RdYlBu';
+    const paletteName = 'PRGn';
     let colors = colorbrewer[paletteName][11];
     colors = colors.slice(0).reverse();
+    colors = colors.slice(5);
+    for (let i =0 ;i<10;i+=2){
+      colors.splice(i+1,0,d3.interpolateRgb(colors[i],colors[i+1])(0.5));
+    }
+    console.log(colors)
     let dom = [];
     for (let i = 0; i < 11; i += 1) {
       dom.push(i * 400 / 10);
@@ -148,6 +153,10 @@ class CellChart extends Component {
       const classesNumber = 11;
       var colors = colorbrewer[paletteName][classesNumber];
       colors = colors.slice(0).reverse();
+      colors = colors.slice(5);
+      for (let i =0 ;i<10;i+=2){
+        colors.splice(i+1,0,d3.interpolateRgb(colors[i],colors[i+1])(0.5));
+      }
       this.colorScale.range(colors);
 
       //cell chart
@@ -621,16 +630,12 @@ class CellChart extends Component {
         <div style={{fontSize:'0.8vw',textAlign:'center', width:'58.3%',float:"left",}}>
           <svg className='cell'></svg>
           Palette:&nbsp;
-          <select id="cellColorMap" defaultValue='RdYlBu'>
-            <option value="RdYlGn">RdYlGn</option>
-            <option value="Spectral">Spectral</option>
-            <option value="RdYlBu">RdYlBu</option>
-            <option value="RdGy">RdGy</option>
-            <option value="RdBu">RdBu</option>
-            <option value="PiYG">PiYG</option>
-            <option value="PRGn">PRGn</option>
-            <option value="BrBG">BrBG</option>
-            <option value="PuOr">PuOr</option>
+          <select id="cellColorMap" defaultValue='PRGn'>
+            <option value="RdBu">Red</option>
+            <option value="PiYG">Pink</option>
+            <option value="PRGn">Purple</option>
+            <option value="BrBG">Brown</option>
+            <option value="PuOr">Orange</option>
           </select>
           &emsp;Scale:&nbsp;
           <select id="cellColorScale" defaultValue='full'>
