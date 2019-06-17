@@ -13,13 +13,9 @@ class HeatChart extends Component {
     const sen_data = this.props.sen_data;
     const chart = circularHeatChart();
     // const width = this.props.size;
-    const paletteName = 'PRGn';
-    let colors = colorbrewer[paletteName][11];
+    const paletteName = 'RdYlBu';
+    var colors = colorbrewer[paletteName][11];
     colors = colors.slice(0).reverse();
-    colors = colors.slice(5);
-    for (let i =0 ;i<10;i+=2){
-      colors.splice(i+1,0,d3.interpolateRgb(colors[i],colors[i+1])(0.5));
-    }
 
     chart.segmentHeight(3)
       .innerRadius(50)
@@ -200,11 +196,31 @@ class HeatChart extends Component {
     // change colormap
     const changePalette = paletteName => {
       const classesNumber = 11;
-      var colors = colorbrewer[paletteName][classesNumber];
-      colors = colors.slice(0).reverse();
-      colors = colors.slice(5);
-      for (let i =0 ;i<10;i+=2){
-        colors.splice(i+1,0,d3.interpolateRgb(colors[i],colors[i+1])(0.5));
+      var colors;
+      if(paletteName==="seqGreen" || paletteName==="seqOrange" || paletteName==="seqPurple"){
+        switch(paletteName){
+          case "seqGreen":
+            colors = colorbrewer["PRGn"][classesNumber];
+            colors = colors.slice(0);
+            break;
+          case "seqOrange":
+            colors = colorbrewer["PuOr"][classesNumber];
+            colors = colors.slice(0).reverse();
+            break;
+          case "seqPurple":
+            colors = colorbrewer["PRGn"][classesNumber];
+            colors = colors.slice(0).reverse();
+            break;
+          default:
+            break;
+        }
+        colors = colors.slice(5);
+        for (let i =0 ;i<10;i+=2){
+          colors.splice(i+1,0,d3.interpolateRgb(colors[i],colors[i+1])(0.5));
+        }
+      }else{
+        colors = colorbrewer[paletteName][classesNumber];
+        colors = colors.slice(0).reverse();
       }
       this.colorScale.range(colors);
 
@@ -252,12 +268,19 @@ class HeatChart extends Component {
             <svg id="heatSvg"></svg>
             <div style={{fontSize:'0.8vw',textAlign:'center'}}>
               Palette:&nbsp;
-              <select id="heatColorMap" defaultValue='PRGn'>
-                <option value="RdBu">Red</option>
-                <option value="PiYG">Pink</option>
-                <option value="PRGn">Purple</option>
-                <option value="BrBG">Brown</option>
-                <option value="PuOr">Orange</option>
+              <select id="heatColorMap" defaultValue='RdYlBu'>
+                <option value="RdYlGn">RdYlGn</option>
+                <option value="Spectral">Spectral</option>
+                <option value="RdYlBu">RdYlBu</option>
+                <option value="RdGy">RdGy</option>
+                <option value="RdBu">RdBu</option>
+                <option value="PiYG">PiYG</option>
+                <option value="PRGn">PRGn</option>
+                <option value="BrBG">BrBG</option>
+                <option value="PuOr">PuOr</option>
+                <option value="seqPurple">seqPurple</option>
+                <option value="seqGreen">seqGreen</option>
+                <option value="seqOrange">seqOrange</option>
               </select>
               <svg id='legend'></svg>
             </div>
